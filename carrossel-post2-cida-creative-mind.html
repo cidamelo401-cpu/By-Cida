@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrossel — Cida Creative Mind</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .serif { font-family: 'Fraunces', serif; }
+  .sans { font-family: 'Outfit', sans-serif; }
+
+  /* IG FRAME */
+  .ig-frame {
+    width: 420px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+
+  .ig-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #efefef;
+    background: #fff;
+  }
+
+  .ig-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2D5A3D 0%, #4A8C5C 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .ig-handle-wrap { flex: 1; }
+  .ig-handle { font-size: 13px; font-weight: 600; color: #111; line-height: 1.2; }
+  .ig-sub { font-size: 11px; color: #8e8e8e; }
+
+  .ig-dots-btn {
+    font-size: 18px;
+    color: #333;
+    line-height: 1;
+    padding: 0 4px;
+  }
+
+  /* CAROUSEL VIEWPORT */
+  .carousel-viewport {
+    width: 420px;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+    background: #000;
+  }
+  .carousel-viewport:active { cursor: grabbing; }
+
+  .carousel-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform;
+  }
+
+  /* SLIDE BASE */
+  .slide {
+    width: 420px;
+    height: 100%;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* BACKGROUNDS */
+  .bg-light  { background: #F5F0EB; }
+  .bg-dark   { background: #0F1C15; }
+  .bg-grad   { background: linear-gradient(165deg, #1A3828 0%, #2D5A3D 50%, #4A8C5C 100%); }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 28px 20px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pb-track {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .pb-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+  .pb-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  /* SWIPE ARROW */
+  .swipe-arrow {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 48px;
+    z-index: 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* SLIDE CONTENT WRAPPER */
+  .slide-inner {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 36px 52px;
+  }
+
+  .slide-inner.center { justify-content: center; }
+  .slide-inner.end   { justify-content: flex-end; }
+
+  /* TAG */
+  .tag {
+    font-family: 'Outfit', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* HEADING */
+  .h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    line-height: 1.1;
+  }
+  .h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    line-height: 1.15;
+  }
+
+  /* BODY */
+  .body {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.55;
+  }
+
+  /* DIVIDER */
+  .divider { height: 1px; width: 40px; margin: 20px 0; }
+
+  /* LOGO LOCKUP */
+  .logo-lockup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #2D5A3D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .logo-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #2D5A3D;
+  }
+
+  /* PHOTO PLACEHOLDER */
+  .photo-placeholder {
+    width: 100%;
+    background: linear-gradient(135deg, #d4e8d9 0%, #b8d4be 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .photo-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232D5A3D' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .photo-icon {
+    font-size: 32px;
+    opacity: 0.5;
+  }
+  .photo-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #2D5A3D;
+    opacity: 0.7;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0 16px;
+  }
+
+  /* FEATURE LIST ITEM */
+  .feat-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+  }
+  .feat-item:last-child { border-bottom: none; }
+  .feat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(45,90,61,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .feat-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1A3828;
+    line-height: 1.3;
+  }
+  .feat-desc {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    color: #8A8580;
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+
+  /* CONTRAST CARD */
+  .contrast-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .contrast-card {
+    border-radius: 10px;
+    padding: 14px 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .contrast-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* IG ACTIONS */
+  .ig-actions {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px 4px;
+    gap: 14px;
+    border-top: 1px solid #efefef;
+  }
+  .ig-actions svg { opacity: 0.75; }
+  .ig-bookmark { margin-left: auto; }
+
+  /* IG DOTS */
+  .ig-dots {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 16px;
+  }
+  .ig-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ddd;
+    transition: background 0.3s;
+  }
+  .ig-dot.active { background: #2D5A3D; width: 18px; border-radius: 3px; }
+
+  /* IG CAPTION */
+  .ig-caption {
+    padding: 4px 16px 16px;
+  }
+  .ig-cap-handle { font-size: 13px; font-weight: 600; color: #111; }
+  .ig-cap-text { font-size: 13px; color: #333; line-height: 1.5; }
+  .ig-cap-time { font-size: 11px; color: #8e8e8e; margin-top: 6px; }
+
+  /* NOISE TEXTURE OVERLAY */
+  .noise {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 200px;
+    pointer-events: none;
+  }
+
+  /* QUOTE BOX */
+  .quote-box {
+    padding: 16px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.12);
+    margin-top: 16px;
+  }
+
+  /* STEP ITEM */
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+  }
+  .step-item:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 300;
+    color: #2D5A3D;
+    min-width: 32px;
+    line-height: 1;
+    padding-top: 2px;
+  }
+
+  /* CTA BUTTON */
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: #F5F0EB;
+    color: #1A3828;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 28px;
+    letter-spacing: 0.2px;
+  }
+
+  /* DECORATIVE SHAPES */
+  .deco-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="ig-frame" id="igFrame">
+
+  <!-- IG HEADER -->
+  <div class="ig-header">
+    <div class="ig-avatar">C</div>
+    <div class="ig-handle-wrap">
+      <div class="ig-handle">cidacreativemind</div>
+      <div class="ig-sub">Mente Criativa &amp; Produtividade</div>
+    </div>
+    <div class="ig-dots-btn">···</div>
+  </div>
+
+  <!-- CAROUSEL VIEWPORT -->
+  <div class="carousel-viewport" id="viewport">
+    <div class="carousel-track" id="track">
+
+      <!-- ======================== SLIDE 1 — HERO / HOOK ======================== -->
+      <div class="slide bg-light">
+        <div class="noise"></div>
+
+        <!-- Decorative circles -->
+        <div class="deco-circle" style="width:300px;height:300px;background:radial-gradient(circle,rgba(45,90,61,0.08) 0%,transparent 70%);top:-80px;right:-80px;"></div>
+        <div class="deco-circle" style="width:200px;height:200px;background:radial-gradient(circle,rgba(45,90,61,0.06) 0%,transparent 70%);bottom:60px;left:-60px;"></div>
+
+        <div class="slide-inner center">
+          <!-- Logo lockup top -->
+          <div class="logo-lockup" style="margin-bottom:auto;padding-top:32px;">
+            <div class="logo-circle">C</div>
+            <span class="logo-text">Cida Creative Mind</span>
+          </div>
+
+          <!-- Hook text -->
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+            <span class="tag" style="color:#2D5A3D;">✦ BASTIDORES CRIATIVOS</span>
+            <h1 class="h1" style="color:#1A3828;">
+              Eu não sou<br>organizada.
+            </h1>
+            <div class="divider" style="background:#2D5A3D;"></div>
+            <p class="h2" style="color:#2D5A3D;font-weight:300;font-style:italic;">
+              Eu criei um jeito de<br><em style="font-weight:600;font-style:normal;">parecer</em> organizada.
+            </p>
+          </div>
+
+          <!-- Bottom area -->
+          <div style="margin-top:auto;margin-bottom:8px;">
+            <p class="body" style="color:#6B6560;font-size:13px;">Arrasta para conhecer como minha cabeça funciona →</p>
+          </div>
+        </div>
+
+        <!-- Progress bar (light) -->
+        <div class="progress-bar">
+          <div class="pb-track" style="background:rgba(0,0,0,0.08);">
+            <div class="pb-fill" style="width:14.28%;background:#2D5A3D;"></div>
+          </div>
+          <span class="pb-label" style="color:rgba(0,0,0,0.3);">1/7</span>
+        </div>
+
+        <!-- Swipe arrow (light) -->
+        <div class="swipe-arrow" style="background:linear-gradient(to right,transparent,rgba(0,0,0,0.06));">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 6l6 6-6 6" stroke="rgba(0,0,0,0.25)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ======================== SLIDE 2 — PROBLEMA / A MENTE ======================== -->
+      <div class="slide bg-dark">
+        <div class="noise"></div>
+        <div class="deco-circle" style="width:250px;height:250px;background:radial-gradient(circle,rgba(74,140,92,0.12) 0%,transparent 70%);top:-60px;left:-60px;"></div>
+
+        <div class="slide-inner end">
+          <span class="tag" style="color:#4A8C5C;">✦ MENTE INQUIETA</span>
+          <h2 class="h2" style="color:#fff;margin-bottom:20px;">
+            Minha cabeça<br>nunca para.
+          </h2>
+
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.06);border-radius:10px;border:1px solid rgba(255,255,255,0.08);">
+              <span style="font-size:18px;">💭</span>
+              <p class="sans" style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.4;">47 abas abertas no navegador às 23h</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.06);border-radius:10px;border:1px solid rgba(255,255,255,0.08);">
+              <span style="font-size:18px;">📝</span>
+              <p class="sans" style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.4;">3 cadernos diferentes, todos "principais"</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.06);border-radius:10px;border:1px solid rgba(255,255,255,0.08);">
+              <span style="font-size:18px;">🎙️</span>
+              <p class="sans" style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.4;">Voice memo às 2h da manhã — "não posso perder essa ideia"</p>
+            </div>
+          </div>
+
+          <div class="quote-box">
+            <p class="serif" style="font-size:15px;color:rgba(255,255,255,0.9);font-style:italic;line-height:1.5;">"Isso não é falta de organização. É excesso de criatividade precisando de um sistema."</p>
+          </div>
+        </div>
+
+        <!-- Progress bar (dark) -->
+        <div class="progress-bar">
+          <div class="pb-track" style="background:rgba(255,255,255,0.12);">
+            <div class="pb-fill" style="width:28.57%;background:#fff;"></div>
+          </div>
+          <span class="pb-label" style="color:rgba(255,255,255,0.4);">2/7</span>
+        </div>
+
+        <!-- Swipe arrow (dark) -->
+        <div class="swipe-arrow" style="background:linear-gradient(to right,transparent,rgba(255,255,255,0.08));">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 6l6 6-6 6" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ======================== SLIDE 3 — VIRADA / GRADIENT ======================== -->
+      <div class="slide bg-grad">
+        <div class="noise"></div>
+        <div class="deco-circle" style="width:280px;height:280px;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%);top:-40px;right:-80px;"></div>
+        <div class="deco-circle" style="width:180px;height:180px;background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 70%);bottom:80px;left:-40px;"></div>
+
+        <div class="slide-inner center" style="justify-content:center;">
+          <span class="tag" style="color:rgba(255,255,255,0.6);">✦ A VIRADA</span>
+
+          <h2 class="h2" style="color:#fff;margin-bottom:20px;">
+            Parei de lutar<br>contra a minha<br>mente.
+          </h2>
+
+          <div style="height:1px;background:rgba(255,255,255,0.2);margin:20px 0;"></div>
+
+          <p class="body" style="color:rgba(255,255,255,0.85);font-size:14px;line-height:1.6;">
+            E comecei a criar sistemas que <strong style="color:#fff;font-weight:600;">trabalham com ela</strong> — não contra.
+          </p>
+
+          <div style="margin-top:24px;padding:18px;background:rgba(0,0,0,0.2);border-radius:14px;border:1px solid rgba(255,255,255,0.1);">
+            <p class="sans" style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">o resultado</p>
+            <p class="serif" style="font-size:15px;color:#fff;font-style:italic;line-height:1.5;">
+              "Não virei uma pessoa diferente. Virei a melhor versão de quem eu sempre fui."
+            </p>
+          </div>
+        </div>
+
+        <!-- Progress bar (dark on gradient) -->
+        <div class="progress-bar">
+          <div class="pb-track" style="background:rgba(255,255,255,0.12);">
+            <div class="pb-fill" style="width:42.86%;background:#fff;"></div>
+          </div>
+          <span class="pb-label" style="color:rgba(255,255,255,0.4);">3/7</span>
+        </div>
+
+        <!-- Swipe arrow -->
+        <div class="swipe-arrow" style="background:linear-gradient(to right,transparent,rgba(255,255,255,0.08));">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 6l6 6-6 6" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ======================== SLIDE 4 — COMO FUNCIONA (LIGHT) ======================== -->
+      <div class="slide bg-light">
+        <div class="noise"></div>
+        <div class="deco-circle" style="width:200px;height:200px;background:radial-gradient(circle,rgba(45,90,61,0.07) 0%,transparent 70%);top:-40px;right:-40px;"></div>
+
+        <div class="slide-inner end">
+          <span class="tag" style="color:#2D5A3D;">✦ COMO FUNCIONA</span>
+          <h2 class="h2" style="color:#1A3828;margin-bottom:20px;">
+            Como minha<br>cabeça opera
+          </h2>
+
+          <div style="display:flex;flex-direction:column;">
+            <div class="feat-item">
+              <div class="feat-icon">⚡</div>
+              <div>
+                <div class="feat-title">Ideias em rafaga</div>
+                <div class="feat-desc">Tudo chega de uma vez — capturo antes de filtrar</div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="feat-icon">🔗</div>
+              <div>
+                <div class="feat-title">Conexões não-lineares</div>
+                <div class="feat-desc">Enxergo padrões onde os outros veem caos</div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="feat-icon">🎯</div>
+              <div>
+                <div class="feat-title">Foco por blocos</div>
+                <div class="feat-desc">Trabalho em sprints, não em longas maratonas</div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="feat-icon">📦</div>
+              <div>
+                <div class="feat-title">Sistema próprio</div>
+                <div class="feat-desc">Adaptei métodos existentes ao meu ritmo único</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress bar (light) -->
+        <div class="progress-bar">
+          <div class="pb-track" style="background:rgba(0,0,0,0.08);">
+            <div class="pb-fill" style="width:57.14%;background:#2D5A3D;"></div>
+          </div>
+          <span class="pb-label" style="color:rgba(0,0,0,0.3);">4/7</span>
+        </div>
+
+        <!-- Swipe arrow (light) -->
+        <div class="swipe-arrow" style="background:linear-gradient(to right,transparent,rgba(0,0,0,0.06));">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 6l6 6-6 6" stroke="rgba(0,0,0,0.25)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ======================== SLIDE 5 — BASTIDORES (DARK) ======================== -->
+      <div class="slide bg-dark">
+        <div class="noise"></div>
+        <div class="deco-circle" style="width:220px;height:220px;background:radial-gradient(circle,rgba(74,140,92,0.1) 0%,transparent 70%);bottom:-40px;right:-40px;"></div>
+
+        <div class="slide-inner end">
+          <span class="tag" style="color:#4A8C5C;">✦ A VERDADE DOS BASTIDORES</span>
+          <h2 class="h2" style="color:#fff;margin-bottom:16px;font-size:24px;">
+            O que você vê<br>vs. o que existe
+          </h2>
+
+          <div class="contrast-grid">
+            <div class="contrast-card" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);">
+              <div class="contrast-label" style="color:rgba(255,255,255,0.4);">🙈 nos bastidores</div>
+              <p class="sans" style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5;">Mesa com post-its, 3 canecas, caderno aberto na página errada</p>
+            </div>
+            <div class="contrast-card" style="background:rgba(45,90,61,0.25);border:1px solid rgba(74,140,92,0.3);">
+              <div class="contrast-label" style="color:#4A8C5C;">✨ o que entrego</div>
+              <p class="sans" style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.5;">Conteúdo claro, organizado e estratégico</p>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.08);">
+            <p class="sans" style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;font-style:italic;">
+              "O caos criativo é <strong style="color:#4A8C5C;">ingrediente</strong>, não obstáculo. Aprendi a cozinhar com ele."
+            </p>
+          </div>
+
+          <!-- Photo placeholder -->
+          <div class="photo-placeholder" style="height:88px;margin-top:12px;background:rgba(255,255,255,0.04);border:1px dashed rgba(74,140,92,0.4);">
+            <span style="font-size:20px;opacity:0.5;">📸</span>
+            <span class="photo-label" style="font-size:10px;color:rgba(255,255,255,0.3);">Sua foto — mesa real</span>
+          </div>
+        </div>
+
+        <!-- Progress bar (dark) -->
+        <div class="progress-bar">
+          <div class="pb-track" style="background:rgba(255,255,255,0.12);">
+            <div class="pb-fill" style="width:71.43%;background:#fff;"></div>
+          </div>
+          <span class="pb-label" style="color:rgba(255,255,255,0.4);">5/7</span>
+        </div>
+
+        <!-- Swipe arrow (dark) -->
+        <div class="swipe-arrow" style="background:linear-gradient(to right,transparent,rgba(255,255,255,0.08));">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 6l6 6-6 6" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ======================== SLIDE 6 — O QUE EU FAÇO (LIGHT) ======================== -->
+      <div class="slide bg-light">
+        <div class="noise"></div>
+        <div class="deco-circle" style="width:240px;height:240px;background:radial-gradient(circle,rgba(45,90,61,0.07) 0%,transparent 70%);top:-60px;left:-60px;"></div>
+
+        <div class="slide-inner end">
+          <span class="tag" style="color:#2D5A3D;">✦ O QUE FAÇO COM ISSO TUDO</span>
+          <h2 class="h2" style="color:#1A3828;margin-bottom:20px;">
+            Transformo caos<br>criativo em<br>resultado real
+          </h2>
+
+          <div style="display:flex;flex-direction:column;gap:0;">
+            <div class="step-item">
+              <span class="step-num">01</span>
+              <div>
+                <div class="feat-title">Estratégia de conteúdo</div>
+                <div class="feat-desc">Que conecta com quem você quer alcançar</div>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">02</span>
+              <div>
+                <div class="feat-title">Sistemas de produtividade</div>
+                <div class="feat-desc">Adaptados para mentes não-lineares como a minha</div>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">03</span>
+              <div>
+                <div class="feat-title">Presença digital autêntica</div>
+                <div class="feat-desc">Sem performar quem você não é</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;padding:12px 16px;background:rgba(45,90,61,0.08);border-radius:10px;border-left:3px solid #2D5A3D;">
+            <p class="sans" style="font-size:12px;color:#2D5A3D;line-height:1.5;font-weight:500;">
+              Se você também se reconhece nesse jeito de ser — você está no lugar certo. 👇
+            </p>
+          </div>
+        </div>
+
+        <!-- Progress bar (light) -->
+        <div class="progress-bar">
+          <div class="pb-track" style="background:rgba(0,0,0,0.08);">
+            <div class="pb-fill" style="width:85.71%;background:#2D5A3D;"></div>
+          </div>
+          <span class="pb-label" style="color:rgba(0,0,0,0.3);">6/7</span>
+        </div>
+
+        <!-- Swipe arrow (light) -->
+        <div class="swipe-arrow" style="background:linear-gradient(to right,transparent,rgba(0,0,0,0.06));">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 6l6 6-6 6" stroke="rgba(0,0,0,0.25)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ======================== SLIDE 7 — CTA (GRADIENT) ======================== -->
+      <div class="slide bg-grad">
+        <div class="noise"></div>
+        <div class="deco-circle" style="width:320px;height:320px;background:radial-gradient(circle,rgba(255,255,255,0.07) 0%,transparent 70%);top:-100px;right:-100px;"></div>
+        <div class="deco-circle" style="width:200px;height:200px;background:radial-gradient(circle,rgba(255,255,255,0.05) 0%,transparent 70%);bottom:60px;left:-60px;"></div>
+
+        <!-- Photo placeholder — top right -->
+        <div style="position:absolute;top:28px;right:28px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;z-index:3;overflow:hidden;">
+          <span style="font-size:24px;opacity:0.6;">👩🏽</span>
+        </div>
+
+        <div class="slide-inner center" style="justify-content:center;">
+          <div style="padding-top:40px;">
+            <span class="tag" style="color:rgba(255,255,255,0.6);">✦ AGORA É A SUA VEZ</span>
+            <h2 class="h2" style="color:#fff;font-size:30px;margin-bottom:20px;">
+              Você também tem<br>mais <em style="font-style:italic;">ideias</em><br>do que tempo?
+            </h2>
+
+            <p class="body" style="color:rgba(255,255,255,0.8);margin-bottom:28px;font-size:13px;">
+              Comenta aqui embaixo! 👇<br>Quero te conhecer.
+            </p>
+
+            <div class="cta-btn" style="display:inline-flex;">
+              💬 &nbsp;Comenta aqui
+            </div>
+          </div>
+
+          <!-- Logo lockup bottom -->
+          <div class="logo-lockup" style="margin-top:auto;margin-bottom:8px;">
+            <div class="logo-circle" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);">C</div>
+            <span style="font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.5px;color:rgba(255,255,255,0.8);">Cida Creative Mind</span>
+          </div>
+        </div>
+
+        <!-- Progress bar — FULL (no arrow on last slide) -->
+        <div class="progress-bar">
+          <div class="pb-track" style="background:rgba(255,255,255,0.12);">
+            <div class="pb-fill" style="width:100%;background:#fff;"></div>
+          </div>
+          <span class="pb-label" style="color:rgba(255,255,255,0.4);">7/7</span>
+        </div>
+        <!-- No swipe arrow on last slide -->
+      </div>
+
+    </div><!-- /carousel-track -->
+  </div><!-- /carousel-viewport -->
+
+  <!-- IG DOTS -->
+  <div class="ig-dots" id="dots">
+    <div class="ig-dot active" data-idx="0"></div>
+    <div class="ig-dot" data-idx="1"></div>
+    <div class="ig-dot" data-idx="2"></div>
+    <div class="ig-dot" data-idx="3"></div>
+    <div class="ig-dot" data-idx="4"></div>
+    <div class="ig-dot" data-idx="5"></div>
+    <div class="ig-dot" data-idx="6"></div>
+  </div>
+
+  <!-- IG ACTIONS -->
+  <div class="ig-actions">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><line x1="22" y1="2" x2="11" y2="13" stroke="#333" stroke-width="2" stroke-linecap="round"/><polygon points="22 2 15 22 11 13 2 9 22 2" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    <svg class="ig-bookmark" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+
+  <!-- IG CAPTION -->
+  <div class="ig-caption">
+    <span class="ig-cap-handle">cidacreativemind</span>
+    <span class="ig-cap-text"> Eu não sou organizada. Eu criei um jeito de <em>parecer</em> organizada. 🧠✨ Arrasta e me conta: você também? 👇</span>
+    <div class="ig-cap-time">2 HOURS AGO</div>
+  </div>
+
+</div><!-- /ig-frame -->
+
+<script>
+  const track = document.getElementById('track');
+  const viewport = document.getElementById('viewport');
+  const dots = document.querySelectorAll('.ig-dot');
+  const TOTAL = 7;
+  let current = 0;
+  let startX = 0;
+  let isDragging = false;
+  let startTranslate = 0;
+
+  function goTo(idx) {
+    current = Math.max(0, Math.min(TOTAL - 1, idx));
+    track.style.transform = 'translateX(' + (-current * 420) + 'px)';
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  // Pointer drag
+  viewport.addEventListener('pointerdown', e => {
+    isDragging = true;
+    startX = e.clientX;
+    startTranslate = -current * 420;
+    track.style.transition = 'none';
+    viewport.setPointerCapture(e.pointerId);
+  });
+
+  viewport.addEventListener('pointermove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    track.style.transform = 'translateX(' + (startTranslate + dx) + 'px)';
+  });
+
+  viewport.addEventListener('pointerup', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    track.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1)';
+    const dx = e.clientX - startX;
+    if (dx < -50) goTo(current + 1);
+    else if (dx > 50) goTo(current - 1);
+    else goTo(current);
+  });
+
+  // Dot click
+  dots.forEach(d => {
+    d.addEventListener('click', () => {
+      track.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1)';
+      goTo(parseInt(d.dataset.idx));
+    });
+  });
+</script>
+</body>
+</html>
