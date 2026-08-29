@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mulher Além de Mãe</title>
+  <meta name="description" content="Você é mãe, mas também é mulher, sonho, força e recomeço. Reconecte-se com quem você é além da maternidade.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ground: #F0EDE8;
+      --surface: #FAFAF7;
+      --text: #2A2118;
+      --text-soft: #8C7E72;
+      --accent: #7B2040;
+      --accent-light: rgba(123, 32, 64, 0.08);
+      --brass: #A6884D;
+      --brass-soft: rgba(166, 136, 77, 0.15);
+      --border: rgba(42, 33, 24, 0.1);
+      --shadow-sm: 0 1px 3px rgba(42, 33, 24, 0.04);
+      --shadow-md: 0 4px 16px rgba(42, 33, 24, 0.06);
+      --green-wa: #25D366;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --ground: #1A1614;
+        --surface: #242019;
+        --text: #E8E2DA;
+        --text-soft: #9C9188;
+        --accent: #D4708B;
+        --accent-light: rgba(212, 112, 139, 0.1);
+        --brass: #C9A962;
+        --brass-soft: rgba(201, 169, 98, 0.12);
+        --border: rgba(232, 226, 218, 0.08);
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+        --green-wa: #4ADE80;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --ground: #1A1614;
+      --surface: #242019;
+      --text: #E8E2DA;
+      --text-soft: #9C9188;
+      --accent: #D4708B;
+      --accent-light: rgba(212, 112, 139, 0.1);
+      --brass: #C9A962;
+      --brass-soft: rgba(201, 169, 98, 0.12);
+      --border: rgba(232, 226, 218, 0.08);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+      --green-wa: #4ADE80;
+    }
+
+    body {
+      font-family: 'Karla', 'Segoe UI', system-ui, sans-serif;
+      background: var(--ground);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 420px;
+      padding: 48px 24px 64px;
+    }
+
+    /* ── Profile ── */
+    .profile {
+      margin-bottom: 40px;
+    }
+
+    .profile h1 {
+      font-family: 'Cormorant Garamond', 'Georgia', serif;
+      font-size: 42px;
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-wrap: balance;
+      margin-bottom: 16px;
+    }
+
+    .profile h1 em {
+      font-style: italic;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .profile-bio {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--text-soft);
+      font-weight: 300;
+      max-width: 34ch;
+    }
+
+    /* ── Section headers ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--brass);
+      margin-bottom: 16px;
+    }
+
+    /* ── Events ── */
+    .events {
+      margin-bottom: 36px;
+    }
+
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .event-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .event-card:hover, .event-card:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent-light);
+    }
+
+    .event-card:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .event-card:active { transform: translateY(0); }
+
+    .event-date {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: var(--accent-light);
+      flex-shrink: 0;
+    }
+
+    .event-date .day {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .event-date .month {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      opacity: 0.7;
+    }
+
+    .event-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .event-info .name {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    .event-info .detail {
+      font-size: 12px;
+      color: var(--text-soft);
+      font-weight: 300;
+      margin-top: 2px;
+    }
+
+    .event-card .arrow {
+      font-size: 16px;
+      color: var(--text-soft);
+      opacity: 0.3;
+      transition: opacity 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .event-card:hover .arrow {
+      opacity: 0.8;
+      transform: translateX(2px);
+    }
+
+    /* ── Link List ── */
+    .link-section {
+      margin-bottom: 36px;
+    }
+
+    .link-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .link-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 4px;
+      text-decoration: none;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s ease, padding-left 0.2s ease;
+      position: relative;
+    }
+
+    .link-item:first-child {
+      border-top: 1px solid var(--border);
+    }
+
+    .link-item::before {
+      content: '';
+      position: absolute;
+      left: -2px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 0;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: height 0.25s ease;
+    }
+
+    .link-item:hover::before,
+    .link-item:focus-visible::before {
+      height: 28px;
+    }
+
+    .link-item:hover,
+    .link-item:focus-visible {
+      padding-left: 12px;
+      background: var(--accent-light);
+    }
+
+    .link-item:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+      border-radius: 4px;
+    }
+
+    .link-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #fff;
+    }
+
+    .link-dot svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .link-dot.wa { background: var(--green-wa); }
+    .link-dot.ig { background: linear-gradient(135deg, #C13584, #E1306C); }
+    .link-dot.ev { background: var(--brass); }
+
+    .link-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .link-text .name {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    .link-text .note {
+      font-size: 12px;
+      color: var(--text-soft);
+      font-weight: 300;
+      margin-top: 1px;
+    }
+
+    .link-item .arrow {
+      font-size: 16px;
+      color: var(--text-soft);
+      opacity: 0.3;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .link-item:hover .arrow {
+      opacity: 0.8;
+      transform: translateX(2px);
+    }
+
+    /* ── Quote ── */
+    .pull-quote {
+      padding: 36px 0;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .pull-quote::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 2px;
+      background: var(--brass);
+      margin-bottom: 28px;
+    }
+
+    .pull-quote blockquote {
+      font-family: 'Cormorant Garamond', 'Georgia', serif;
+      font-size: 28px;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.4;
+      color: var(--text);
+      letter-spacing: -0.3px;
+      text-wrap: balance;
+    }
+
+    .pull-quote cite {
+      display: block;
+      font-family: 'Karla', sans-serif;
+      font-style: normal;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin-top: 20px;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-soft);
+    }
+
+    .footer-year {
+      font-size: 11px;
+      color: var(--text-soft);
+      opacity: 0.5;
+    }
+
+    /* ── Entrance ── */
+    @media (prefers-reduced-motion: no-preference) {
+      .profile, .events, .link-section, .pull-quote, .footer {
+        animation: enter 0.5s ease both;
+      }
+      .profile       { animation-delay: 0s; }
+      .events        { animation-delay: 0.08s; }
+      .link-section  { animation-delay: 0.2s; }
+      .pull-quote    { animation-delay: 0.3s; }
+      .footer        { animation-delay: 0.36s; }
+
+      @keyframes enter {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+    }
+
+    @media (max-width: 380px) {
+      .profile h1 { font-size: 34px; }
+      .pull-quote blockquote { font-size: 24px; }
+      .page { padding: 36px 18px 48px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <header class="profile">
+      <h1>Mulher <em>Além</em> de&nbsp;Mãe</h1>
+      <p class="profile-bio">Você é mãe, mas também é mulher, sonho, força e recomeço. Reconecte-se com quem você é.</p>
+    </header>
+
+    <!-- Próximos Eventos -->
+    <section class="events">
+      <h2 class="section-label">Próximos Eventos</h2>
+      <div class="event-list">
+        <a href="eventos/maes-e-vinhos.html" class="event-card">
+          <div class="event-date">
+            <span class="day">12</span>
+            <span class="month">Set</span>
+          </div>
+          <div class="event-info">
+            <div class="name">Mães & Vinhos</div>
+            <div class="detail">14h às 18h · Sow Cake Lounge, Aclimação</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="eventos/conexao-natureza.html" class="event-card">
+          <div class="event-date">
+            <span class="day">17</span>
+            <span class="month">Out</span>
+          </div>
+          <div class="event-info">
+            <div class="name">Mães, Conexão e Natureza</div>
+            <div class="detail">Sítio Anju, Atibaia · A partir de R$ 299</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="eventos/buzios.html" class="event-card">
+          <div class="event-date">
+            <span class="day">07</span>
+            <span class="month">Nov</span>
+          </div>
+          <div class="event-info">
+            <div class="name">Viagem Búzios das Mães</div>
+            <div class="detail">2 diárias · 10× R$ 195</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="eventos/lancha-14nov.html" class="event-card">
+          <div class="event-date">
+            <span class="day">14</span>
+            <span class="month">Nov</span>
+          </div>
+          <div class="event-info">
+            <div class="name">Passeio de Lancha</div>
+            <div class="detail">Guarujá · 7h de lancha · R$ 60/mês</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="eventos/lancha-28nov.html" class="event-card">
+          <div class="event-date">
+            <span class="day">28</span>
+            <span class="month">Nov</span>
+          </div>
+          <div class="event-info">
+            <div class="name">Passeio de Lancha — 2ª edição</div>
+            <div class="detail">Guarujá · 7h de lancha · R$ 60/mês</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Links -->
+    <nav class="link-section">
+      <div class="link-list">
+        <a href="https://chat.whatsapp.com/CQMnzoDtbKFBH0ocgJ5Ysf" class="link-item" target="_blank" rel="noopener">
+          <span class="link-dot wa">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </span>
+          <div class="link-text">
+            <div class="name">Nossa Comunidade</div>
+            <div class="note">Entre no grupo de apoio e acolhimento</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="https://www.instagram.com/mulheralemdemaeoficial" class="link-item" target="_blank" rel="noopener">
+          <span class="link-dot ig">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </span>
+          <div class="link-text">
+            <div class="name">Instagram</div>
+            <div class="note">@mulheralemdemaeoficial</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="https://linktr.ee/maesevinhos" class="link-item" target="_blank" rel="noopener">
+          <span class="link-dot ev">
+            <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+          </span>
+          <div class="link-text">
+            <div class="name">Eventos Anteriores</div>
+            <div class="note">Veja o que já vivemos juntas</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Quote -->
+    <div class="pull-quote">
+      <blockquote>Ser mãe não apaga quem você era. Ser mulher não diminui o amor que você sente.</blockquote>
+      <cite>— Mulher Além de Mãe</cite>
+    </div>
+
+    <footer class="footer">
+      <span class="footer-brand">Mulher Além de Mãe</span>
+      <span class="footer-year">© 2026</span>
+    </footer>
+
+  </div>
+</body>
+</html>
