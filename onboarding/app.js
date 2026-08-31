@@ -14,8 +14,8 @@
 (function () {
   'use strict';
 
-  const SUPABASE_URL = 'https://pnylyuhnrphpksekfmbh.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueWx5dWhucnBocGtzZWtmbWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4Mjc0OTIsImV4cCI6MjEwMjQwMzQ5Mn0.LioVn_rV3B01Gee_JDJyD1FrEkV4W1iUzmYiEniG66I';
+  const SUPABASE_URL = 'https://nttolzutbhynrrprqirj.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50dG9senV0Ymh5bnJycHJxaXJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODc1NTIsImV4cCI6MjEwMzc2MzU1Mn0.vxAu7WwDk2KjIIOBASXH5Cu4aPD8DeyydmulEBDv3fk';
 
   // ============================================================
   // Auth — Supabase Anonymous Authentication
