@@ -1,0 +1,72 @@
+{
+  "slug": "bruna-makdissi",
+  "client": {
+    "name": "Bruna",
+    "fullName": "Bruna Makdissi"
+  },
+  "welcome": {
+    "title": "Vamos falar sobre o seu negócio?",
+    "description": "Este não é daqueles formulários gigantes de onboarding.\n\nQuero entender onde você quer chegar, o que faz sentido para o seu negócio agora e o que precisa mudar.\n\nSão poucas etapas e você pode responder do seu jeito.\n\nNão precisa escrever bonito nem organizar as ideias antes.\n\nQuanto mais natural for sua resposta, melhor.",
+    "cta": "Começar",
+    "estimatedTime": "Leva aproximadamente 15 minutos."
+  },
+  "steps": [
+    {
+      "id": "visao",
+      "title": "Onde você quer chegar?",
+      "question": "Daqui a 12 meses, o que precisa ter acontecido para você olhar para o seu negócio e pensar: deu muito certo?",
+      "helperText": "Pode pensar em dinheiro, rotina, clientes, produtos, liberdade, reconhecimento ou qualquer outra coisa importante para você.",
+      "responseType": "text"
+    },
+    {
+      "id": "negocio",
+      "title": "O que você quer vender?",
+      "question": "Me conte o que você realmente quer vender nos próximos meses.",
+      "helperText": "O que você quer manter? O que não faz mais sentido? Quais preços pratica hoje? E o que você mais gosta de entregar?",
+      "responseType": "text"
+    },
+    {
+      "id": "cliente",
+      "title": "Com quem você quer trabalhar?",
+      "question": "Pense nas clientes com quem você mais gosta de trabalhar. Quem são elas e o que normalmente está acontecendo na vida delas quando chegam até você?",
+      "helperText": "Se existir algum perfil de cliente que você não quer mais atrair, pode contar também.",
+      "responseType": "text"
+    },
+    {
+      "id": "marca",
+      "title": "Como você quer ser reconhecida?",
+      "question": "Se alguém indicasse você para uma amiga, como gostaria que essa pessoa explicasse o que você faz?",
+      "helperText": "Conte também onde você sente que entram finanças, energia, espiritualidade, desenvolvimento pessoal e sua própria história.",
+      "responseType": "text"
+    },
+    {
+      "id": "resultados",
+      "title": "O que mostra que seu trabalho funciona?",
+      "question": "Quais histórias, resultados ou depoimentos de clientes representam melhor o seu trabalho?",
+      "helperText": "Se souber, diga também quais dessas histórias podemos utilizar publicamente.",
+      "responseType": "text"
+    },
+    {
+      "id": "aberto",
+      "title": "Faltou alguma coisa?",
+      "question": "Tem algo importante sobre você, seu negócio ou seus planos que eu não perguntei?",
+      "helperText": "Esse espaço é totalmente livre. Pode contar do seu jeito.",
+      "responseType": "text",
+      "optional": true
+    }
+  ],
+  "review": {
+    "title": "Tudo certo?",
+    "editLabel": "Editar",
+    "submitLabel": "Enviar minhas respostas"
+  },
+  "confirmation": {
+    "title": "Pronto 💛",
+    "message": "Suas respostas chegaram.\n\nAgora eu vou organizar tudo isso junto com as informações que já tenho sobre o seu negócio.\n\nSe surgir alguma pergunta realmente importante, eu volto até você.\n\nVocê não vai precisar preencher outro formulário gigante. Prometo."
+  },
+  "meta": {
+    "onboardingType": "smart-onboarding-v1",
+    "version": "1.0.0",
+    "createdAt": "2026-08-31"
+  }
+}
