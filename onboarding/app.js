@@ -17,6 +17,28 @@
   const SUPABASE_URL = 'https://nttolzutbhynrrprqirj.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50dG9senV0Ymh5bnJycHJxaXJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODc1NTIsImV4cCI6MjEwMzc2MzU1Mn0.vxAu7WwDk2KjIIOBASXH5Cu4aPD8DeyydmulEBDv3fk';
 
+  // Set to true for structured console logs; false silences them.
+  const DEBUG = true;
+
+  // ============================================================
+  // Structured Logger
+  // ============================================================
+  const Log = {
+    _t: null,
+    start(op) { this._t = performance.now(); if (DEBUG) console.log(`[bycida] ▶ ${op}`); },
+    ok(op, detail) {
+      if (!DEBUG) return;
+      const ms = this._t ? Math.round(performance.now() - this._t) : '?';
+      console.log(`[bycida] ✅ ${op} — ${ms}ms`, detail || '');
+    },
+    fail(op, status, message) {
+      // Always log errors regardless of DEBUG
+      const ms = this._t ? Math.round(performance.now() - this._t) : '?';
+      console.error(`[bycida] ❌ ${op} — ${ms}ms | HTTP ${status || '?'} | ${message || ''}`);
+    },
+    info(op, detail) { if (DEBUG) console.log(`[bycida] ℹ ${op}`, detail || ''); },
+  };
+
   // ============================================================
   // Auth — Supabase Anonymous Authentication
   // ============================================================
@@ -85,20 +107,25 @@
     },
 
     async signInAnonymously() {
+      Log.start('auth:signInAnonymously');
       const data = await this._authFetch('signup', {});
       this._setFromResponse(data);
+      Log.ok('auth:signInAnonymously', { uid: this._uid });
       return this._uid;
     },
 
     async refresh() {
       if (!this._refreshToken) return false;
+      Log.start('auth:refresh');
       try {
         const data = await this._authFetch('token?grant_type=refresh_token', {
           refresh_token: this._refreshToken,
         });
         this._setFromResponse(data);
+        Log.ok('auth:refresh', { uid: this._uid, expiresIn: data.expires_in });
         return true;
-      } catch {
+      } catch (e) {
+        Log.fail('auth:refresh', null, e.message);
         return false;
       }
     },
@@ -119,6 +146,8 @@
   // ============================================================
   const db = {
     async query(table, { method = 'GET', filters = '', body = null, single = false, headers = {} } = {}) {
+      const opName = `db:${method} ${table}`;
+      Log.start(opName);
       const url = `${SUPABASE_URL}/rest/v1/${table}${filters ? '?' + filters : ''}`;
       const opts = {
         method,
@@ -135,19 +164,23 @@
       const resp = await fetch(url, opts);
       if (!resp.ok) {
         const text = await resp.text().catch(() => '');
+        Log.fail(opName, resp.status, text);
         throw new Error(`DB ${method} ${table}: ${resp.status} ${text}`);
       }
-      if (resp.status === 204) return null;
+      if (resp.status === 204) { Log.ok(opName, { status: 204 }); return null; }
       const data = await resp.json();
+      Log.ok(opName, { status: resp.status, rows: Array.isArray(data) ? data.length : 1 });
       return single ? (Array.isArray(data) ? data[0] || null : data) : data;
     },
 
     async uploadAudio(path, blob) {
+      Log.start('storage:upload');
       const url = `${SUPABASE_URL}/storage/v1/object/onboarding-audio/${path}`;
       // Strip codec params from MIME type — Safari produces e.g.
       // "audio/mp4;codecs=mp4a.40.2" but Supabase Storage's
       // allowed_mime_types checks the base type only ("audio/mp4").
       const baseType = (blob.type || 'audio/webm').split(';')[0].trim();
+      Log.info('storage:upload', { path, mimeRaw: blob.type, mimeBase: baseType, size: blob.size });
       const resp = await fetch(url, {
         method: 'POST',
         headers: {
@@ -159,8 +192,10 @@
       });
       if (!resp.ok) {
         const text = await resp.text().catch(() => '');
+        Log.fail('storage:upload', resp.status, text);
         throw new Error(`Upload failed: ${resp.status} ${text}`);
       }
+      Log.ok('storage:upload', { status: resp.status, path });
       return path;
     },
 
@@ -241,6 +276,7 @@
 
   async function findOrCreateSession(slug, clientId) {
     const uid = Auth.uid();
+    Log.start('session:findOrCreate');
 
     // Try to find existing session for this user + client
     try {
@@ -249,6 +285,7 @@
         single: true,
       });
       if (existing) {
+        Log.ok('session:findOrCreate', { action: 'restored', id: existing.id });
         dbSession = existing;
         const responses = await db.query('onboarding_responses', {
           filters: `session_id=eq.${existing.id}&select=*`,
@@ -267,10 +304,11 @@
           consentAccepted: !!existing.consent_accepted_at,
         };
       }
-    } catch (e) { console.warn('Session lookup failed:', e.message); }
+    } catch (e) { Log.fail('session:findOrCreate', null, 'lookup: ' + e.message); }
 
     // Create new
     try {
+      Log.start('session:create');
       const newSession = await db.query('onboarding_sessions', {
         method: 'POST',
         body: {
@@ -283,12 +321,13 @@
         single: true,
       });
       dbSession = newSession;
+      Log.ok('session:create', { id: newSession.id });
       return {
         id: newSession.id, slug, status: 'in_progress',
         currentStep: 0, responses: {}, consentAccepted: false,
       };
     } catch (e) {
-      console.error('Session creation failed:', e.message);
+      Log.fail('session:create', null, e.message);
       return null;
     }
   }
@@ -331,12 +370,15 @@
 
   async function submitRemote() {
     if (!dbSession) return false;
+    Log.start('submit');
     try {
       // Refresh JWT before submit — Safari/iOS may have suspended the
       // refresh timer if the tab was inactive or the device slept.
       await Auth.refresh().catch(() => {});
 
-      for (const stepId of Object.keys(session.responses)) {
+      const stepIds = Object.keys(session.responses);
+      Log.info('submit', `saving ${stepIds.length} responses`);
+      for (const stepId of stepIds) {
         const audioPath = audioRecordings[stepId]?.path || null;
         await saveResponseRemote(stepId, session.responses[stepId], audioPath);
       }
@@ -345,8 +387,9 @@
         filters: `id=eq.${dbSession.id}`,
         body: { status: 'submitted', submitted_at: new Date().toISOString(), updated_at: new Date().toISOString() },
       });
+      Log.ok('submit', { session: dbSession.id, steps: stepIds.length });
       return true;
-    } catch (e) { console.error('Submit failed:', e.message); throw e; }
+    } catch (e) { Log.fail('submit', null, e.message); throw e; }
   }
 
   // ============================================================
@@ -402,12 +445,14 @@
   };
 
   async function uploadAudioFile(sessionId, stepId, blob) {
+    Log.start('audio:upload');
     // Refresh JWT in case Safari/iOS suspended the refresh timer
     await Auth.refresh().catch(() => {});
     const uid = Auth.uid();
     const ext = blob.type.includes('mp4') ? 'mp4' : blob.type.includes('ogg') ? 'ogg' : 'webm';
     // Path scoped by auth.uid() for RLS
     const path = `${uid}/${sessionId}/${stepId}.${ext}`;
+    Log.info('audio:upload', { path, mime: blob.type, size: blob.size });
     await db.uploadAudio(path, blob);
     try {
       await db.query('onboarding_files', {
@@ -418,6 +463,7 @@
         },
       });
     } catch {}
+    Log.ok('audio:upload', { path });
     return path;
   }
 
@@ -549,11 +595,13 @@
     textarea.addEventListener('input', () => {
       clearTimeout(saveTimeout);
       saveTimeout = setTimeout(() => {
+        Log.start('autosave');
         session.responses[step.id] = textarea.value;
         session.currentStep = index + 1;
         LocalStore.save(slug, session);
         SyncQueue.add(() => saveResponseRemote(step.id, textarea.value, audioRecordings[step.id]?.path));
         SyncQueue.add(() => updateSessionStep(index + 1));
+        Log.ok('autosave', { step: step.id, chars: textarea.value.length });
         indicator.classList.add('visible');
         setTimeout(() => indicator.classList.remove('visible'), 1500);
       }, 600);
