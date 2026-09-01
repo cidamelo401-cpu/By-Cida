@@ -144,16 +144,23 @@
 
     async uploadAudio(path, blob) {
       const url = `${SUPABASE_URL}/storage/v1/object/onboarding-audio/${path}`;
+      // Strip codec params from MIME type — Safari produces e.g.
+      // "audio/mp4;codecs=mp4a.40.2" but Supabase Storage's
+      // allowed_mime_types checks the base type only ("audio/mp4").
+      const baseType = (blob.type || 'audio/webm').split(';')[0].trim();
       const resp = await fetch(url, {
         method: 'POST',
         headers: {
           'apikey': SUPABASE_ANON_KEY,
           'Authorization': `Bearer ${Auth.token()}`,
-          'Content-Type': blob.type || 'audio/webm',
+          'Content-Type': baseType,
         },
         body: blob,
       });
-      if (!resp.ok) throw new Error(`Upload failed: ${resp.status}`);
+      if (!resp.ok) {
+        const text = await resp.text().catch(() => '');
+        throw new Error(`Upload failed: ${resp.status} ${text}`);
+      }
       return path;
     },
 
@@ -627,7 +634,11 @@
         await saveResponseRemote(stepId, session.responses[stepId], path);
         renderAudioPlayback(stepId);
       } catch (e) {
+        console.error('Audio upload error:', e.message);
         btn.disabled = false; btn.textContent = '✓ Usar esta gravação';
+        // Remove any previous error before showing the new one
+        const prev = audioUI.querySelector('.audio-error');
+        if (prev) prev.remove();
         audioUI.insertAdjacentHTML('beforeend', '<p class="audio-error">Falha no envio. Tente novamente.</p>');
       }
     });
