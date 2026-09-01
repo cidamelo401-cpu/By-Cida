@@ -297,6 +297,9 @@
     if (!dbSession) return;
     await db.query('onboarding_responses', {
       method: 'POST',
+      // on_conflict tells PostgREST which unique constraint to use for UPSERT
+      // (table has both PK on id and UNIQUE on session_id+step_id)
+      filters: 'on_conflict=session_id,step_id',
       body: {
         session_id: dbSession.id,
         step_id: stepId,
@@ -329,6 +332,10 @@
   async function submitRemote() {
     if (!dbSession) return false;
     try {
+      // Refresh JWT before submit — Safari/iOS may have suspended the
+      // refresh timer if the tab was inactive or the device slept.
+      await Auth.refresh().catch(() => {});
+
       for (const stepId of Object.keys(session.responses)) {
         const audioPath = audioRecordings[stepId]?.path || null;
         await saveResponseRemote(stepId, session.responses[stepId], audioPath);
@@ -339,7 +346,7 @@
         body: { status: 'submitted', submitted_at: new Date().toISOString(), updated_at: new Date().toISOString() },
       });
       return true;
-    } catch (e) { console.error('Submit failed:', e.message); return false; }
+    } catch (e) { console.error('Submit failed:', e.message); throw e; }
   }
 
   // ============================================================
@@ -395,6 +402,8 @@
   };
 
   async function uploadAudioFile(sessionId, stepId, blob) {
+    // Refresh JWT in case Safari/iOS suspended the refresh timer
+    await Auth.refresh().catch(() => {});
     const uid = Auth.uid();
     const ext = blob.type.includes('mp4') ? 'mp4' : blob.type.includes('ogg') ? 'ogg' : 'webm';
     // Path scoped by auth.uid() for RLS
@@ -695,16 +704,24 @@
       const submitBtn = document.getElementById('btn-submit');
       const errorEl = document.getElementById('submit-error');
       submitBtn.disabled = true; submitBtn.textContent = 'Enviando...'; errorEl.hidden = true;
-      const ok = await submitRemote();
-      if (ok) {
-        session.status = 'submitted';
-        LocalStore.save(slug, session);
-        navigate(SCREEN_CONFIRMATION);
-      } else {
+      try {
+        const ok = await submitRemote();
+        if (ok) {
+          session.status = 'submitted';
+          LocalStore.save(slug, session);
+          navigate(SCREEN_CONFIRMATION);
+          return;
+        }
+      } catch (e) {
+        console.error('Submit error:', e.message);
         submitBtn.disabled = false; submitBtn.textContent = config.review.submitLabel;
         errorEl.hidden = false;
-        errorEl.innerHTML = '<p class="submit-error-text">Não foi possível enviar. Verifique sua conexão e tente novamente.</p>';
+        errorEl.innerHTML = `<p class="submit-error-text">Falha no envio: ${esc(e.message)}</p>`;
+        return;
       }
+      submitBtn.disabled = false; submitBtn.textContent = config.review.submitLabel;
+      errorEl.hidden = false;
+      errorEl.innerHTML = '<p class="submit-error-text">Não foi possível enviar. Verifique sua conexão e tente novamente.</p>';
     });
   }
 
