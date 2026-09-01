@@ -639,7 +639,8 @@
         // Remove any previous error before showing the new one
         const prev = audioUI.querySelector('.audio-error');
         if (prev) prev.remove();
-        audioUI.insertAdjacentHTML('beforeend', '<p class="audio-error">Falha no envio. Tente novamente.</p>');
+        audioUI.insertAdjacentHTML('beforeend',
+          `<p class="audio-error">Falha no envio: ${esc(e.message)}</p>`);
       }
     });
   }
