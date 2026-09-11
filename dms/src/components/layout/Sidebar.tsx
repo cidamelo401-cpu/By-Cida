@@ -83,7 +83,7 @@ export function Sidebar({ userName, userRole, onSignOut }: SidebarProps) {
           </svg>
         </div>
         <div>
-          <p className="text-sm font-bold leading-tight text-gray-900">DMS Camisas</p>
+          <p className="text-sm font-bold leading-tight text-gray-900">DMS Sports</p>
           <p className="text-xs text-gray-400">Estoque & Vendas</p>
         </div>
       </div>

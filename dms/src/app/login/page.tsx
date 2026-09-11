@@ -162,7 +162,7 @@ export default function LoginPage() {
         <div className="flex flex-col items-center mb-8">
           <ShieldIcon />
           <h1 className="mt-4 text-2xl font-bold tracking-tight text-[#1B5E20]">
-            DMS Camisas
+            DMS Sports
           </h1>
           <p className="mt-1 text-sm text-gray-500">Controle de Estoque</p>
         </div>
