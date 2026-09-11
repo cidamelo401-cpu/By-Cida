@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #E8F5E9;
+  --color-primary-100: #C8E6C9;
+  --color-primary-200: #A5D6A7;
+  --color-primary-300: #81C784;
+  --color-primary-400: #66BB6A;
+  --color-primary-500: #4CAF50;
+  --color-primary-600: #43A047;
+  --color-primary-700: #388E3C;
+  --color-primary-800: #2E7D32;
+  --color-primary-900: #1B5E20;
+  --color-surface: #F8FAF8;
+  --color-surface-card: #FFFFFF;
+}
+
+body {
+  background-color: var(--color-surface);
+  color: #1a1a1a;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Brazilian currency input */
+input[type="text"].currency {
+  text-align: right;
+}
