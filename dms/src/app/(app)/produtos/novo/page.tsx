@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Button, Card, Input, Select, Textarea } from '@/components/ui'
+import { Button, Card, Input, PhotoUpload, Select, Textarea } from '@/components/ui'
 import { generateSKU, parseCurrency, formatCurrency } from '@/lib/utils/format'
 import { COMMON_TEAMS, MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
 import type { ProductModel, ProductSize, ProductVersion } from '@/types/database'
@@ -291,12 +291,10 @@ export default function NewProductPage() {
             onChange={(e) => updateField('supplier', e.target.value)}
             placeholder="Ex: Fornecedor XPTO"
           />
-          <Input
-            label="Foto (URL)"
+          <PhotoUpload
             value={form.photo_url}
-            onChange={(e) => updateField('photo_url', e.target.value)}
-            placeholder="https://..."
-            helper="Upload de arquivo em breve."
+            onChange={(url) => updateField('photo_url', url)}
+            disabled={saving}
           />
         </Card>
 
