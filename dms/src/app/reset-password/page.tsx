@@ -91,7 +91,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen w-full flex items-center justify-center bg-[#F5F5F0] px-4 py-10">
       <div className="w-full max-w-[400px]">
         <div className="flex flex-col items-center mb-8">
-          <h1 className="text-2xl font-bold tracking-tight text-[#1B5E20]">
+          <h1 className="text-2xl font-bold tracking-tight text-[#141414]">
             Redefinir senha
           </h1>
           <p className="mt-1 text-sm text-gray-500 text-center">
@@ -114,7 +114,7 @@ export default function ResetPasswordPage() {
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="••••••••"
                   disabled={loading}
-                  className="w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 pr-11 text-sm text-gray-900 outline-none transition focus:border-[#1B5E20] focus:ring-2 focus:ring-[#1B5E20]/20 disabled:opacity-60"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 pr-11 text-sm text-gray-900 outline-none transition focus:border-[#141414] focus:ring-2 focus:ring-[#141414]/20 disabled:opacity-60"
                 />
                 <button
                   type="button"
@@ -140,14 +140,14 @@ export default function ResetPasswordPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
                 disabled={loading}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-[#1B5E20] focus:ring-2 focus:ring-[#1B5E20]/20 disabled:opacity-60"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-[#141414] focus:ring-2 focus:ring-[#141414]/20 disabled:opacity-60"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="mt-1 w-full rounded-lg bg-[#1B5E20] py-2.5 text-sm font-semibold text-white transition hover:bg-[#164a1a] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="mt-1 w-full rounded-lg bg-[#141414] py-2.5 text-sm font-semibold text-white transition hover:bg-[#0a0a0a] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading && (
                 <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">

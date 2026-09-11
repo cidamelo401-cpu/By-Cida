@@ -220,7 +220,7 @@ function ProductCard({ product }: { product: Product }) {
               {product.quantity} un.
             </span>
           </div>
-          <p className="text-sm font-bold text-primary-900">{formatCurrency(product.sell_price)}</p>
+          <p className="text-sm font-bold text-accent-600">{formatCurrency(product.sell_price)}</p>
         </div>
       </Card>
     </Link>

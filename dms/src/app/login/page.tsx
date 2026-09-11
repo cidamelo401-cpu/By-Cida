@@ -8,37 +8,36 @@ import { createClient } from '@/lib/supabase/client'
 function ShieldIcon() {
   return (
     <svg
-      width="56"
-      height="56"
-      viewBox="0 0 56 56"
+      width="64"
+      height="64"
+      viewBox="0 0 64 64"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
+      {/* Shield shape — gold border */}
       <path
-        d="M28 4L48 12V26C48 38.7 39.7 48.9 28 52C16.3 48.9 8 38.7 8 26V12L28 4Z"
-        fill="#1B5E20"
+        d="M32 3L54 12V30C54 43.5 44.5 54 32 57.5C19.5 54 10 43.5 10 30V12L32 3Z"
+        fill="#C9A84C"
       />
+      {/* Inner shield — black */}
       <path
-        d="M28 4L48 12V26C48 38.7 39.7 48.9 28 52C16.3 48.9 8 38.7 8 26V12L28 4Z"
-        stroke="#0F3D12"
-        strokeWidth="1.5"
+        d="M32 6L51 14V30C51 42 42.5 51.5 32 54.5C21.5 51.5 13 42 13 30V14L32 6Z"
+        fill="#141414"
       />
-      {/* football pentagon pattern */}
+      {/* Three gold stars */}
+      <path d="M24 16l1.2 2.4 2.6.4-1.9 1.8.4 2.6L24 22l-2.3 1.2.4-2.6-1.9-1.8 2.6-.4L24 16z" fill="#C9A84C" />
+      <path d="M32 14l1.2 2.4 2.6.4-1.9 1.8.4 2.6L32 20l-2.3 1.2.4-2.6-1.9-1.8 2.6-.4L32 14z" fill="#C9A84C" />
+      <path d="M40 16l1.2 2.4 2.6.4-1.9 1.8.4 2.6L40 22l-2.3 1.2.4-2.6-1.9-1.8 2.6-.4L40 16z" fill="#C9A84C" />
+      {/* DMS text placeholder — gold accent line */}
+      <rect x="20" y="26" width="24" height="2" rx="1" fill="#C9A84C" opacity="0.6" />
+      {/* Football */}
+      <circle cx="32" cy="40" r="6" fill="white" />
       <path
-        d="M28 18L33.5 22L31.5 28.5H24.5L22.5 22L28 18Z"
-        fill="#F5F5F0"
+        d="M32 35.5L34.5 37.5L33.5 40.5H30.5L29.5 37.5L32 35.5Z"
+        fill="#141414"
       />
-      <path
-        d="M28 18L22.5 22M28 18L33.5 22M22.5 22L24.5 28.5M33.5 22L31.5 28.5M24.5 28.5H31.5"
-        stroke="#1B5E20"
-        strokeWidth="0.75"
-      />
-      <path
-        d="M28 30L31 32.5L29.8 36H26.2L25 32.5L28 30Z"
-        fill="#F5F5F0"
-        opacity="0.85"
-      />
+      <circle cx="32" cy="40" r="6" stroke="#333" strokeWidth="0.5" fill="none" />
     </svg>
   )
 }
@@ -161,8 +160,9 @@ export default function LoginPage() {
       <div className="w-full max-w-[400px]">
         <div className="flex flex-col items-center mb-8">
           <ShieldIcon />
-          <h1 className="mt-4 text-2xl font-bold tracking-tight text-[#1B5E20]">
-            DMS Sports
+          <h1 className="mt-4 text-2xl font-bold tracking-tight">
+            <span className="text-[#141414]">DMS</span>{' '}
+            <span className="text-[#C9A84C]">Sports</span>
           </h1>
           <p className="mt-1 text-sm text-gray-500">Gestão de Estoque & Vendas</p>
         </div>
@@ -182,7 +182,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="seu@email.com"
                   disabled={loading}
-                  className="w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-[#1B5E20] focus:ring-2 focus:ring-[#1B5E20]/20 disabled:opacity-60"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-[#141414] focus:ring-2 focus:ring-[#141414]/20 disabled:opacity-60"
                 />
               </div>
 
@@ -199,7 +199,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     disabled={loading}
-                    className="w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 pr-11 text-sm text-gray-900 outline-none transition focus:border-[#1B5E20] focus:ring-2 focus:ring-[#1B5E20]/20 disabled:opacity-60"
+                    className="w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 pr-11 text-sm text-gray-900 outline-none transition focus:border-[#141414] focus:ring-2 focus:ring-[#141414]/20 disabled:opacity-60"
                   />
                   <button
                     type="button"
@@ -219,7 +219,7 @@ export default function LoginPage() {
                     type="checkbox"
                     checked={keepConnected}
                     onChange={(e) => setKeepConnected(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-[#1B5E20] focus:ring-[#1B5E20]/30 accent-[#1B5E20]"
+                    className="h-4 w-4 rounded border-gray-300 text-[#141414] focus:ring-[#141414]/30 accent-[#141414]"
                   />
                   Permanecer conectado
                 </label>
@@ -227,7 +227,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setMode('recover')}
-                  className="text-sm font-medium text-[#1B5E20] hover:underline"
+                  className="text-sm font-medium text-[#141414] hover:underline"
                 >
                   Esqueci minha senha
                 </button>
@@ -236,7 +236,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-1 w-full rounded-lg bg-[#1B5E20] py-2.5 text-sm font-semibold text-white transition hover:bg-[#164a1a] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="mt-1 w-full rounded-lg bg-[#141414] py-2.5 text-sm font-semibold text-white transition hover:bg-[#0a0a0a] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading && (
                   <svg
@@ -285,14 +285,14 @@ export default function LoginPage() {
                   onChange={(e) => setRecoverEmail(e.target.value)}
                   placeholder="seu@email.com"
                   disabled={recoverLoading}
-                  className="w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-[#1B5E20] focus:ring-2 focus:ring-[#1B5E20]/20 disabled:opacity-60"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-[#141414] focus:ring-2 focus:ring-[#141414]/20 disabled:opacity-60"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={recoverLoading}
-                className="w-full rounded-lg bg-[#1B5E20] py-2.5 text-sm font-semibold text-white transition hover:bg-[#164a1a] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full rounded-lg bg-[#141414] py-2.5 text-sm font-semibold text-white transition hover:bg-[#0a0a0a] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {recoverLoading && (
                   <svg
@@ -321,7 +321,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setMode('login')}
-                className="text-sm font-medium text-gray-500 hover:text-[#1B5E20] transition text-center"
+                className="text-sm font-medium text-gray-500 hover:text-[#141414] transition text-center"
               >
                 Voltar para o login
               </button>
@@ -334,7 +334,7 @@ export default function LoginPage() {
             href="https://www.instagram.com/dmssports.oficial"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#1B5E20] transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#141414] transition-colors"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />

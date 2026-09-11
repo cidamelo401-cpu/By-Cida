@@ -133,7 +133,7 @@ export default function ReservasPage() {
                         <p className="text-sm text-gray-600">{sale.customers?.name ?? 'Cliente não informado'}</p>
                       </div>
                     </Link>
-                    <span className="text-sm font-bold text-primary-900">{formatCurrency(sale.total)}</span>
+                    <span className="text-sm font-bold text-accent-600">{formatCurrency(sale.total)}</span>
                   </div>
 
                   {itemsSummary && <p className="text-xs text-gray-500">{itemsSummary}</p>}

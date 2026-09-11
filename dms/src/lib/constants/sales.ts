@@ -16,7 +16,7 @@ export const SALE_STATUS_COLORS: Record<SaleStatus, string> = {
   aguardando_pagamento: 'bg-orange-100 text-orange-800',
   paga: 'bg-green-100 text-green-800',
   enviada: 'bg-blue-100 text-blue-800',
-  entregue: 'bg-primary-100 text-primary-900',
+  entregue: 'bg-accent-100 text-accent-800',
   cancelada: 'bg-red-100 text-red-800',
 }
 

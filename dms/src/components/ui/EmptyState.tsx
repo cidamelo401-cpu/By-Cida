@@ -22,7 +22,7 @@ function DefaultIcon() {
 export function EmptyState({ icon, title, description, action, className = '' }: EmptyStateProps) {
   return (
     <div className={`flex flex-col items-center justify-center text-center py-12 px-4 ${className}`}>
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-700 mb-4">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-50 text-accent-600 mb-4">
         {icon ?? <DefaultIcon />}
       </div>
       <h3 className="text-base font-semibold text-gray-900">{title}</h3>

@@ -12,7 +12,7 @@ const styles: Record<BadgeStatus, string> = {
   danger: 'bg-red-100 text-red-800',
   info: 'bg-blue-100 text-blue-800',
   neutral: 'bg-gray-100 text-gray-700',
-  primary: 'bg-primary-100 text-primary-900',
+  primary: 'bg-accent-100 text-accent-800',
 }
 
 export function Badge({ children, status = 'neutral', className = '' }: BadgeProps) {

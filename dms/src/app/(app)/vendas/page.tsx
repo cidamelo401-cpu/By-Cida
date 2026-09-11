@@ -154,7 +154,7 @@ export default function VendasPage() {
                       </div>
                       <div className="flex flex-col items-end gap-1 shrink-0">
                         <span className="text-xs text-gray-400">{formatDate(sale.created_at)}</span>
-                        <span className="text-sm font-bold text-primary-900">{formatCurrency(sale.total)}</span>
+                        <span className="text-sm font-bold text-accent-600">{formatCurrency(sale.total)}</span>
                       </div>
                     </div>
 
