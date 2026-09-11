@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 type NavItem = {
@@ -86,14 +87,13 @@ export function Sidebar({ userName, userRole, onSignOut }: SidebarProps) {
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 lg:h-screen lg:sticky lg:top-0 border-r border-gray-100 bg-white">
       <div className="flex items-center gap-2.5 px-6 py-6">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-900">
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2L20 6V12C20 17.5 16.5 22 12 23.5C7.5 22 4 17.5 4 12V6L12 2Z" fill="#C9A84C" />
-            <path d="M12 3.5L19 7V12C19 17 15.8 21 12 22.3C8.2 21 5 17 5 12V7L12 3.5Z" fill="#141414" />
-            <circle cx="12" cy="14" r="3" fill="white" />
-            <path d="M12 11.8L13.2 12.8L12.7 14.2H11.3L10.8 12.8L12 11.8Z" fill="#141414" />
-          </svg>
-        </div>
+        <Image
+          src="/logo-dms-sports.jpg"
+          alt="DMS Sports"
+          width={36}
+          height={36}
+          className="rounded-lg"
+        />
         <div>
           <p className="text-sm font-bold leading-tight text-gray-900">DMS <span className="text-accent-400">Sports</span></p>
           <p className="text-xs text-gray-400">Estoque & Vendas</p>

@@ -2,45 +2,9 @@
 
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
-
-function ShieldIcon() {
-  return (
-    <svg
-      width="64"
-      height="64"
-      viewBox="0 0 64 64"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      {/* Shield shape — gold border */}
-      <path
-        d="M32 3L54 12V30C54 43.5 44.5 54 32 57.5C19.5 54 10 43.5 10 30V12L32 3Z"
-        fill="#C9A84C"
-      />
-      {/* Inner shield — black */}
-      <path
-        d="M32 6L51 14V30C51 42 42.5 51.5 32 54.5C21.5 51.5 13 42 13 30V14L32 6Z"
-        fill="#141414"
-      />
-      {/* Three gold stars */}
-      <path d="M24 16l1.2 2.4 2.6.4-1.9 1.8.4 2.6L24 22l-2.3 1.2.4-2.6-1.9-1.8 2.6-.4L24 16z" fill="#C9A84C" />
-      <path d="M32 14l1.2 2.4 2.6.4-1.9 1.8.4 2.6L32 20l-2.3 1.2.4-2.6-1.9-1.8 2.6-.4L32 14z" fill="#C9A84C" />
-      <path d="M40 16l1.2 2.4 2.6.4-1.9 1.8.4 2.6L40 22l-2.3 1.2.4-2.6-1.9-1.8 2.6-.4L40 16z" fill="#C9A84C" />
-      {/* DMS text placeholder — gold accent line */}
-      <rect x="20" y="26" width="24" height="2" rx="1" fill="#C9A84C" opacity="0.6" />
-      {/* Football */}
-      <circle cx="32" cy="40" r="6" fill="white" />
-      <path
-        d="M32 35.5L34.5 37.5L33.5 40.5H30.5L29.5 37.5L32 35.5Z"
-        fill="#141414"
-      />
-      <circle cx="32" cy="40" r="6" stroke="#333" strokeWidth="0.5" fill="none" />
-    </svg>
-  )
-}
 
 function EyeIcon({ open }: { open: boolean }) {
   if (open) {
@@ -159,7 +123,14 @@ export default function LoginPage() {
     <div className="min-h-screen w-full flex items-center justify-center bg-[#F5F5F0] px-4 py-10">
       <div className="w-full max-w-[400px]">
         <div className="flex flex-col items-center mb-8">
-          <ShieldIcon />
+          <Image
+            src="/logo-dms-sports.jpg"
+            alt="DMS Sports"
+            width={96}
+            height={96}
+            className="rounded-2xl"
+            priority
+          />
           <h1 className="mt-4 text-2xl font-bold tracking-tight">
             <span className="text-[#141414]">DMS</span>{' '}
             <span className="text-[#C9A84C]">Sports</span>
