@@ -243,47 +243,42 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </button>
             </div>
             <div className="p-4">
-              <p className="text-xs text-gray-500 mb-3">Medidas aproximadas em centímetros (cm). Podem variar conforme modelo e marca.</p>
+              <p className="text-xs text-gray-500 mb-3">Versão Fan (Torcedor). Medidas aproximadas — podem variar conforme modelo e marca.</p>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="py-2 px-3 text-left text-xs font-bold text-[#C9A84C] uppercase">Tam.</th>
-                      <th className="py-2 px-3 text-center text-xs font-bold text-[#C9A84C] uppercase">Largura</th>
-                      <th className="py-2 px-3 text-center text-xs font-bold text-[#C9A84C] uppercase">Comprimento</th>
-                      <th className="py-2 px-3 text-center text-xs font-bold text-[#C9A84C] uppercase">Manga</th>
+                    <tr className="border-b border-[#C9A84C]/30 bg-[#0A0A0A]">
+                      <th className="py-2.5 px-2 text-left text-xs font-bold text-[#C9A84C] uppercase">Tam.</th>
+                      <th className="py-2.5 px-2 text-center text-xs font-bold text-[#C9A84C] uppercase">Comp.</th>
+                      <th className="py-2.5 px-2 text-center text-xs font-bold text-[#C9A84C] uppercase">Larg.</th>
+                      <th className="py-2.5 px-2 text-center text-xs font-bold text-[#C9A84C] uppercase">Altura</th>
+                      <th className="py-2.5 px-2 text-center text-xs font-bold text-[#C9A84C] uppercase">Peso</th>
                     </tr>
                   </thead>
                   <tbody className="text-gray-300">
                     {[
-                      { size: 'P', width: '48', length: '68', sleeve: '20' },
-                      { size: 'M', width: '51', length: '71', sleeve: '21' },
-                      { size: 'G', width: '54', length: '74', sleeve: '22' },
-                      { size: 'GG', width: '57', length: '77', sleeve: '23' },
-                      { size: '2XG', width: '60', length: '80', sleeve: '24' },
-                      { size: '3XG', width: '63', length: '83', sleeve: '25' },
+                      { size: 'P', length: '69-71', width: '53-55', height: '162-170', weight: '50-62' },
+                      { size: 'M', length: '71-73', width: '55-57', height: '170-176', weight: '62-78' },
+                      { size: 'G', length: '73-75', width: '57-58', height: '176-182', weight: '78-83' },
+                      { size: 'GG', length: '75-78', width: '58-60', height: '182-190', weight: '83-90' },
+                      { size: '2XG', length: '78-81', width: '60-62', height: '190-195', weight: '90-97' },
+                      { size: '3XG', length: '81-83', width: '62-64', height: '192-197', weight: '97-104' },
                     ].map((row) => (
                       <tr
                         key={row.size}
-                        className={`border-b border-white/5 ${product.size === row.size ? 'bg-[#C9A84C]/10 text-[#C9A84C] font-bold' : ''}`}
+                        className={`border-b border-white/5 ${product.size === row.size ? 'bg-[#C9A84C]/15 text-[#C9A84C] font-bold' : ''}`}
                       >
-                        <td className="py-2.5 px-3 font-semibold">{row.size}</td>
-                        <td className="py-2.5 px-3 text-center">{row.width}</td>
-                        <td className="py-2.5 px-3 text-center">{row.length}</td>
-                        <td className="py-2.5 px-3 text-center">{row.sleeve}</td>
+                        <td className="py-2.5 px-2 font-semibold">{row.size}</td>
+                        <td className="py-2.5 px-2 text-center text-xs">{row.length}</td>
+                        <td className="py-2.5 px-2 text-center text-xs">{row.width}</td>
+                        <td className="py-2.5 px-2 text-center text-xs">{row.height}</td>
+                        <td className="py-2.5 px-2 text-center text-xs">{row.weight}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              <div className="mt-4 rounded-xl bg-[#0A0A0A] border border-white/5 p-3">
-                <p className="text-xs font-bold text-[#C9A84C] uppercase mb-1">Como medir</p>
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  <strong className="text-gray-300">Largura:</strong> meça de axila a axila com a camisa aberta.<br />
-                  <strong className="text-gray-300">Comprimento:</strong> da base da gola até a barra.<br />
-                  <strong className="text-gray-300">Manga:</strong> da costura do ombro até o punho.
-                </p>
-              </div>
+              <p className="mt-3 text-[10px] text-gray-600 text-center">Comprimento e largura em cm · Altura em cm · Peso em kg</p>
             </div>
           </div>
         </div>
