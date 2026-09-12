@@ -147,49 +147,38 @@ export default function CatalogoPage() {
             />
           </div>
 
-          {/* Version chips */}
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Chip
-              label="TODOS"
-              active={versionFilter === ''}
-              onClick={() => setVersionFilter('')}
-            />
-            {Object.entries(VERSION_LABELS).map(([value, label]) => (
-              <Chip
-                key={value}
-                label={label.toUpperCase()}
-                active={versionFilter === value}
-                onClick={() => setVersionFilter(versionFilter === value ? '' : (value as ProductVersion))}
-              />
-            ))}
-          </div>
-
-          {/* Team chips */}
+          {/* Team badges carousel */}
           {teams.length > 0 && (
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
-              <Chip
-                small
-                label="TODOS OS TIMES"
-                active={teamFilter === ''}
-                onClick={() => setTeamFilter('')}
-              />
-              {teams.map((team) => (
-                <Chip
-                  key={team}
-                  small
-                  label={team.toUpperCase()}
-                  active={teamFilter === team}
-                  onClick={() => setTeamFilter(teamFilter === team ? '' : team)}
+            <div className="mt-5">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-500 mb-3">
+                Filtre por time
+              </p>
+              <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+                <TeamBadge
+                  team="Todos"
+                  initials="⚽"
+                  active={teamFilter === ''}
+                  onClick={() => setTeamFilter('')}
                 />
-              ))}
+                {teams.map((team) => (
+                  <TeamBadge
+                    key={team}
+                    team={team}
+                    initials={getTeamInitials(team)}
+                    colors={getTeamColors(team)}
+                    active={teamFilter === team}
+                    onClick={() => setTeamFilter(teamFilter === team ? '' : team)}
+                  />
+                ))}
+              </div>
             </div>
           )}
 
           {/* Size chips */}
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
+          <div className="mt-4 flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
             <Chip
               small
-              label="TODOS OS TAMANHOS"
+              label="TODOS"
               active={sizeFilter === ''}
               onClick={() => setSizeFilter('')}
             />
@@ -371,4 +360,98 @@ function Chip({
       {label}
     </button>
   )
+}
+
+function TeamBadge({
+  team,
+  initials,
+  colors,
+  active,
+  onClick,
+}: {
+  team: string
+  initials: string
+  colors?: { bg: string; text: string }
+  active: boolean
+  onClick: () => void
+}) {
+  const bg = colors?.bg ?? '#C9A84C'
+  const text = colors?.text ?? '#000'
+  return (
+    <button
+      onClick={onClick}
+      className="flex flex-col items-center gap-1.5 shrink-0 group"
+    >
+      <div
+        className={`h-14 w-14 rounded-full flex items-center justify-center text-sm font-extrabold transition-all border-2 ${
+          active
+            ? 'border-[#C9A84C] scale-110 shadow-[0_0_12px_rgba(201,168,76,0.4)]'
+            : 'border-transparent group-hover:border-white/20'
+        }`}
+        style={{ backgroundColor: bg, color: text }}
+      >
+        {initials}
+      </div>
+      <span
+        className={`text-[10px] font-medium max-w-[60px] truncate transition-colors ${
+          active ? 'text-[#C9A84C]' : 'text-gray-500 group-hover:text-gray-300'
+        }`}
+      >
+        {team}
+      </span>
+    </button>
+  )
+}
+
+const TEAM_COLORS: Record<string, { bg: string; text: string }> = {
+  'Al-Hilal': { bg: '#1A3F8F', text: '#fff' },
+  'Arsenal': { bg: '#EF0107', text: '#fff' },
+  'Barcelona': { bg: '#A50044', text: '#EDBB00' },
+  'Bayern': { bg: '#DC052D', text: '#fff' },
+  'Benfica': { bg: '#E2001A', text: '#fff' },
+  'Boca Juniors': { bg: '#002D6A', text: '#FFD700' },
+  'Borussia Dortmund': { bg: '#FDE100', text: '#000' },
+  'Chelsea': { bg: '#034694', text: '#fff' },
+  'Corinthians': { bg: '#000', text: '#fff' },
+  'Inter Miami': { bg: '#F7B5CD', text: '#231F20' },
+  'Juventus': { bg: '#000', text: '#fff' },
+  'Liverpool': { bg: '#C8102E', text: '#fff' },
+  'Manchester City': { bg: '#6CABDD', text: '#1C2C5B' },
+  'Napoli': { bg: '#12A0D7', text: '#fff' },
+  'Palmeiras': { bg: '#006437', text: '#fff' },
+  'PSV': { bg: '#ED1C24', text: '#fff' },
+  'Santos': { bg: '#fff', text: '#000' },
+  'São Paulo': { bg: '#FF0000', text: '#fff' },
+  'Vasco': { bg: '#000', text: '#fff' },
+  'Brasil': { bg: '#FFDF00', text: '#009739' },
+  'Alemanha': { bg: '#000', text: '#fff' },
+  'Bélgica': { bg: '#ED2939', text: '#FFD700' },
+  'Espanha': { bg: '#AA151B', text: '#F1BF00' },
+  'França': { bg: '#002395', text: '#fff' },
+  'Itália': { bg: '#0066B3', text: '#fff' },
+  'Japão': { bg: '#002868', text: '#fff' },
+  'México': { bg: '#006847', text: '#fff' },
+  'Noruega': { bg: '#EF2B2D', text: '#002868' },
+  'Portugal': { bg: '#006600', text: '#FF0000' },
+  'USA': { bg: '#002868', text: '#BF0A30' },
+  'Valência': { bg: '#FF4500', text: '#000' },
+}
+
+function getTeamColors(team: string): { bg: string; text: string } {
+  return TEAM_COLORS[team] ?? { bg: '#333', text: '#fff' }
+}
+
+function getTeamInitials(team: string): string {
+  const map: Record<string, string> = {
+    'Al-Hilal': 'AH',
+    'Borussia Dortmund': 'BVB',
+    'Boca Juniors': 'BOC',
+    'Inter Miami': 'MIA',
+    'Manchester City': 'MCI',
+    'São Paulo': 'SPF',
+  }
+  if (map[team]) return map[team]
+  const words = team.split(/\s+/)
+  if (words.length === 1) return team.slice(0, 3).toUpperCase()
+  return words.map((w) => w[0]).join('').toUpperCase().slice(0, 3)
 }
