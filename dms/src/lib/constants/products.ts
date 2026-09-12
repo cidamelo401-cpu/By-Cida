@@ -13,7 +13,7 @@ export const VERSION_LABELS: Record<ProductVersion, string> = {
   jogador: 'Jogador',
 }
 
-export const SIZE_OPTIONS: ProductSize[] = ['PP', 'P', 'M', 'G', 'GG', 'XGG']
+export const SIZE_OPTIONS: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
 
 export const STATUS_LABELS: Record<ProductStatus, string> = {
   disponivel: 'Disponível',
@@ -28,32 +28,35 @@ export const STATUS_BADGE: Record<ProductStatus, 'success' | 'warning' | 'danger
 }
 
 export const COMMON_TEAMS = [
-  'Flamengo',
-  'Corinthians',
-  'São Paulo',
-  'Palmeiras',
-  'Vasco da Gama',
-  'Fluminense',
-  'Grêmio',
-  'Internacional',
-  'Santos',
-  'Cruzeiro',
-  'Atlético Mineiro',
-  'Botafogo',
-  'Real Madrid',
-  'Barcelona',
-  'Manchester United',
-  'Manchester City',
-  'Liverpool',
-  'Chelsea',
+  'Alemanha',
+  'Al-Hilal',
   'Arsenal',
+  'Barcelona',
+  'Bayern',
+  'Benfica',
+  'Boca Juniors',
+  'Brasil',
+  'Bélgica',
+  'Chelsea',
+  'Corinthians',
+  'Espanha',
+  'França',
+  'Inter Miami',
+  'Itália',
+  'Japão',
   'Juventus',
-  'Milan',
-  'Inter de Milão',
-  'PSG',
-  'Bayern de Munique',
-  'Seleção Brasileira',
-  'Seleção Argentina',
+  'Liverpool',
+  'Manchester City',
+  'México',
+  'Napoli',
+  'Noruega',
+  'PSV',
+  'Palmeiras',
+  'Portugal',
+  'Santos',
+  'USA',
+  'Valência',
+  'Vasco',
 ]
 
 export const MOVEMENT_TYPE_LABELS: Record<string, string> = {
