@@ -59,7 +59,7 @@ body {
 
 .page {
   width: 100%;
-  max-width: 480px;
+  max-width: 680px;
   padding: 32px 24px 64px;
 }
 
@@ -357,6 +357,12 @@ body {
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+}
+
+@media (min-width: 600px) {
+  .page { padding: 48px 40px 80px; }
+  .hero h1 { font-size: 44px; }
+  .hero-lead { font-size: 18px; max-width: none; }
 }
 
 @media (max-width: 380px) {
