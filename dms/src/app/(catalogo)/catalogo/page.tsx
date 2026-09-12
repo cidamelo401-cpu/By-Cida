@@ -562,7 +562,6 @@ function TeamBadge({
 }
 
 function CatalogCard({ shirt }: { shirt: GroupedShirt }) {
-  const totalQty = shirt.sizes.reduce((sum, s) => sum + s.quantity, 0)
   // Link to first product's detail page
   const firstId = shirt.sizes[0]?.id
 
@@ -575,11 +574,6 @@ function CatalogCard({ shirt }: { shirt: GroupedShirt }) {
             <img src={shirt.photo_url} alt={shirt.team} className="h-full w-full object-cover" />
           ) : (
             <ShirtPlaceholder />
-          )}
-          {totalQty <= shirt.sizes.length && (
-            <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-red-950/80 text-red-400 text-[9px] font-semibold">
-              {totalQty === 1 ? 'Última unidade!' : 'Últimas unidades!'}
-            </span>
           )}
         </div>
         <div className="p-3 flex flex-col gap-1.5 flex-1">
