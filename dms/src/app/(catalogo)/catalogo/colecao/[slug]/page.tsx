@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, use as usePromise } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils/format'
+import { COLLECTION_IMAGES } from '@/lib/constants/products'
 import type { Database } from '@/types/database'
 import CatalogShell from '../../_components/CatalogShell'
 import TeamBadge from '../../_components/TeamBadge'
@@ -103,9 +104,15 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
           <span>/</span>
           <span className="text-gray-300">{collectionName}</span>
         </nav>
-        <h1 className="mt-3 text-2xl sm:text-3xl font-extrabold uppercase text-white tracking-tight">
-          {collectionName}
-        </h1>
+        <div className="mt-3 flex items-center gap-3">
+          {COLLECTION_IMAGES[collectionName] && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={COLLECTION_IMAGES[collectionName]} alt={collectionName} className="w-12 h-12 object-contain rounded-lg" />
+          )}
+          <h1 className="text-2xl sm:text-3xl font-extrabold uppercase text-white tracking-tight">
+            {collectionName}
+          </h1>
+        </div>
       </div>
 
       {/* Search */}
