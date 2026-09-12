@@ -245,9 +245,9 @@ export default function DashboardPage() {
             + Nova Camisa
           </Button>
         </Link>
-        <Link href="/clientes/novo">
+        <Link href="/leads">
           <Button fullWidth variant="secondary">
-            + Novo Cliente
+            🔔 Ver Leads
           </Button>
         </Link>
       </div>
