@@ -40,6 +40,7 @@ export default function CatalogoPage() {
   const [search, setSearch] = useState('')
   const [error, setError] = useState('')
   const [activeTeam, setActiveTeam] = useState<string | null>(null)
+  const [activeCollection, setActiveCollection] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -70,11 +71,40 @@ export default function CatalogoPage() {
     load()
   }, [])
 
+  // Filtered products by active collection
+  const filteredProducts = useMemo(() => {
+    if (!activeCollection) return products
+    if (activeCollection === '__outros__') {
+      return products.filter((p) => !p.country_league?.trim())
+    }
+    return products.filter((p) => p.country_league?.trim() === activeCollection)
+  }, [products, activeCollection])
+
+  // Collections (leagues) for filter tabs
+  const collections = useMemo(() => {
+    const map = new Map<string, number>()
+    for (const p of products) {
+      const league = p.country_league?.trim()
+      if (league) {
+        map.set(league, (map.get(league) ?? 0) + 1)
+      }
+    }
+    const hasOthers = products.some((p) => !p.country_league?.trim())
+    const result = Array.from(map.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, count]) => ({ name, count }))
+    if (hasOthers) {
+      const othersCount = products.filter((p) => !p.country_league?.trim()).length
+      result.push({ name: '__outros__', count: othersCount })
+    }
+    return result
+  }, [products])
+
   // Get all unique team names for badge fetching
   const teamNames = useMemo(() => {
-    const set = new Set(products.map((p) => p.team))
+    const set = new Set(filteredProducts.map((p) => p.team))
     return Array.from(set).sort()
-  }, [products])
+  }, [filteredProducts])
 
   const badges = useTeamBadges(teamNames)
 
@@ -82,7 +112,7 @@ export default function CatalogoPage() {
   const teams = useMemo(() => {
     const map = new Map<string, TeamInfo>()
 
-    for (const p of products) {
+    for (const p of filteredProducts) {
       const league = p.country_league?.trim() || ''
       const existing = map.get(p.team)
       if (existing) {
@@ -107,13 +137,13 @@ export default function CatalogoPage() {
     const result = Array.from(map.values())
     if (term) return result.filter((t) => t.name.toLowerCase().includes(term))
     return result.sort((a, b) => a.name.localeCompare(b.name))
-  }, [products, search])
+  }, [filteredProducts, search])
 
   // Build grouped shirts for the selected team
   const groupedShirts = useMemo(() => {
     if (!activeTeam) return []
 
-    const teamProducts = products.filter((p) => p.team === activeTeam)
+    const teamProducts = filteredProducts.filter((p) => p.team === activeTeam)
     const map = new Map<string, GroupedShirt>()
 
     for (const p of teamProducts) {
@@ -144,7 +174,7 @@ export default function CatalogoPage() {
     }
 
     return Array.from(map.values())
-  }, [products, activeTeam])
+  }, [filteredProducts, activeTeam])
 
   // Build the link for a team card
   function teamHref(team: TeamInfo) {
@@ -160,7 +190,13 @@ export default function CatalogoPage() {
     setSearch('')
   }
 
-  const totalShirts = products.length
+  function handleCollectionTab(col: string | null) {
+    setActiveCollection(col)
+    setActiveTeam(null)
+    setSearch('')
+  }
+
+  const totalShirts = filteredProducts.length
 
   return (
     <CatalogShell>
@@ -179,13 +215,44 @@ export default function CatalogoPage() {
             <input
               type="text"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setActiveTeam(null) }}
+              onChange={(e) => { setSearch(e.target.value); setActiveTeam(null); setActiveCollection(null) }}
               placeholder="Buscar time..."
               className="w-full rounded-full bg-white pl-11 pr-4 py-3 text-sm text-black placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-[#C9A84C] transition"
             />
           </div>
         </div>
       </section>
+
+      {/* Collection filter tabs */}
+      {!loading && collections.length > 0 && (
+        <section className="mx-auto max-w-6xl px-4 pb-3">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+            <button
+              onClick={() => handleCollectionTab(null)}
+              className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
+                activeCollection === null
+                  ? 'bg-[#C9A84C] text-black'
+                  : 'bg-white/10 text-gray-400 hover:bg-white/20'
+              }`}
+            >
+              Todas as Coleções
+            </button>
+            {collections.map((col) => (
+              <button
+                key={col.name}
+                onClick={() => handleCollectionTab(col.name)}
+                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
+                  activeCollection === col.name
+                    ? 'bg-[#C9A84C] text-black'
+                    : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                }`}
+              >
+                {col.name === '__outros__' ? 'Outros' : col.name} ({col.count})
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Quick badge bar — horizontal scroll with team crests */}
       {!loading && teamNames.length > 0 && (
@@ -239,7 +306,7 @@ export default function CatalogoPage() {
               Todos ({totalShirts})
             </button>
             {teamNames.map((name) => {
-              const count = products.filter((p) => p.team === name).length
+              const count = filteredProducts.filter((p) => p.team === name).length
               return (
                 <button
                   key={name}
