@@ -6,8 +6,7 @@ import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Button, Card, EmptyState, Input, LoadingSpinner, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
-import { formatCurrency, parseCurrency } from '@/lib/utils/format'
+import { Button, Card, CurrencyInput, EmptyState, Input, LoadingSpinner, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
 import { MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
 import type { Database, ProductModel, ProductSize, ProductVersion } from '@/types/database'
 
@@ -213,15 +212,15 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         <Card className="p-5 flex flex-col gap-4">
           <h2 className="font-semibold text-gray-900">Preços e fornecedor</h2>
           <div className="grid grid-cols-2 gap-4">
-            <CurrencyField
+            <CurrencyInput
               label="Custo unitário"
               value={form.cost_price}
-              onChange={(v) => updateField('cost_price', v)}
+              onValueChange={(v) => updateField('cost_price', v)}
             />
-            <CurrencyField
+            <CurrencyInput
               label="Preço de venda"
               value={form.sell_price}
-              onChange={(v) => updateField('sell_price', v)}
+              onValueChange={(v) => updateField('sell_price', v)}
             />
           </div>
           <Input
@@ -271,47 +270,3 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   )
 }
 
-function CurrencyField({
-  label,
-  value,
-  onChange,
-}: {
-  label: string
-  value: number
-  onChange: (value: number) => void
-}) {
-  const [raw, setRaw] = useState('')
-  const [focused, setFocused] = useState(false)
-
-  useEffect(() => {
-    if (!focused) {
-      setRaw(value ? formatCurrency(value) : '')
-    }
-  }, [value, focused])
-
-  return (
-    <Input
-      label={label}
-      type="text"
-      inputMode="decimal"
-      className="currency"
-      value={raw}
-      onChange={(e) => {
-        setRaw(e.target.value)
-        const parsed = parseCurrency(e.target.value)
-        if (parsed !== value) onChange(parsed)
-      }}
-      onFocus={() => {
-        setFocused(true)
-        setRaw(value ? String(value).replace('.', ',') : '')
-      }}
-      onBlur={() => {
-        setFocused(false)
-        const parsed = parseCurrency(raw)
-        onChange(parsed)
-        setRaw(parsed ? formatCurrency(parsed) : '')
-      }}
-      placeholder="R$ 0,00"
-    />
-  )
-}

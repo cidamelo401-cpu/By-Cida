@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Button, Card, Input, LoadingSpinner, Textarea } from '@/components/ui'
-import { formatCurrency, parseCurrency } from '@/lib/utils/format'
+import { Button, Card, CurrencyInput, Input, LoadingSpinner, Textarea } from '@/components/ui'
 import { updateSaleDetails } from '@/lib/actions/sales'
 import type { Database } from '@/types/database'
 
@@ -99,15 +98,15 @@ export default function EditarVendaPage({ params }: { params: Promise<{ id: stri
           )}
 
           <div className="flex gap-2">
-            <Input
+            <CurrencyInput
               label="Desconto (R$)"
-              value={formatCurrency(discount)}
-              onChange={(e) => setDiscount(parseCurrency(e.target.value))}
+              value={discount}
+              onValueChange={setDiscount}
             />
-            <Input
+            <CurrencyInput
               label="Frete (R$)"
-              value={formatCurrency(shipping)}
-              onChange={(e) => setShipping(parseCurrency(e.target.value))}
+              value={shipping}
+              onValueChange={setShipping}
             />
           </div>
 
