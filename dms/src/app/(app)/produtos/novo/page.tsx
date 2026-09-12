@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
@@ -343,16 +343,39 @@ function CurrencyField({
   cents: number
   onChange: (cents: number) => void
 }) {
-  const display = cents ? formatCurrency(cents) : ''
+  const [raw, setRaw] = useState('')
+  const [focused, setFocused] = useState(false)
+
+  // Sync display when value changes externally (and field is not focused)
+  useEffect(() => {
+    if (!focused) {
+      setRaw(cents ? formatCurrency(cents) : '')
+    }
+  }, [cents, focused])
 
   return (
     <Input
       label={label}
       type="text"
-      inputMode="numeric"
+      inputMode="decimal"
       className="currency"
-      value={display}
-      onChange={(e) => onChange(parseCurrency(e.target.value) || 0)}
+      value={raw}
+      onChange={(e) => {
+        setRaw(e.target.value)
+        const parsed = parseCurrency(e.target.value)
+        if (parsed !== cents) onChange(parsed)
+      }}
+      onFocus={() => {
+        setFocused(true)
+        // Show plain number for easy editing
+        setRaw(cents ? String(cents).replace('.', ',') : '')
+      }}
+      onBlur={() => {
+        setFocused(false)
+        const parsed = parseCurrency(raw)
+        onChange(parsed)
+        setRaw(parsed ? formatCurrency(parsed) : '')
+      }}
       placeholder="R$ 0,00"
     />
   )

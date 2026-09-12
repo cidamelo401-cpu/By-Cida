@@ -274,14 +274,37 @@ function CurrencyField({
   value: number
   onChange: (value: number) => void
 }) {
+  const [raw, setRaw] = useState('')
+  const [focused, setFocused] = useState(false)
+
+  useEffect(() => {
+    if (!focused) {
+      setRaw(value ? formatCurrency(value) : '')
+    }
+  }, [value, focused])
+
   return (
     <Input
       label={label}
       type="text"
-      inputMode="numeric"
+      inputMode="decimal"
       className="currency"
-      value={value ? formatCurrency(value) : ''}
-      onChange={(e) => onChange(parseCurrency(e.target.value) || 0)}
+      value={raw}
+      onChange={(e) => {
+        setRaw(e.target.value)
+        const parsed = parseCurrency(e.target.value)
+        if (parsed !== value) onChange(parsed)
+      }}
+      onFocus={() => {
+        setFocused(true)
+        setRaw(value ? String(value).replace('.', ',') : '')
+      }}
+      onBlur={() => {
+        setFocused(false)
+        const parsed = parseCurrency(raw)
+        onChange(parsed)
+        setRaw(parsed ? formatCurrency(parsed) : '')
+      }}
       placeholder="R$ 0,00"
     />
   )

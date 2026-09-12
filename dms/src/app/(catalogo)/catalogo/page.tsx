@@ -241,9 +241,10 @@ export default function CatalogoPage() {
       if (teamFilter && p.team !== teamFilter) continue
       if (sizeFilter && p.size !== sizeFilter) continue
 
-      // Group key: same shirt = same team + model + season + color (from notes)
-      const colorNote = p.notes?.match(/Cor:\s*(\w+)/i)?.[1] ?? ''
-      const key = `${p.team}|${p.model}|${p.season ?? ''}|${colorNote}`
+      // Group key: same shirt = same team + model + color (from notes)
+      // Season is intentionally excluded so Copa 2026 and 24/25 of the same team merge
+      const colorNote = p.notes?.match(/Cor[:\s]*(\w+)/i)?.[1]?.toLowerCase() ?? ''
+      const key = `${p.team}|${p.model}|${colorNote}`
 
       const existing = map.get(key)
       if (existing) {
