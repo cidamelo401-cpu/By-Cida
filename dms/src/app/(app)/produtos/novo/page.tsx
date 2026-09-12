@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useMemo, useState, type FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Button, Card, Input, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
-import { generateSKU, parseCurrency, formatCurrency } from '@/lib/utils/format'
+import { Button, Card, CurrencyInput, Input, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
+import { generateSKU } from '@/lib/utils/format'
 import { COMMON_TEAMS, MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
 import type { ProductModel, ProductSize, ProductVersion } from '@/types/database'
 
@@ -277,15 +277,15 @@ export default function NewProductPage() {
         <Card className="p-5 flex flex-col gap-4">
           <h2 className="font-semibold text-gray-900">Preços e fornecedor</h2>
           <div className="grid grid-cols-2 gap-4">
-            <CurrencyField
+            <CurrencyInput
               label="Custo unitário"
-              cents={form.cost_price}
-              onChange={(cents) => updateField('cost_price', cents)}
+              value={form.cost_price}
+              onValueChange={(v) => updateField('cost_price', v)}
             />
-            <CurrencyField
+            <CurrencyInput
               label="Preço de venda"
-              cents={form.sell_price}
-              onChange={(cents) => updateField('sell_price', cents)}
+              value={form.sell_price}
+              onValueChange={(v) => updateField('sell_price', v)}
             />
           </div>
           <Input
@@ -340,49 +340,3 @@ export default function NewProductPage() {
   )
 }
 
-function CurrencyField({
-  label,
-  cents,
-  onChange,
-}: {
-  label: string
-  cents: number
-  onChange: (cents: number) => void
-}) {
-  const [raw, setRaw] = useState('')
-  const [focused, setFocused] = useState(false)
-
-  // Sync display when value changes externally (and field is not focused)
-  useEffect(() => {
-    if (!focused) {
-      setRaw(cents ? formatCurrency(cents) : '')
-    }
-  }, [cents, focused])
-
-  return (
-    <Input
-      label={label}
-      type="text"
-      inputMode="decimal"
-      className="currency"
-      value={raw}
-      onChange={(e) => {
-        setRaw(e.target.value)
-        const parsed = parseCurrency(e.target.value)
-        if (parsed !== cents) onChange(parsed)
-      }}
-      onFocus={() => {
-        setFocused(true)
-        // Show plain number for easy editing
-        setRaw(cents ? String(cents).replace('.', ',') : '')
-      }}
-      onBlur={() => {
-        setFocused(false)
-        const parsed = parseCurrency(raw)
-        onChange(parsed)
-        setRaw(parsed ? formatCurrency(parsed) : '')
-      }}
-      placeholder="R$ 0,00"
-    />
-  )
-}

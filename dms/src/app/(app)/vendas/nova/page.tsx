@@ -6,8 +6,8 @@ import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Button, Card, Input, Modal, SearchInput, Select, Textarea } from '@/components/ui'
-import { formatCurrency, parseCurrency } from '@/lib/utils/format'
+import { Button, Card, CurrencyInput, Input, Modal, SearchInput, Select, Textarea } from '@/components/ui'
+import { formatCurrency } from '@/lib/utils/format'
 import { createSale } from '@/lib/actions/sales'
 import { PAYMENT_METHOD_LABELS } from '@/lib/constants/sales'
 import type { Database, PaymentMethod, SaleChannel, SaleStatus } from '@/types/database'
@@ -357,10 +357,10 @@ export default function NovaVendaPage() {
                           updateItem(item.product_id, { quantity: qty })
                         }}
                       />
-                      <Input
+                      <CurrencyInput
                         label="Preço unitário"
-                        value={formatCurrency(item.unit_price)}
-                        onChange={(e) => updateItem(item.product_id, { unit_price: parseCurrency(e.target.value) })}
+                        value={item.unit_price}
+                        onValueChange={(v) => updateItem(item.product_id, { unit_price: v })}
                       />
                     </div>
                     {item.quantity > item.available && (
@@ -391,15 +391,15 @@ export default function NovaVendaPage() {
             </div>
 
             <div className="flex gap-2">
-              <Input
+              <CurrencyInput
                 label="Desconto (R$)"
-                value={formatCurrency(discount)}
-                onChange={(e) => setDiscount(parseCurrency(e.target.value))}
+                value={discount}
+                onValueChange={setDiscount}
               />
-              <Input
+              <CurrencyInput
                 label="Frete (R$)"
-                value={formatCurrency(shipping)}
-                onChange={(e) => setShipping(parseCurrency(e.target.value))}
+                value={shipping}
+                onValueChange={setShipping}
               />
             </div>
 
@@ -420,11 +420,11 @@ export default function NovaVendaPage() {
               ))}
             </Select>
 
-            <Input
+            <CurrencyInput
               label="Valor pago"
               helper="Pode ser 0, parcial ou o valor total."
-              value={formatCurrency(amountPaid)}
-              onChange={(e) => setAmountPaid(parseCurrency(e.target.value))}
+              value={amountPaid}
+              onValueChange={setAmountPaid}
             />
 
             <Input
