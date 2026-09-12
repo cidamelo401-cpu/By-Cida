@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Button, Card, EmptyState, Input, LoadingSpinner, Select, Textarea } from '@/components/ui'
+import { Button, Card, EmptyState, Input, LoadingSpinner, PhotoUpload, Select, Textarea } from '@/components/ui'
 import { formatCurrency, parseCurrency } from '@/lib/utils/format'
 import { MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
 import type { Database, ProductModel, ProductSize, ProductVersion } from '@/types/database'
@@ -226,10 +226,10 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             value={form.supplier}
             onChange={(e) => updateField('supplier', e.target.value)}
           />
-          <Input
-            label="Foto (URL)"
+          <PhotoUpload
             value={form.photo_url}
-            onChange={(e) => updateField('photo_url', e.target.value)}
+            onChange={(url) => updateField('photo_url', url)}
+            disabled={saving}
           />
         </Card>
 
