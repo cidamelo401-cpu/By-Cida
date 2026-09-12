@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils/format'
 
-type LeadStatus = 'novo' | 'em_negociacao' | 'vendido' | 'desistiu'
+type LeadStatus = 'novo' | 'em_negociacao' | 'reservado' | 'vendido' | 'desistiu'
 
 type Lead = {
   id: string
@@ -24,6 +24,7 @@ type Lead = {
 const STATUS_CONFIG: Record<LeadStatus, { label: string; color: string; bg: string }> = {
   novo: { label: 'Novo', color: 'text-blue-700', bg: 'bg-blue-50' },
   em_negociacao: { label: 'Em negociação', color: 'text-amber-700', bg: 'bg-amber-50' },
+  reservado: { label: 'Reservado', color: 'text-purple-700', bg: 'bg-purple-50' },
   vendido: { label: 'Vendido', color: 'text-green-700', bg: 'bg-green-50' },
   desistiu: { label: 'Desistiu', color: 'text-gray-500', bg: 'bg-gray-100' },
 }
@@ -59,6 +60,7 @@ export default function LeadsPage() {
     todos: leads.length,
     novo: leads.filter((l) => l.status === 'novo').length,
     em_negociacao: leads.filter((l) => l.status === 'em_negociacao').length,
+    reservado: leads.filter((l) => l.status === 'reservado').length,
     vendido: leads.filter((l) => l.status === 'vendido').length,
     desistiu: leads.filter((l) => l.status === 'desistiu').length,
   }
@@ -73,7 +75,7 @@ export default function LeadsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
         <div className="rounded-xl bg-blue-50 border border-blue-100 p-4">
           <p className="text-2xl font-bold text-blue-700">{counts.novo}</p>
           <p className="text-xs text-blue-600 font-medium">Novos</p>
@@ -81,6 +83,10 @@ export default function LeadsPage() {
         <div className="rounded-xl bg-amber-50 border border-amber-100 p-4">
           <p className="text-2xl font-bold text-amber-700">{counts.em_negociacao}</p>
           <p className="text-xs text-amber-600 font-medium">Em negociação</p>
+        </div>
+        <div className="rounded-xl bg-purple-50 border border-purple-100 p-4">
+          <p className="text-2xl font-bold text-purple-700">{counts.reservado}</p>
+          <p className="text-xs text-purple-600 font-medium">Reservados</p>
         </div>
         <div className="rounded-xl bg-green-50 border border-green-100 p-4">
           <p className="text-2xl font-bold text-green-700">{counts.vendido}</p>
@@ -94,7 +100,7 @@ export default function LeadsPage() {
 
       {/* Filter tabs */}
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
-        {(['todos', 'novo', 'em_negociacao', 'vendido', 'desistiu'] as const).map((s) => (
+        {(['todos', 'novo', 'em_negociacao', 'reservado', 'vendido', 'desistiu'] as const).map((s) => (
           <button
             key={s}
             onClick={() => setFilter(s)}
@@ -159,6 +165,7 @@ export default function LeadsPage() {
                   >
                     <option value="novo">Novo</option>
                     <option value="em_negociacao">Em negociação</option>
+                    <option value="reservado">Reservado</option>
                     <option value="vendido">Vendido</option>
                     <option value="desistiu">Desistiu</option>
                   </select>
