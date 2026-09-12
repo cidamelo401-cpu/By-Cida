@@ -34,18 +34,33 @@ export default function CatalogoPage() {
   const [modelFilter, setModelFilter] = useState<ProductModel | ''>('')
   const [versionFilter, setVersionFilter] = useState<ProductVersion | ''>('')
 
+  const [error, setError] = useState('')
+
   useEffect(() => {
     async function load() {
       setLoading(true)
-      const { data } = await supabase
-        .from('products')
-        .select('*')
-        .eq('archived', false)
-        .eq('status', 'disponivel')
-        .gt('quantity', 0)
-        .order('team')
-      setProducts(data ?? [])
-      setLoading(false)
+      setError('')
+      try {
+        const { data, error: queryError } = await supabase
+          .from('products')
+          .select('*')
+          .eq('archived', false)
+          .eq('status', 'disponivel')
+          .gt('quantity', 0)
+          .order('team')
+
+        if (queryError) {
+          console.error('Supabase error:', queryError)
+          setError(queryError.message)
+          return
+        }
+        setProducts(data ?? [])
+      } catch (err) {
+        console.error('Fetch error:', err)
+        setError(err instanceof Error ? err.message : 'Erro ao carregar produtos')
+      } finally {
+        setLoading(false)
+      }
     }
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -179,7 +194,12 @@ export default function CatalogoPage() {
           )}
         </div>
 
-        {loading ? (
+        {error ? (
+          <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-center">
+            <p className="text-sm font-medium text-red-800">Erro ao carregar catálogo</p>
+            <p className="mt-1 text-xs text-red-600">{error}</p>
+          </div>
+        ) : loading ? (
           <div className="flex items-center justify-center py-20">
             <svg className="animate-spin h-6 w-6 text-[#C9A84C]" viewBox="0 0 24 24" fill="none">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
