@@ -25,7 +25,6 @@ function ShirtPlaceholder() {
 }
 
 export default function CatalogoPage() {
-  const supabase = createClient()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -41,6 +40,7 @@ export default function CatalogoPage() {
       setLoading(true)
       setError('')
       try {
+        const supabase = createClient()
         const { data, error: queryError } = await supabase
           .from('products')
           .select('*')
@@ -57,13 +57,13 @@ export default function CatalogoPage() {
         setProducts(data ?? [])
       } catch (err) {
         console.error('Fetch error:', err)
-        setError(err instanceof Error ? err.message : 'Erro ao carregar produtos')
+        const msg = err instanceof Error ? err.message : 'Erro desconhecido'
+        setError(msg)
       } finally {
         setLoading(false)
       }
     }
     load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const teams = useMemo(() => {
@@ -197,7 +197,12 @@ export default function CatalogoPage() {
         {error ? (
           <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-center">
             <p className="text-sm font-medium text-red-800">Erro ao carregar catálogo</p>
-            <p className="mt-1 text-xs text-red-600">{error}</p>
+            <p className="mt-1 text-xs text-red-600 break-all">{error}</p>
+            {error.includes('MISSING') && (
+              <p className="mt-2 text-xs text-red-700">
+                Verifique as variáveis de ambiente na Vercel: NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY
+              </p>
+            )}
           </div>
         ) : loading ? (
           <div className="flex items-center justify-center py-20">
