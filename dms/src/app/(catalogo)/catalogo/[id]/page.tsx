@@ -26,6 +26,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showSizeChart, setShowSizeChart] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -172,6 +173,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <InfoChip>Tamanho {product.size}</InfoChip>
             </div>
 
+            <button
+              onClick={() => setShowSizeChart(true)}
+              className="mt-2 self-start text-xs text-[#C9A84C] underline underline-offset-2 hover:text-[#b8983f] transition-colors"
+            >
+              📏 Tabela de medidas
+            </button>
+
             {product.quantity === 1 && (
               <div className="mt-3 inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/60 text-red-400 text-xs font-semibold">
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -221,6 +229,65 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
       </main>
+
+      {/* Size Chart Modal */}
+      {showSizeChart && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setShowSizeChart(false)}>
+          <div className="bg-[#1A1A1A] rounded-2xl border border-white/10 w-full max-w-lg max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-white/5">
+              <h3 className="text-lg font-bold text-white uppercase">📏 Tabela de Medidas</h3>
+              <button onClick={() => setShowSizeChart(false)} className="text-gray-400 hover:text-white transition-colors">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-4">
+              <p className="text-xs text-gray-500 mb-3">Medidas aproximadas em centímetros (cm). Podem variar conforme modelo e marca.</p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="py-2 px-3 text-left text-xs font-bold text-[#C9A84C] uppercase">Tam.</th>
+                      <th className="py-2 px-3 text-center text-xs font-bold text-[#C9A84C] uppercase">Largura</th>
+                      <th className="py-2 px-3 text-center text-xs font-bold text-[#C9A84C] uppercase">Comprimento</th>
+                      <th className="py-2 px-3 text-center text-xs font-bold text-[#C9A84C] uppercase">Manga</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-gray-300">
+                    {[
+                      { size: 'P', width: '48', length: '68', sleeve: '20' },
+                      { size: 'M', width: '51', length: '71', sleeve: '21' },
+                      { size: 'G', width: '54', length: '74', sleeve: '22' },
+                      { size: 'GG', width: '57', length: '77', sleeve: '23' },
+                      { size: '2XG', width: '60', length: '80', sleeve: '24' },
+                      { size: '3XG', width: '63', length: '83', sleeve: '25' },
+                    ].map((row) => (
+                      <tr
+                        key={row.size}
+                        className={`border-b border-white/5 ${product.size === row.size ? 'bg-[#C9A84C]/10 text-[#C9A84C] font-bold' : ''}`}
+                      >
+                        <td className="py-2.5 px-3 font-semibold">{row.size}</td>
+                        <td className="py-2.5 px-3 text-center">{row.width}</td>
+                        <td className="py-2.5 px-3 text-center">{row.length}</td>
+                        <td className="py-2.5 px-3 text-center">{row.sleeve}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mt-4 rounded-xl bg-[#0A0A0A] border border-white/5 p-3">
+                <p className="text-xs font-bold text-[#C9A84C] uppercase mb-1">Como medir</p>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  <strong className="text-gray-300">Largura:</strong> meça de axila a axila com a camisa aberta.<br />
+                  <strong className="text-gray-300">Comprimento:</strong> da base da gola até a barra.<br />
+                  <strong className="text-gray-300">Manga:</strong> da costura do ombro até o punho.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Floating WhatsApp button */}
       <a
