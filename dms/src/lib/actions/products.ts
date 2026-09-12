@@ -56,3 +56,16 @@ export async function archiveProduct(productId: string, archived: boolean) {
   const { error } = await supabase.from('products').update({ archived }).eq('id', productId)
   if (error) throw error
 }
+
+export async function deleteProduct(productId: string) {
+  const supabase = createClient()
+  // Delete stock movements first (FK constraint)
+  const { error: movError } = await supabase
+    .from('stock_movements')
+    .delete()
+    .eq('product_id', productId)
+  if (movError) throw movError
+
+  const { error } = await supabase.from('products').delete().eq('id', productId)
+  if (error) throw error
+}
