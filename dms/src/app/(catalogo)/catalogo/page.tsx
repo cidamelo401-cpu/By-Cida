@@ -281,19 +281,19 @@ export default function CatalogoPage() {
       {/* Header */}
       <header className="sticky top-0 z-30 bg-[#0A0A0A]/95 backdrop-blur border-b border-white/5">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-          <Link href="/catalogo" className="flex items-center gap-2.5">
+          <Link href="/catalogo" className="flex items-center gap-3">
             <Image
               src="/logo-dms-sports.jpg"
               alt="DMS Sports"
-              width={36}
-              height={36}
-              className="rounded-lg"
+              width={44}
+              height={44}
+              className="rounded-xl"
             />
             <div>
-              <p className="text-sm font-bold leading-tight text-white">
+              <p className="text-lg font-extrabold leading-tight text-white tracking-tight">
                 DMS <span className="text-[#C9A84C]">Sports</span>
               </p>
-              <p className="text-[10px] text-gray-500">Camisas de Futebol</p>
+              <p className="text-[11px] text-gray-400 font-medium">Camisas de Futebol</p>
             </div>
           </Link>
           <a
@@ -310,18 +310,10 @@ export default function CatalogoPage() {
         </div>
       </header>
 
-      {/* Hero + Search */}
+      {/* Search */}
       <section className="pb-6 pt-5">
         <div className="mx-auto max-w-6xl px-4">
-          <h1 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-white">
-            Camisas de <span className="text-[#C9A84C]">Futebol</span>
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Encontre a camisa do seu time e compre pelo WhatsApp
-          </p>
-
-          {/* Search */}
-          <div className="mt-4 relative">
+          <div className="relative">
             <svg
               className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
               fill="none"
