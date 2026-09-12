@@ -165,7 +165,7 @@ export default function CatalogoPage() {
                       className="w-10 h-10 object-contain"
                     />
                   ) : (
-                    <TeamBadge team={team.name} badgeUrl={undefined} size="sm" />
+                    <TeamBadge team={team.name} badgeUrl={undefined} size="md" />
                   )}
                 </div>
                 <span className="text-[10px] text-gray-400 group-hover:text-white text-center leading-tight line-clamp-2 transition-colors">
