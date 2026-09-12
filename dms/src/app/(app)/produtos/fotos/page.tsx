@@ -112,9 +112,15 @@ export default function BulkPhotoUploadPage() {
           .from('product-photos')
           .getPublicUrl(fileName)
 
+        // Add to photos array and set as photo_url if first photo
+        const existingPhotos: string[] = (item.product as any).photos ?? []
+        const newPhotos = [...existingPhotos, urlData.publicUrl]
         const { error: updateError } = await supabase
           .from('products')
-          .update({ photo_url: urlData.publicUrl })
+          .update({
+            photo_url: newPhotos[0],
+            photos: newPhotos,
+          })
           .eq('id', item.product.id)
 
         if (updateError) throw updateError

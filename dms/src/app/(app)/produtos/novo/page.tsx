@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Button, Card, Input, PhotoUpload, Select, Textarea } from '@/components/ui'
+import { Button, Card, Input, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
 import { generateSKU, parseCurrency, formatCurrency } from '@/lib/utils/format'
 import { COMMON_TEAMS, MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
 import type { ProductModel, ProductSize, ProductVersion } from '@/types/database'
@@ -23,6 +23,7 @@ type FormState = {
   sell_price: number // cents
   supplier: string
   photo_url: string
+  photos: string[]
   notes: string
   min_stock: string
 }
@@ -39,6 +40,7 @@ const initialState: FormState = {
   sell_price: 0,
   supplier: '',
   photo_url: '',
+  photos: [],
   notes: '',
   min_stock: '2',
 }
@@ -125,7 +127,8 @@ export default function NewProductPage() {
           cost_price: form.cost_price,
           sell_price: form.sell_price,
           supplier: form.supplier.trim() || null,
-          photo_url: form.photo_url.trim() || null,
+          photo_url: form.photos[0]?.trim() || form.photo_url.trim() || null,
+          photos: form.photos.length > 0 ? form.photos : null,
           notes: form.notes.trim() || null,
           min_stock: minStock,
           status: quantity > 0 ? 'disponivel' : 'esgotado',
@@ -291,9 +294,12 @@ export default function NewProductPage() {
             onChange={(e) => updateField('supplier', e.target.value)}
             placeholder="Ex: Fornecedor XPTO"
           />
-          <PhotoUpload
-            value={form.photo_url}
-            onChange={(url) => updateField('photo_url', url)}
+          <MultiPhotoUpload
+            photos={form.photos}
+            onChange={(photos) => {
+              updateField('photos', photos)
+              updateField('photo_url', photos[0] ?? '')
+            }}
             disabled={saving}
           />
         </Card>

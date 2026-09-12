@@ -81,6 +81,7 @@ export interface Database {
           sell_price: number
           supplier: string | null
           photo_url: string | null
+          photos: string[] | null
           notes: string | null
           min_stock: number
           status: ProductStatus
@@ -102,6 +103,7 @@ export interface Database {
           sell_price: number
           supplier?: string | null
           photo_url?: string | null
+          photos?: string[] | null
           notes?: string | null
           min_stock?: number
           status?: ProductStatus
@@ -123,6 +125,7 @@ export interface Database {
           sell_price?: number
           supplier?: string | null
           photo_url?: string | null
+          photos?: string[] | null
           notes?: string | null
           min_stock?: number
           status?: ProductStatus
