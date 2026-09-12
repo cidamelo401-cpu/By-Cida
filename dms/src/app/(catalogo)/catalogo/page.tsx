@@ -33,6 +33,7 @@ type GroupedShirt = {
 }
 
 const SIZE_ORDER: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
+const KIDS_SIZES: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28']
 
 export default function CatalogoPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -41,6 +42,7 @@ export default function CatalogoPage() {
   const [error, setError] = useState('')
   const [activeTeam, setActiveTeam] = useState<string | null>(null)
   const [activeCollection, setActiveCollection] = useState<string | null>(null)
+  const [kidsOnly, setKidsOnly] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -71,14 +73,29 @@ export default function CatalogoPage() {
     load()
   }, [])
 
-  // Filtered products by active collection
+  // Filtered products by active collection + kids toggle
   const filteredProducts = useMemo(() => {
-    if (!activeCollection) return products
-    if (activeCollection === '__outros__') {
-      return products.filter((p) => !p.country_league?.trim())
+    let result = products
+
+    if (activeCollection) {
+      if (activeCollection === '__outros__') {
+        result = result.filter((p) => !p.country_league?.trim())
+      } else {
+        result = result.filter((p) => p.country_league?.trim() === activeCollection)
+      }
     }
-    return products.filter((p) => p.country_league?.trim() === activeCollection)
-  }, [products, activeCollection])
+
+    if (kidsOnly) {
+      result = result.filter((p) => KIDS_SIZES.includes(p.size))
+    }
+
+    return result
+  }, [products, activeCollection, kidsOnly])
+
+  // Check if there are any kids products
+  const hasKidsProducts = useMemo(() => {
+    return products.some((p) => KIDS_SIZES.includes(p.size))
+  }, [products])
 
   // Collections (leagues) for filter tabs
   const collections = useMemo(() => {
@@ -215,7 +232,7 @@ export default function CatalogoPage() {
             <input
               type="text"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setActiveTeam(null); setActiveCollection(null) }}
+              onChange={(e) => { setSearch(e.target.value); setActiveTeam(null); setActiveCollection(null); setKidsOnly(false) }}
               placeholder="Buscar time..."
               className="w-full rounded-full bg-white pl-11 pr-4 py-3 text-sm text-black placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-[#C9A84C] transition"
             />
@@ -223,33 +240,52 @@ export default function CatalogoPage() {
         </div>
       </section>
 
-      {/* Collection filter tabs */}
-      {!loading && collections.length > 0 && (
+      {/* Filter tabs: collections + kids */}
+      {!loading && (collections.length > 0 || hasKidsProducts) && (
         <section className="mx-auto max-w-6xl px-4 pb-3">
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            <button
-              onClick={() => handleCollectionTab(null)}
-              className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
-                activeCollection === null
-                  ? 'bg-[#C9A84C] text-black'
-                  : 'bg-white/10 text-gray-400 hover:bg-white/20'
-              }`}
-            >
-              Todas as Coleções
-            </button>
-            {collections.map((col) => (
+            {/* Kids toggle */}
+            {hasKidsProducts && (
               <button
-                key={col.name}
-                onClick={() => handleCollectionTab(col.name)}
-                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
-                  activeCollection === col.name
+                onClick={() => { setKidsOnly(!kidsOnly); setActiveTeam(null) }}
+                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors flex items-center gap-1.5 ${
+                  kidsOnly
                     ? 'bg-[#C9A84C] text-black'
                     : 'bg-white/10 text-gray-400 hover:bg-white/20'
                 }`}
               >
-                {col.name === '__outros__' ? 'Outros' : col.name} ({col.count})
+                👶 Kids
               </button>
-            ))}
+            )}
+
+            {/* Collection tabs */}
+            {collections.length > 0 && (
+              <>
+                <button
+                  onClick={() => handleCollectionTab(null)}
+                  className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
+                    activeCollection === null
+                      ? 'bg-[#C9A84C] text-black'
+                      : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                  }`}
+                >
+                  Todas as Coleções
+                </button>
+                {collections.map((col) => (
+                  <button
+                    key={col.name}
+                    onClick={() => handleCollectionTab(col.name)}
+                    className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
+                      activeCollection === col.name
+                        ? 'bg-[#C9A84C] text-black'
+                        : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                    }`}
+                  >
+                    {col.name === '__outros__' ? 'Outros' : col.name} ({col.count})
+                  </button>
+                ))}
+              </>
+            )}
           </div>
         </section>
       )}
