@@ -9,7 +9,7 @@ export const BRAZILIAN_STATES = [
   'PA', 'PB', 'PE', 'PI', 'PR', 'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO',
 ] as const
 
-const SIZES: ProductSize[] = ['PP', 'P', 'M', 'G', 'GG', 'XGG']
+const SIZES: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
 
 export type CustomerFormValues = {
   name: string

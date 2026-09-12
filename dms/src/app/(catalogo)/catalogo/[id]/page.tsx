@@ -6,11 +6,13 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, getWhatsAppLink } from '@/lib/utils/format'
 import { MODEL_LABELS, VERSION_LABELS } from '@/lib/constants/products'
-import type { Database } from '@/types/database'
+import type { Database, ProductSize } from '@/types/database'
 
 type Product = Database['public']['Tables']['products']['Row']
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '5511992963041'
+
+const SIZE_ORDER: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
 
 function ShirtPlaceholder() {
   return (
@@ -24,6 +26,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const { id } = usePromise(params)
 
   const [product, setProduct] = useState<Product | null>(null)
+  const [siblings, setSiblings] = useState<Product[]>([])
+  const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showSizeChart, setShowSizeChart] = useState(false)
@@ -34,12 +38,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       setError('')
       try {
         const supabase = createClient()
+
+        // Load the main product
         const { data, error: queryError } = await supabase
           .from('products')
           .select('*')
           .eq('id', id)
           .eq('archived', false)
-          .eq('status', 'disponivel')
           .single()
 
         if (queryError) {
@@ -48,6 +53,33 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           return
         }
         setProduct(data)
+        setSelectedSize(data.size)
+
+        // Load siblings (same team + model + season)
+        let query = supabase
+          .from('products')
+          .select('*')
+          .eq('team', data.team)
+          .eq('model', data.model)
+          .eq('archived', false)
+          .eq('status', 'disponivel')
+          .gt('quantity', 0)
+
+        if (data.season) {
+          query = query.eq('season', data.season)
+        }
+
+        const { data: sibs } = await query
+        if (sibs) {
+          // Filter to same color/notes group
+          const colorNote = data.notes?.match(/Cor:\s*(\w+)/i)?.[1] ?? ''
+          const filtered = sibs.filter((s) => {
+            const sibColor = s.notes?.match(/Cor:\s*(\w+)/i)?.[1] ?? ''
+            return sibColor === colorNote
+          })
+          filtered.sort((a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size))
+          setSiblings(filtered)
+        }
       } catch (err) {
         console.error('Fetch error:', err)
         const msg = err instanceof Error ? err.message : 'Erro desconhecido'
@@ -126,8 +158,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     )
   }
 
-  const whatsappMessage = `Oi! Vi a camisa ${product.team} ${product.size} no catálogo e tenho interesse!`
+  // Use photo from any sibling if current product doesn't have one
+  const photoUrl = product.photo_url || siblings.find((s) => s.photo_url)?.photo_url || null
+
+  const sizeForMessage = selectedSize ?? product.size
+  const whatsappMessage = `Oi! Vi a camisa ${product.team} tamanho ${sizeForMessage} no catálogo e tenho interesse!`
   const whatsappUrl = getWhatsAppLink(WHATSAPP_NUMBER, whatsappMessage)
+
+  const totalQuantity = siblings.reduce((sum, s) => sum + s.quantity, 0)
+  const isKids = SIZE_ORDER.indexOf(product.size) < 5 || siblings.some((s) => SIZE_ORDER.indexOf(s.size) < 5)
 
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
@@ -146,10 +185,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Image */}
           <div className="rounded-2xl overflow-hidden bg-gradient-to-b from-[#0F1F12] to-[#1A1A1A] border border-white/5 aspect-square flex items-center justify-center">
-            {product.photo_url ? (
+            {photoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={product.photo_url}
+                src={photoUrl}
                 alt={product.team}
                 className="h-full w-full object-cover"
               />
@@ -170,22 +209,51 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             <div className="mt-4 flex flex-wrap gap-2">
               <InfoChip>{MODEL_LABELS[product.model]}</InfoChip>
               <InfoChip>{VERSION_LABELS[product.version]}</InfoChip>
-              <InfoChip>Tamanho {product.size}</InfoChip>
             </div>
+
+            {/* Size selector */}
+            {siblings.length > 1 && (
+              <div className="mt-5">
+                <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-2">
+                  Tamanho
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {siblings.map((sib) => (
+                    <button
+                      key={sib.id}
+                      onClick={() => setSelectedSize(sib.size)}
+                      className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                        selectedSize === sib.size
+                          ? 'bg-[#C9A84C] text-black shadow-[0_0_12px_rgba(201,168,76,0.3)]'
+                          : 'bg-[#1A1A1A] border border-white/10 text-gray-300 hover:border-[#C9A84C]/50'
+                      }`}
+                    >
+                      {sib.size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {siblings.length <= 1 && (
+              <div className="mt-4">
+                <InfoChip>Tamanho {product.size}</InfoChip>
+              </div>
+            )}
 
             <button
               onClick={() => setShowSizeChart(true)}
-              className="mt-2 self-start text-xs text-[#C9A84C] underline underline-offset-2 hover:text-[#b8983f] transition-colors"
+              className="mt-3 self-start text-xs text-[#C9A84C] underline underline-offset-2 hover:text-[#b8983f] transition-colors"
             >
               📏 Tabela de medidas
             </button>
 
-            {product.quantity === 1 && (
+            {totalQuantity <= siblings.length && totalQuantity > 0 && (
               <div className="mt-3 inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/60 text-red-400 text-xs font-semibold">
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
-                Última unidade disponível!
+                {totalQuantity === 1 ? 'Última unidade disponível!' : 'Últimas unidades!'}
               </div>
             )}
 
@@ -243,7 +311,43 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </button>
             </div>
             <div className="p-4">
-              <p className="text-xs text-gray-500 mb-3">Versão Fan (Torcedor). Medidas aproximadas — podem variar conforme modelo e marca.</p>
+              {isKids && (
+                <>
+                  <p className="text-xs font-semibold text-[#C9A84C] uppercase mb-2">Tamanhos Infantis</p>
+                  <div className="overflow-x-auto mb-4">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-[#C9A84C]/30 bg-[#0A0A0A]">
+                          <th className="py-2.5 px-2 text-left text-xs font-bold text-[#C9A84C] uppercase">Tam.</th>
+                          <th className="py-2.5 px-2 text-center text-xs font-bold text-[#C9A84C] uppercase">Idade</th>
+                          <th className="py-2.5 px-2 text-center text-xs font-bold text-[#C9A84C] uppercase">Altura</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-gray-300">
+                        {[
+                          { size: 'T20', age: '3-4 anos', height: '98-104 cm' },
+                          { size: 'T22', age: '5-6 anos', height: '110-116 cm' },
+                          { size: 'T24', age: '7-8 anos', height: '122-128 cm' },
+                          { size: 'T26', age: '9-10 anos', height: '134-140 cm' },
+                          { size: 'T28', age: '11-12 anos', height: '146-152 cm' },
+                        ].map((row) => (
+                          <tr
+                            key={row.size}
+                            className={`border-b border-white/5 ${selectedSize === row.size ? 'bg-[#C9A84C]/15 text-[#C9A84C] font-bold' : ''}`}
+                          >
+                            <td className="py-2.5 px-2 font-semibold">{row.size}</td>
+                            <td className="py-2.5 px-2 text-center text-xs">{row.age}</td>
+                            <td className="py-2.5 px-2 text-center text-xs">{row.height}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+
+              <p className="text-xs font-semibold text-[#C9A84C] uppercase mb-2">Tamanhos Adultos</p>
+              <p className="text-xs text-gray-500 mb-3">Versão Fan (Torcedor). Medidas aproximadas.</p>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -257,6 +361,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   </thead>
                   <tbody className="text-gray-300">
                     {[
+                      { size: 'PP', length: '67-69', width: '51-53', height: '155-162', weight: '45-50' },
                       { size: 'P', length: '69-71', width: '53-55', height: '162-170', weight: '50-62' },
                       { size: 'M', length: '71-73', width: '55-57', height: '170-176', weight: '62-78' },
                       { size: 'G', length: '73-75', width: '57-58', height: '176-182', weight: '78-83' },
@@ -266,7 +371,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     ].map((row) => (
                       <tr
                         key={row.size}
-                        className={`border-b border-white/5 ${product.size === row.size ? 'bg-[#C9A84C]/15 text-[#C9A84C] font-bold' : ''}`}
+                        className={`border-b border-white/5 ${selectedSize === row.size ? 'bg-[#C9A84C]/15 text-[#C9A84C] font-bold' : ''}`}
                       >
                         <td className="py-2.5 px-2 font-semibold">{row.size}</td>
                         <td className="py-2.5 px-2 text-center text-xs">{row.length}</td>

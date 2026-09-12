@@ -79,12 +79,20 @@ export default function ProductsPage() {
       <div className="flex flex-col gap-5">
         <div className="hidden lg:flex items-center justify-between gap-3">
           <h1 className="text-xl font-bold text-gray-900">Produtos</h1>
-          <Link
-            href="/produtos/novo"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-900 text-white text-sm font-medium hover:bg-primary-800"
-          >
-            + Nova Camisa
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/produtos/fotos"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50"
+            >
+              📷 Upload de Fotos
+            </Link>
+            <Link
+              href="/produtos/novo"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-900 text-white text-sm font-medium hover:bg-primary-800"
+            >
+              + Nova Camisa
+            </Link>
+          </div>
         </div>
 
         <label className="flex items-center gap-2 text-sm text-gray-500 select-none cursor-pointer">
