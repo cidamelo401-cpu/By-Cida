@@ -10,7 +10,7 @@ import {
   SIZE_OPTIONS,
   VERSION_LABELS,
 } from '@/lib/constants/products'
-import type { Database, ProductModel, ProductSize, ProductVersion } from '@/types/database'
+import type { Database, ProductSize, ProductVersion } from '@/types/database'
 
 type Product = Database['public']['Tables']['products']['Row']
 
@@ -18,7 +18,7 @@ const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '551199296304
 
 function ShirtPlaceholder() {
   return (
-    <svg className="h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg className="h-14 w-14 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 4l4 2 4-2 4 3-3 3v10H7V10L4 7l4-3z" />
     </svg>
   )
@@ -30,8 +30,8 @@ export default function CatalogoPage() {
   const [search, setSearch] = useState('')
 
   const [sizeFilter, setSizeFilter] = useState<ProductSize | ''>('')
-  const [modelFilter, setModelFilter] = useState<ProductModel | ''>('')
   const [versionFilter, setVersionFilter] = useState<ProductVersion | ''>('')
+  const [teamFilter, setTeamFilter] = useState('')
 
   const [error, setError] = useState('')
 
@@ -71,26 +71,23 @@ export default function CatalogoPage() {
     return Array.from(set).sort()
   }, [products])
 
-  const [teamFilter, setTeamFilter] = useState('')
-
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase()
     return products.filter((p) => {
       if (term && !p.team.toLowerCase().includes(term)) return false
       if (sizeFilter && p.size !== sizeFilter) return false
-      if (modelFilter && p.model !== modelFilter) return false
       if (versionFilter && p.version !== versionFilter) return false
       if (teamFilter && p.team !== teamFilter) return false
       return true
     })
-  }, [products, search, sizeFilter, modelFilter, versionFilter, teamFilter])
+  }, [products, search, sizeFilter, versionFilter, teamFilter])
 
-  const hasFilters = Boolean(sizeFilter || modelFilter || versionFilter || teamFilter)
+  const hasFilters = Boolean(sizeFilter || versionFilter || teamFilter)
 
   return (
-    <div className="min-h-screen bg-[#F5F5F0]">
+    <div className="min-h-screen bg-[#0A0A0A]">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-[#141414] text-white shadow-lg">
+      <header className="sticky top-0 z-30 bg-[#0A0A0A]/95 backdrop-blur border-b border-white/5">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
           <Link href="/catalogo" className="flex items-center gap-2.5">
             <Image
@@ -101,17 +98,17 @@ export default function CatalogoPage() {
               className="rounded-lg"
             />
             <div>
-              <p className="text-sm font-bold leading-tight">
+              <p className="text-sm font-bold leading-tight text-white">
                 DMS <span className="text-[#C9A84C]">Sports</span>
               </p>
-              <p className="text-[10px] text-gray-400">Camisas de Futebol</p>
+              <p className="text-[10px] text-gray-500">Camisas de Futebol</p>
             </div>
           </Link>
           <a
             href="https://www.instagram.com/dmssports.oficial"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs text-gray-300 hover:text-[#C9A84C] transition-colors"
+            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#C9A84C] transition-colors"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
@@ -121,20 +118,20 @@ export default function CatalogoPage() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="bg-[#141414] text-white pb-8 pt-4">
+      {/* Hero + Search */}
+      <section className="pb-6 pt-5">
         <div className="mx-auto max-w-6xl px-4">
-          <h1 className="text-2xl sm:text-3xl font-bold">
+          <h1 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-white">
             Camisas de <span className="text-[#C9A84C]">Futebol</span>
           </h1>
-          <p className="mt-1 text-sm text-gray-400">
+          <p className="mt-1 text-sm text-gray-500">
             Encontre a camisa do seu time e compre pelo WhatsApp
           </p>
 
           {/* Search */}
           <div className="mt-4 relative">
             <svg
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -146,60 +143,90 @@ export default function CatalogoPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por time..."
-              className="w-full rounded-xl bg-white/10 border border-white/10 pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-gray-500 outline-none focus:border-[#C9A84C]/50 focus:ring-2 focus:ring-[#C9A84C]/20 transition"
+              className="w-full rounded-full bg-white pl-11 pr-4 py-3 text-sm text-black placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-[#C9A84C] transition"
             />
           </div>
-        </div>
-      </section>
 
-      {/* Filters + Content */}
-      <main className="mx-auto max-w-6xl px-4 py-6">
-        <div className="flex flex-wrap gap-2 mb-5">
-          <FilterChip
-            label="Time"
-            value={teamFilter}
-            options={teams.map((t) => ({ value: t, label: t }))}
-            onChange={setTeamFilter}
-          />
-          <FilterChip
-            label="Tamanho"
-            value={sizeFilter}
-            options={SIZE_OPTIONS.map((s) => ({ value: s, label: s }))}
-            onChange={(v) => setSizeFilter(v as ProductSize | '')}
-          />
-          <FilterChip
-            label="Modelo"
-            value={modelFilter}
-            options={Object.entries(MODEL_LABELS).map(([v, l]) => ({ value: v, label: l }))}
-            onChange={(v) => setModelFilter(v as ProductModel | '')}
-          />
-          <FilterChip
-            label="Versão"
-            value={versionFilter}
-            options={Object.entries(VERSION_LABELS).map(([v, l]) => ({ value: v, label: l }))}
-            onChange={(v) => setVersionFilter(v as ProductVersion | '')}
-          />
+          {/* Version chips */}
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Chip
+              label="TODOS"
+              active={versionFilter === ''}
+              onClick={() => setVersionFilter('')}
+            />
+            {Object.entries(VERSION_LABELS).map(([value, label]) => (
+              <Chip
+                key={value}
+                label={label.toUpperCase()}
+                active={versionFilter === value}
+                onClick={() => setVersionFilter(versionFilter === value ? '' : (value as ProductVersion))}
+              />
+            ))}
+          </div>
+
+          {/* Team chips */}
+          {teams.length > 0 && (
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
+              <Chip
+                small
+                label="TODOS OS TIMES"
+                active={teamFilter === ''}
+                onClick={() => setTeamFilter('')}
+              />
+              {teams.map((team) => (
+                <Chip
+                  key={team}
+                  small
+                  label={team.toUpperCase()}
+                  active={teamFilter === team}
+                  onClick={() => setTeamFilter(teamFilter === team ? '' : team)}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Size chips */}
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
+            <Chip
+              small
+              label="TODOS OS TAMANHOS"
+              active={sizeFilter === ''}
+              onClick={() => setSizeFilter('')}
+            />
+            {SIZE_OPTIONS.map((size) => (
+              <Chip
+                key={size}
+                small
+                label={size}
+                active={sizeFilter === size}
+                onClick={() => setSizeFilter(sizeFilter === size ? '' : size)}
+              />
+            ))}
+          </div>
+
           {hasFilters && (
             <button
               onClick={() => {
                 setSizeFilter('')
-                setModelFilter('')
                 setVersionFilter('')
                 setTeamFilter('')
               }}
-              className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-500 hover:text-[#141414]"
+              className="mt-3 text-xs font-medium text-gray-500 hover:text-[#C9A84C] transition-colors"
             >
               Limpar filtros
             </button>
           )}
         </div>
+      </section>
 
+      {/* Content */}
+      <main className="mx-auto max-w-6xl px-4 py-4">
         {error ? (
-          <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-center">
-            <p className="text-sm font-medium text-red-800">Erro ao carregar catálogo</p>
-            <p className="mt-1 text-xs text-red-600 break-all">{error}</p>
+          <div className="rounded-xl bg-red-950/40 border border-red-900 p-4 text-center">
+            <p className="text-sm font-medium text-red-400">Erro ao carregar catálogo</p>
+            <p className="mt-1 text-xs text-red-500 break-all">{error}</p>
             {error.includes('MISSING') && (
-              <p className="mt-2 text-xs text-red-700">
+              <p className="mt-2 text-xs text-red-400">
                 Verifique as variáveis de ambiente na Vercel: NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY
               </p>
             )}
@@ -215,15 +242,15 @@ export default function CatalogoPage() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <ShirtPlaceholder />
-            <p className="mt-4 font-semibold text-gray-900">Nenhuma camisa encontrada</p>
+            <p className="mt-4 font-semibold text-white">Nenhuma camisa encontrada</p>
             <p className="mt-1 text-sm text-gray-500">Tente ajustar os filtros ou a busca.</p>
           </div>
         ) : (
           <>
-            <p className="text-sm text-gray-500 mb-4">
-              {filtered.length} {filtered.length === 1 ? 'camisa disponível' : 'camisas disponíveis'}
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-4">
+              {filtered.length} {filtered.length === 1 ? 'produto' : 'produtos'}
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {filtered.map((product) => (
                 <CatalogCard key={product.id} product={product} />
               ))}
@@ -233,7 +260,7 @@ export default function CatalogoPage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#141414] text-gray-400 py-8 mt-8">
+      <footer className="bg-black border-t border-white/5 text-gray-500 py-8 mt-8">
         <div className="mx-auto max-w-6xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <Image
@@ -287,71 +314,61 @@ export default function CatalogoPage() {
 function CatalogCard({ product }: { product: Product }) {
   return (
     <Link href={`/catalogo/${product.id}`}>
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow h-full flex flex-col">
-        <div className="aspect-square bg-gray-50 flex items-center justify-center">
+      <div className="bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5 hover:border-[#C9A84C]/40 transition-colors h-full flex flex-col">
+        <div className="relative aspect-square bg-gradient-to-b from-[#0F1F12] to-[#1A1A1A] flex items-center justify-center">
           {product.photo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={product.photo_url} alt={product.team} className="h-full w-full object-cover" />
           ) : (
             <ShirtPlaceholder />
           )}
-        </div>
-        <div className="p-3 flex flex-col gap-1 flex-1">
-          <p className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2">{product.team}</p>
-          <p className="text-xs text-gray-500">
-            {product.season ?? ''} · {MODEL_LABELS[product.model]} · {product.size}
-          </p>
+          <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur text-[9px] font-bold uppercase tracking-wide text-[#C9A84C] border border-[#C9A84C]/30">
+            {VERSION_LABELS[product.version]}
+          </span>
           {product.quantity === 1 && (
-            <span className="inline-flex self-start px-2 py-0.5 rounded-full bg-red-50 text-red-600 text-[10px] font-semibold">
+            <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-red-950/80 text-red-400 text-[9px] font-semibold">
               Última unidade!
             </span>
           )}
+        </div>
+        <div className="p-3 flex flex-col gap-1 flex-1">
+          <p className="font-semibold text-white text-sm leading-tight line-clamp-2">{product.team}</p>
+          <p className="text-[11px] text-gray-500">
+            {product.season ?? ''} · {MODEL_LABELS[product.model]} · {product.size}
+          </p>
           <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{formatCurrency(product.sell_price)}</p>
+          <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C] text-black text-xs font-bold uppercase py-2 tracking-wide">
+            Comprar
+          </span>
         </div>
       </div>
     </Link>
   )
 }
 
-function FilterChip({
+function Chip({
   label,
-  value,
-  options,
-  onChange,
+  active,
+  onClick,
+  small,
 }: {
   label: string
-  value: string
-  options: { value: string; label: string }[]
-  onChange: (value: string) => void
+  active: boolean
+  onClick: () => void
+  small?: boolean
 }) {
   return (
-    <div className="relative">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className={`appearance-none pl-3 pr-8 py-1.5 rounded-full text-sm font-medium border cursor-pointer transition ${
-          value
-            ? 'bg-[#141414] text-white border-[#141414]'
-            : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
-        }`}
-      >
-        <option value="">{label}</option>
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-      <svg
-        className={`pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 ${
-          value ? 'text-white' : 'text-gray-400'
-        }`}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-      </svg>
-    </div>
+    <button
+      onClick={onClick}
+      className={`whitespace-nowrap rounded-full transition-colors ${
+        small ? 'px-3 py-1.5 text-[11px]' : 'px-4 py-2 text-sm'
+      } ${
+        active
+          ? 'bg-[#C9A84C] text-black font-bold'
+          : 'border border-gray-600 text-gray-400 hover:border-[#C9A84C] font-medium'
+      }`}
+    >
+      {label}
+    </button>
   )
 }
