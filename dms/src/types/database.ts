@@ -365,6 +365,51 @@ export interface Database {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          id: string
+          name: string
+          whatsapp: string
+          product_id: string | null
+          team: string
+          model: string | null
+          size: string | null
+          sell_price: number | null
+          status: 'novo' | 'em_negociacao' | 'vendido' | 'desistiu'
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          whatsapp: string
+          product_id?: string | null
+          team: string
+          model?: string | null
+          size?: string | null
+          sell_price?: number | null
+          status?: 'novo' | 'em_negociacao' | 'vendido' | 'desistiu'
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          whatsapp?: string
+          product_id?: string | null
+          team?: string
+          model?: string | null
+          size?: string | null
+          sell_price?: number | null
+          status?: 'novo' | 'em_negociacao' | 'vendido' | 'desistiu'
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
