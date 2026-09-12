@@ -142,28 +142,20 @@ export function Sidebar({ userName, userRole, onSignOut }: SidebarProps) {
       </div>
 
       <div className="border-t border-gray-100 px-4 py-4">
-        <div className="flex items-center gap-3">
+        <Link
+          href="/conta"
+          className={`flex items-center gap-3 rounded-xl px-2 py-2.5 transition-colors ${
+            pathname === '/conta' ? 'bg-primary-900 text-white' : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
+          }`}
+        >
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-900 font-semibold text-sm">
             {userName?.charAt(0)?.toUpperCase() ?? '?'}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-gray-900">{userName ?? 'Usuário'}</p>
-            <p className="truncate text-xs text-gray-400">{userRole ?? ''}</p>
+            <p className="truncate text-sm font-medium">{userName ?? 'Usuário'}</p>
+            <p className={`truncate text-xs ${pathname === '/conta' ? 'text-white/60' : 'text-gray-400'}`}>Conta e senha</p>
           </div>
-          <button
-            onClick={onSignOut}
-            aria-label="Sair"
-            className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-          </button>
-        </div>
+        </Link>
       </div>
     </aside>
   )
