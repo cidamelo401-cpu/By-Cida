@@ -280,20 +280,20 @@ export default function CatalogoPage() {
     <div className="min-h-screen bg-[#0A0A0A]">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-[#0A0A0A]/95 backdrop-blur border-b border-white/5">
-        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-          <Link href="/catalogo" className="flex items-center gap-3">
+        <div className="mx-auto max-w-6xl px-4 py-3.5 flex items-center justify-between">
+          <Link href="/catalogo" className="flex items-center gap-3.5">
             <Image
               src="/logo-dms-sports.jpg"
               alt="DMS Sports"
-              width={44}
-              height={44}
+              width={56}
+              height={56}
               className="rounded-xl"
             />
             <div>
-              <p className="text-lg font-extrabold leading-tight text-white tracking-tight">
+              <p className="text-xl sm:text-2xl font-extrabold leading-tight text-white tracking-tight">
                 DMS <span className="text-[#C9A84C]">Sports</span>
               </p>
-              <p className="text-[11px] text-gray-400 font-medium">Camisas de Futebol</p>
+              <p className="text-xs text-gray-400 font-medium">Camisas de Futebol</p>
             </div>
           </Link>
           <a
