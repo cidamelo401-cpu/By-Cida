@@ -38,6 +38,7 @@ const TEAM_SEARCH_NAMES: Record<string, string> = {
   'Juventus': 'Juventus',
   'Liverpool': 'Liverpool',
   'Manchester City': 'Manchester City',
+  'Manchester United': 'Manchester United',
   'México': 'Mexico',
   'Napoli': 'Napoli',
   'Noruega': 'Norway',
@@ -45,6 +46,7 @@ const TEAM_SEARCH_NAMES: Record<string, string> = {
   'Palmeiras': 'Palmeiras',
   'Portugal': 'Portugal',
   'Santos': 'Santos',
+  'Real Madrid': 'Real Madrid',
   'São Paulo': 'Sao Paulo',
   'USA': 'USA',
   'Valência': 'Valencia CF',
@@ -66,9 +68,11 @@ const TEAM_COLORS: Record<string, { bg: string; text: string }> = {
   'Juventus': { bg: '#000', text: '#fff' },
   'Liverpool': { bg: '#C8102E', text: '#fff' },
   'Manchester City': { bg: '#6CABDD', text: '#1C2C5B' },
+  'Manchester United': { bg: '#DA291C', text: '#fff' },
   'Napoli': { bg: '#12A0D7', text: '#fff' },
   'Palmeiras': { bg: '#006437', text: '#fff' },
   'PSV': { bg: '#ED1C24', text: '#fff' },
+  'Real Madrid': { bg: '#FEBE10', text: '#00529F' },
   'Santos': { bg: '#fff', text: '#000' },
   'São Paulo': { bg: '#FF0000', text: '#fff' },
   'Vasco': { bg: '#000', text: '#fff' },
@@ -89,7 +93,8 @@ const TEAM_COLORS: Record<string, { bg: string; text: string }> = {
 function getInitials(team: string): string {
   const map: Record<string, string> = {
     'Al-Hilal': 'AH', 'Borussia Dortmund': 'BVB', 'Boca Juniors': 'BOC',
-    'Inter Miami': 'MIA', 'Manchester City': 'MCI', 'São Paulo': 'SPF',
+    'Inter Miami': 'MIA', 'Manchester City': 'MCI', 'Manchester United': 'MUN',
+    'Real Madrid': 'RMA', 'São Paulo': 'SPF',
   }
   if (map[team]) return map[team]
   const words = team.split(/\s+/)
