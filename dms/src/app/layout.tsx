@@ -14,8 +14,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DMS Sports",
-  description: "Gestão de estoque e vendas — DMS Sports",
+  title: "DMS Sports — Painel de Gestão",
+  description: "Gestão de estoque, vendas e leads — DMS Sports",
+  openGraph: {
+    title: "DMS Sports — Painel de Gestão",
+    description: "Gestão de estoque, vendas e leads — DMS Sports",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "DMS Sports — Painel de Gestão",
+    description: "Gestão de estoque, vendas e leads — DMS Sports",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
