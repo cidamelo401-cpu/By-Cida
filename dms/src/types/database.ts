@@ -375,7 +375,7 @@ export interface Database {
           model: string | null
           size: string | null
           sell_price: number | null
-          status: 'novo' | 'em_negociacao' | 'vendido' | 'desistiu'
+          status: 'novo' | 'em_negociacao' | 'reservado' | 'vendido' | 'desistiu'
           notes: string | null
           created_at: string
           updated_at: string
@@ -389,7 +389,7 @@ export interface Database {
           model?: string | null
           size?: string | null
           sell_price?: number | null
-          status?: 'novo' | 'em_negociacao' | 'vendido' | 'desistiu'
+          status?: 'novo' | 'em_negociacao' | 'reservado' | 'vendido' | 'desistiu'
           notes?: string | null
           created_at?: string
           updated_at?: string
@@ -403,7 +403,7 @@ export interface Database {
           model?: string | null
           size?: string | null
           sell_price?: number | null
-          status?: 'novo' | 'em_negociacao' | 'vendido' | 'desistiu'
+          status?: 'novo' | 'em_negociacao' | 'reservado' | 'vendido' | 'desistiu'
           notes?: string | null
           created_at?: string
           updated_at?: string
