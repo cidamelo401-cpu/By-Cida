@@ -146,6 +146,37 @@ export default function CatalogoPage() {
         </div>
       </section>
 
+      {/* Quick badge bar — horizontal scroll with team crests */}
+      {!loading && teams.length > 0 && (
+        <section className="mx-auto max-w-6xl px-4 pb-4">
+          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4">
+            {teams.map((team) => (
+              <Link
+                key={team.name}
+                href={teamHref(team)}
+                className="flex-shrink-0 flex flex-col items-center gap-1.5 w-16 group"
+              >
+                <div className="w-14 h-14 rounded-full bg-[#1A1A1A] border-2 border-white/10 group-hover:border-[#C9A84C] transition-colors flex items-center justify-center overflow-hidden">
+                  {badges[team.name] ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={badges[team.name]}
+                      alt={team.name}
+                      className="w-10 h-10 object-contain"
+                    />
+                  ) : (
+                    <TeamBadge team={team.name} badgeUrl={undefined} size="sm" />
+                  )}
+                </div>
+                <span className="text-[10px] text-gray-400 group-hover:text-white text-center leading-tight line-clamp-2 transition-colors">
+                  {team.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Collection filter tabs (only if there are real collections) */}
       {collections.length > 1 && (
         <section className="mx-auto max-w-6xl px-4 pb-4">
