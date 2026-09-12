@@ -2,12 +2,24 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
 
 export default function CatalogHeader() {
+  const pathname = usePathname()
+  const router = useRouter()
+
+  function handleLogoClick(e: React.MouseEvent) {
+    if (pathname === '/catalogo') {
+      e.preventDefault()
+      router.refresh()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   return (
     <header className="sticky top-0 z-30 bg-[#0A0A0A]/95 backdrop-blur border-b border-white/5">
       <div className="mx-auto max-w-6xl px-4 py-3.5 flex items-center justify-between">
-        <Link href="/catalogo" className="flex items-center gap-3.5">
+        <Link href="/catalogo" onClick={handleLogoClick} className="flex items-center gap-3.5">
           <Image
             src="/logo-dms-sports.jpg"
             alt="DMS Sports"
