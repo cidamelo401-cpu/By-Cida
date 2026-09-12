@@ -19,7 +19,7 @@ import {
   Select,
   Textarea,
 } from '@/components/ui'
-import { registerStockMovement, archiveProduct } from '@/lib/actions/products'
+import { registerStockMovement, archiveProduct, deleteProduct } from '@/lib/actions/products'
 import { formatCurrency, formatDateTime } from '@/lib/utils/format'
 import {
   MODEL_LABELS,
@@ -59,6 +59,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const [archiveOpen, setArchiveOpen] = useState(false)
   const [archiving, setArchiving] = useState(false)
+
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const [reloadTick, setReloadTick] = useState(0)
 
@@ -124,6 +127,20 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       toast.error('Erro ao arquivar produto.')
     } finally {
       setArchiving(false)
+    }
+  }
+
+  async function handleDelete() {
+    if (!product) return
+    setDeleting(true)
+    try {
+      await deleteProduct(product.id)
+      toast.success('Produto excluído permanentemente.')
+      router.push('/produtos')
+    } catch {
+      toast.error('Erro ao excluir produto.')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -267,6 +284,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               {product.archived ? 'Reativar' : 'Arquivar'}
             </Button>
           )}
+          {isAdmin && (
+            <Button variant="danger" onClick={() => setDeleteOpen(true)}>
+              Excluir
+            </Button>
+          )}
         </div>
 
         <Card className="p-5">
@@ -361,6 +383,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         loading={archiving}
         onConfirm={handleArchive}
         onCancel={() => setArchiveOpen(false)}
+      />
+
+      <ConfirmDialog
+        open={deleteOpen}
+        title="Excluir produto permanentemente?"
+        description="Esta ação não pode ser desfeita. O produto e todo o seu histórico de movimentações serão apagados."
+        confirmLabel="Excluir"
+        danger
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteOpen(false)}
       />
     </AppLayout>
   )
