@@ -10,11 +10,168 @@ import {
   SIZE_OPTIONS,
   VERSION_LABELS,
 } from '@/lib/constants/products'
-import type { Database, ProductSize, ProductVersion } from '@/types/database'
+import type { Database, ProductSize } from '@/types/database'
 
 type Product = Database['public']['Tables']['products']['Row']
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '5511992963041'
+
+/* ── TheSportsDB search names for each team ── */
+const TEAM_SEARCH_NAMES: Record<string, string> = {
+  'Al-Hilal': 'Al-Hilal',
+  'Alemanha': 'Germany',
+  'Arsenal': 'Arsenal',
+  'Barcelona': 'Barcelona',
+  'Bayern': 'Bayern Munich',
+  'Benfica': 'Benfica',
+  'Boca Juniors': 'Boca Juniors',
+  'Borussia Dortmund': 'Borussia Dortmund',
+  'Brasil': 'Brazil',
+  'Bélgica': 'Belgium',
+  'Chelsea': 'Chelsea',
+  'Corinthians': 'Corinthians',
+  'Espanha': 'Spain',
+  'França': 'France',
+  'Inter Miami': 'Inter Miami',
+  'Itália': 'Italy',
+  'Japão': 'Japan',
+  'Juventus': 'Juventus',
+  'Liverpool': 'Liverpool',
+  'Manchester City': 'Manchester City',
+  'México': 'Mexico',
+  'Napoli': 'Napoli',
+  'Noruega': 'Norway',
+  'PSV': 'PSV',
+  'Palmeiras': 'Palmeiras',
+  'Portugal': 'Portugal',
+  'Santos': 'Santos',
+  'São Paulo': 'Sao Paulo',
+  'USA': 'USA',
+  'Valência': 'Valencia CF',
+  'Vasco': 'Vasco da Gama',
+}
+
+/* ── Fallback colors when badge image fails ── */
+const TEAM_COLORS: Record<string, { bg: string; text: string }> = {
+  'Al-Hilal': { bg: '#1A3F8F', text: '#fff' },
+  'Arsenal': { bg: '#EF0107', text: '#fff' },
+  'Barcelona': { bg: '#A50044', text: '#EDBB00' },
+  'Bayern': { bg: '#DC052D', text: '#fff' },
+  'Benfica': { bg: '#E2001A', text: '#fff' },
+  'Boca Juniors': { bg: '#002D6A', text: '#FFD700' },
+  'Borussia Dortmund': { bg: '#FDE100', text: '#000' },
+  'Chelsea': { bg: '#034694', text: '#fff' },
+  'Corinthians': { bg: '#000', text: '#fff' },
+  'Inter Miami': { bg: '#F7B5CD', text: '#231F20' },
+  'Juventus': { bg: '#000', text: '#fff' },
+  'Liverpool': { bg: '#C8102E', text: '#fff' },
+  'Manchester City': { bg: '#6CABDD', text: '#1C2C5B' },
+  'Napoli': { bg: '#12A0D7', text: '#fff' },
+  'Palmeiras': { bg: '#006437', text: '#fff' },
+  'PSV': { bg: '#ED1C24', text: '#fff' },
+  'Santos': { bg: '#fff', text: '#000' },
+  'São Paulo': { bg: '#FF0000', text: '#fff' },
+  'Vasco': { bg: '#000', text: '#fff' },
+  'Brasil': { bg: '#FFDF00', text: '#009739' },
+  'Alemanha': { bg: '#000', text: '#fff' },
+  'Bélgica': { bg: '#ED2939', text: '#FFD700' },
+  'Espanha': { bg: '#AA151B', text: '#F1BF00' },
+  'França': { bg: '#002395', text: '#fff' },
+  'Itália': { bg: '#0066B3', text: '#fff' },
+  'Japão': { bg: '#002868', text: '#fff' },
+  'México': { bg: '#006847', text: '#fff' },
+  'Noruega': { bg: '#EF2B2D', text: '#002868' },
+  'Portugal': { bg: '#006600', text: '#FF0000' },
+  'USA': { bg: '#002868', text: '#BF0A30' },
+  'Valência': { bg: '#FF4500', text: '#000' },
+}
+
+function getInitials(team: string): string {
+  const map: Record<string, string> = {
+    'Al-Hilal': 'AH', 'Borussia Dortmund': 'BVB', 'Boca Juniors': 'BOC',
+    'Inter Miami': 'MIA', 'Manchester City': 'MCI', 'São Paulo': 'SPF',
+  }
+  if (map[team]) return map[team]
+  const words = team.split(/\s+/)
+  if (words.length === 1) return team.slice(0, 3).toUpperCase()
+  return words.map((w) => w[0]).join('').toUpperCase().slice(0, 3)
+}
+
+/* ── Hook to fetch team badges from TheSportsDB ── */
+function useTeamBadges(teams: string[]) {
+  const [badges, setBadges] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    if (teams.length === 0) return
+
+    // Try to load from localStorage cache first
+    const CACHE_KEY = 'dms_team_badges'
+    const CACHE_TTL = 7 * 24 * 60 * 60 * 1000 // 7 days
+    try {
+      const cached = localStorage.getItem(CACHE_KEY)
+      if (cached) {
+        const { data, ts } = JSON.parse(cached)
+        if (Date.now() - ts < CACHE_TTL && data && typeof data === 'object') {
+          setBadges(data)
+          // Still fetch missing teams
+          const missing = teams.filter((t) => !data[t])
+          if (missing.length === 0) return
+        }
+      }
+    } catch { /* ignore */ }
+
+    // Fetch badges from TheSportsDB
+    let cancelled = false
+
+    async function fetchBadges() {
+      const results: Record<string, string> = {}
+
+      // Fetch in batches of 5 to avoid overwhelming the API
+      for (let i = 0; i < teams.length; i += 5) {
+        if (cancelled) break
+        const batch = teams.slice(i, i + 5)
+
+        await Promise.all(
+          batch.map(async (team) => {
+            const searchName = TEAM_SEARCH_NAMES[team] ?? team
+            try {
+              const res = await fetch(
+                `https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(searchName)}`
+              )
+              if (!res.ok) return
+              const json = await res.json()
+              const badge = json?.teams?.[0]?.strBadge
+              if (badge) {
+                results[team] = badge
+              }
+            } catch { /* ignore failed fetches */ }
+          })
+        )
+
+        // Small delay between batches
+        if (i + 5 < teams.length) {
+          await new Promise((r) => setTimeout(r, 200))
+        }
+      }
+
+      if (cancelled) return
+
+      setBadges((prev) => {
+        const merged = { ...prev, ...results }
+        // Cache to localStorage
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ data: merged, ts: Date.now() }))
+        } catch { /* ignore */ }
+        return merged
+      })
+    }
+
+    fetchBadges()
+    return () => { cancelled = true }
+  }, [teams])
+
+  return badges
+}
 
 function ShirtPlaceholder() {
   return (
@@ -28,11 +185,8 @@ export default function CatalogoPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-
   const [sizeFilter, setSizeFilter] = useState<ProductSize | ''>('')
-  const [versionFilter, setVersionFilter] = useState<ProductVersion | ''>('')
   const [teamFilter, setTeamFilter] = useState('')
-
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -71,18 +225,19 @@ export default function CatalogoPage() {
     return Array.from(set).sort()
   }, [products])
 
+  const badges = useTeamBadges(teams)
+
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase()
     return products.filter((p) => {
       if (term && !p.team.toLowerCase().includes(term)) return false
       if (sizeFilter && p.size !== sizeFilter) return false
-      if (versionFilter && p.version !== versionFilter) return false
       if (teamFilter && p.team !== teamFilter) return false
       return true
     })
-  }, [products, search, sizeFilter, versionFilter, teamFilter])
+  }, [products, search, sizeFilter, teamFilter])
 
-  const hasFilters = Boolean(sizeFilter || versionFilter || teamFilter)
+  const hasFilters = Boolean(sizeFilter || teamFilter)
 
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
@@ -147,25 +302,41 @@ export default function CatalogoPage() {
             />
           </div>
 
-          {/* Team badges carousel */}
+          {/* Team badges carousel — real escudos */}
           {teams.length > 0 && (
-            <div className="mt-5">
+            <div className="mt-6">
               <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-500 mb-3">
                 Filtre por time
               </p>
-              <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-                <TeamBadge
-                  team="Todos"
-                  initials="⚽"
-                  active={teamFilter === ''}
+              <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 scrollbar-hide">
+                {/* "Todos" button */}
+                <button
                   onClick={() => setTeamFilter('')}
-                />
+                  className="flex flex-col items-center gap-2 shrink-0 group"
+                >
+                  <div
+                    className={`h-16 w-16 rounded-full flex items-center justify-center text-2xl transition-all border-2 bg-[#1A1A1A] ${
+                      teamFilter === ''
+                        ? 'border-[#C9A84C] scale-110 shadow-[0_0_16px_rgba(201,168,76,0.5)]'
+                        : 'border-white/10 group-hover:border-white/30'
+                    }`}
+                  >
+                    ⚽
+                  </div>
+                  <span
+                    className={`text-[10px] font-semibold transition-colors ${
+                      teamFilter === '' ? 'text-[#C9A84C]' : 'text-gray-500 group-hover:text-gray-300'
+                    }`}
+                  >
+                    Todos
+                  </span>
+                </button>
+
                 {teams.map((team) => (
                   <TeamBadge
                     key={team}
                     team={team}
-                    initials={getTeamInitials(team)}
-                    colors={getTeamColors(team)}
+                    badgeUrl={badges[team]}
                     active={teamFilter === team}
                     onClick={() => setTeamFilter(teamFilter === team ? '' : team)}
                   />
@@ -175,7 +346,7 @@ export default function CatalogoPage() {
           )}
 
           {/* Size chips */}
-          <div className="mt-4 flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
             <Chip
               small
               label="TODOS"
@@ -197,7 +368,6 @@ export default function CatalogoPage() {
             <button
               onClick={() => {
                 setSizeFilter('')
-                setVersionFilter('')
                 setTeamFilter('')
               }}
               className="mt-3 text-xs font-medium text-gray-500 hover:text-[#C9A84C] transition-colors"
@@ -300,6 +470,60 @@ export default function CatalogoPage() {
   )
 }
 
+/* ── Team Badge with real crest image ── */
+function TeamBadge({
+  team,
+  badgeUrl,
+  active,
+  onClick,
+}: {
+  team: string
+  badgeUrl?: string
+  active: boolean
+  onClick: () => void
+}) {
+  const [imgError, setImgError] = useState(false)
+  const colors = TEAM_COLORS[team] ?? { bg: '#333', text: '#fff' }
+
+  return (
+    <button
+      onClick={onClick}
+      className="flex flex-col items-center gap-2 shrink-0 group"
+    >
+      <div
+        className={`h-16 w-16 rounded-full flex items-center justify-center overflow-hidden transition-all border-2 ${
+          active
+            ? 'border-[#C9A84C] scale-110 shadow-[0_0_16px_rgba(201,168,76,0.5)]'
+            : 'border-white/10 group-hover:border-white/30'
+        }`}
+        style={!badgeUrl || imgError ? { backgroundColor: colors.bg } : { backgroundColor: '#151515' }}
+      >
+        {badgeUrl && !imgError ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={badgeUrl}
+            alt={team}
+            className="h-11 w-11 object-contain"
+            onError={() => setImgError(true)}
+            loading="lazy"
+          />
+        ) : (
+          <span className="text-xs font-extrabold" style={{ color: colors.text }}>
+            {getInitials(team)}
+          </span>
+        )}
+      </div>
+      <span
+        className={`text-[10px] font-semibold max-w-[64px] truncate text-center transition-colors ${
+          active ? 'text-[#C9A84C]' : 'text-gray-500 group-hover:text-gray-300'
+        }`}
+      >
+        {team}
+      </span>
+    </button>
+  )
+}
+
 function CatalogCard({ product }: { product: Product }) {
   return (
     <Link href={`/catalogo/${product.id}`}>
@@ -360,98 +584,4 @@ function Chip({
       {label}
     </button>
   )
-}
-
-function TeamBadge({
-  team,
-  initials,
-  colors,
-  active,
-  onClick,
-}: {
-  team: string
-  initials: string
-  colors?: { bg: string; text: string }
-  active: boolean
-  onClick: () => void
-}) {
-  const bg = colors?.bg ?? '#C9A84C'
-  const text = colors?.text ?? '#000'
-  return (
-    <button
-      onClick={onClick}
-      className="flex flex-col items-center gap-1.5 shrink-0 group"
-    >
-      <div
-        className={`h-14 w-14 rounded-full flex items-center justify-center text-sm font-extrabold transition-all border-2 ${
-          active
-            ? 'border-[#C9A84C] scale-110 shadow-[0_0_12px_rgba(201,168,76,0.4)]'
-            : 'border-transparent group-hover:border-white/20'
-        }`}
-        style={{ backgroundColor: bg, color: text }}
-      >
-        {initials}
-      </div>
-      <span
-        className={`text-[10px] font-medium max-w-[60px] truncate transition-colors ${
-          active ? 'text-[#C9A84C]' : 'text-gray-500 group-hover:text-gray-300'
-        }`}
-      >
-        {team}
-      </span>
-    </button>
-  )
-}
-
-const TEAM_COLORS: Record<string, { bg: string; text: string }> = {
-  'Al-Hilal': { bg: '#1A3F8F', text: '#fff' },
-  'Arsenal': { bg: '#EF0107', text: '#fff' },
-  'Barcelona': { bg: '#A50044', text: '#EDBB00' },
-  'Bayern': { bg: '#DC052D', text: '#fff' },
-  'Benfica': { bg: '#E2001A', text: '#fff' },
-  'Boca Juniors': { bg: '#002D6A', text: '#FFD700' },
-  'Borussia Dortmund': { bg: '#FDE100', text: '#000' },
-  'Chelsea': { bg: '#034694', text: '#fff' },
-  'Corinthians': { bg: '#000', text: '#fff' },
-  'Inter Miami': { bg: '#F7B5CD', text: '#231F20' },
-  'Juventus': { bg: '#000', text: '#fff' },
-  'Liverpool': { bg: '#C8102E', text: '#fff' },
-  'Manchester City': { bg: '#6CABDD', text: '#1C2C5B' },
-  'Napoli': { bg: '#12A0D7', text: '#fff' },
-  'Palmeiras': { bg: '#006437', text: '#fff' },
-  'PSV': { bg: '#ED1C24', text: '#fff' },
-  'Santos': { bg: '#fff', text: '#000' },
-  'São Paulo': { bg: '#FF0000', text: '#fff' },
-  'Vasco': { bg: '#000', text: '#fff' },
-  'Brasil': { bg: '#FFDF00', text: '#009739' },
-  'Alemanha': { bg: '#000', text: '#fff' },
-  'Bélgica': { bg: '#ED2939', text: '#FFD700' },
-  'Espanha': { bg: '#AA151B', text: '#F1BF00' },
-  'França': { bg: '#002395', text: '#fff' },
-  'Itália': { bg: '#0066B3', text: '#fff' },
-  'Japão': { bg: '#002868', text: '#fff' },
-  'México': { bg: '#006847', text: '#fff' },
-  'Noruega': { bg: '#EF2B2D', text: '#002868' },
-  'Portugal': { bg: '#006600', text: '#FF0000' },
-  'USA': { bg: '#002868', text: '#BF0A30' },
-  'Valência': { bg: '#FF4500', text: '#000' },
-}
-
-function getTeamColors(team: string): { bg: string; text: string } {
-  return TEAM_COLORS[team] ?? { bg: '#333', text: '#fff' }
-}
-
-function getTeamInitials(team: string): string {
-  const map: Record<string, string> = {
-    'Al-Hilal': 'AH',
-    'Borussia Dortmund': 'BVB',
-    'Boca Juniors': 'BOC',
-    'Inter Miami': 'MIA',
-    'Manchester City': 'MCI',
-    'São Paulo': 'SPF',
-  }
-  if (map[team]) return map[team]
-  const words = team.split(/\s+/)
-  if (words.length === 1) return team.slice(0, 3).toUpperCase()
-  return words.map((w) => w[0]).join('').toUpperCase().slice(0, 3)
 }
