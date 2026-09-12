@@ -31,6 +31,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showSizeChart, setShowSizeChart] = useState(false)
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0)
   const [showLeadModal, setShowLeadModal] = useState(false)
   const [leadName, setLeadName] = useState('')
   const [leadWhatsapp, setLeadWhatsapp] = useState('')
@@ -162,8 +163,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     )
   }
 
-  // Use photo from any sibling if current product doesn't have one
-  const photoUrl = product.photo_url || siblings.find((s) => s.photo_url)?.photo_url || null
+  // Build photos array: prefer photos field, fallback to photo_url, then sibling photo
+  const productPhotos: string[] = (product as any).photos?.length
+    ? (product as any).photos
+    : product.photo_url
+      ? [product.photo_url]
+      : []
+  const fallbackPhoto = siblings.find((s) => s.photo_url)?.photo_url
+  const allPhotos = productPhotos.length > 0 ? productPhotos : (fallbackPhoto ? [fallbackPhoto] : [])
+  const photoUrl = allPhotos[activePhotoIndex] ?? allPhotos[0] ?? null
 
   const sizeForMessage = selectedSize ?? product.size
   const whatsappMessage = `Oi! Vi a camisa ${product.team} tamanho ${sizeForMessage} no catálogo e tenho interesse!`
@@ -222,17 +230,39 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         </nav>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Image */}
-          <div className="rounded-2xl overflow-hidden bg-gradient-to-b from-[#0F1F12] to-[#1A1A1A] border border-white/5 aspect-square flex items-center justify-center">
-            {photoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={photoUrl}
-                alt={product.team}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <ShirtPlaceholder />
+          {/* Image Gallery */}
+          <div className="flex flex-col gap-3">
+            <div className="rounded-2xl overflow-hidden bg-gradient-to-b from-[#0F1F12] to-[#1A1A1A] border border-white/5 aspect-square flex items-center justify-center">
+              {photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={photoUrl}
+                  alt={product.team}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <ShirtPlaceholder />
+              )}
+            </div>
+
+            {allPhotos.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {allPhotos.map((url, index) => (
+                  <button
+                    key={url}
+                    type="button"
+                    onClick={() => setActivePhotoIndex(index)}
+                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                      index === activePhotoIndex
+                        ? 'border-[#C9A84C] shadow-[0_0_8px_rgba(201,168,76,0.3)]'
+                        : 'border-white/10 hover:border-white/30'
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url} alt={`Foto ${index + 1}`} className="h-full w-full object-cover" />
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 

@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Button, Card, EmptyState, Input, LoadingSpinner, PhotoUpload, Select, Textarea } from '@/components/ui'
+import { Button, Card, EmptyState, Input, LoadingSpinner, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
 import { formatCurrency, parseCurrency } from '@/lib/utils/format'
 import { MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
 import type { Database, ProductModel, ProductSize, ProductVersion } from '@/types/database'
@@ -34,6 +34,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     sell_price: 0,
     supplier: '',
     photo_url: '',
+    photos: [] as string[],
     notes: '',
     min_stock: '2',
   })
@@ -56,6 +57,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           sell_price: data.sell_price,
           supplier: data.supplier ?? '',
           photo_url: data.photo_url ?? '',
+          photos: (data as any).photos?.length ? (data as any).photos : (data.photo_url ? [data.photo_url] : []),
           notes: data.notes ?? '',
           min_stock: String(data.min_stock),
         })
@@ -99,7 +101,8 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           cost_price: form.cost_price,
           sell_price: form.sell_price,
           supplier: form.supplier.trim() || null,
-          photo_url: form.photo_url.trim() || null,
+          photo_url: form.photos[0]?.trim() || form.photo_url.trim() || null,
+          photos: form.photos.length > 0 ? form.photos : null,
           notes: form.notes.trim() || null,
           min_stock: Number(form.min_stock) || 0,
         })
@@ -226,9 +229,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             value={form.supplier}
             onChange={(e) => updateField('supplier', e.target.value)}
           />
-          <PhotoUpload
-            value={form.photo_url}
-            onChange={(url) => updateField('photo_url', url)}
+          <MultiPhotoUpload
+            photos={form.photos}
+            onChange={(photos) => {
+              updateField('photos', photos)
+              updateField('photo_url', photos[0] ?? '')
+            }}
             disabled={saving}
           />
         </Card>
