@@ -63,6 +63,28 @@ export const COMMON_TEAMS = [
   'Vasco',
 ]
 
+/** Display labels for sizes in the public catalog (international naming) */
+export const CATALOG_SIZE_LABELS: Record<ProductSize, string> = {
+  T20: 'T20',
+  T22: 'T22',
+  T24: 'T24',
+  T26: 'T26',
+  T28: 'T28',
+  PP: 'XS',
+  P: 'S',
+  M: 'M',
+  G: 'L',
+  GG: 'XL',
+  '2XG': '2XL',
+  '3XG': '3XL',
+}
+
+/** Collection header images for the catalog */
+/** Collection header images for the catalog */
+export const COLLECTION_IMAGES: Record<string, string> = {
+  'Copa': '/copa-do-mundo-2026.png',
+}
+
 export const MOVEMENT_TYPE_LABELS: Record<string, string> = {
   entrada: 'Entrada',
   venda: 'Venda',

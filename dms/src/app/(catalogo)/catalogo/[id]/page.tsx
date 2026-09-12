@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, getWhatsAppLink } from '@/lib/utils/format'
-import { MODEL_LABELS, VERSION_LABELS } from '@/lib/constants/products'
+import { MODEL_LABELS, VERSION_LABELS, CATALOG_SIZE_LABELS } from '@/lib/constants/products'
 import type { Database, ProductSize } from '@/types/database'
 
 type Product = Database['public']['Tables']['products']['Row']
@@ -174,7 +174,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const photoUrl = allPhotos[activePhotoIndex] ?? allPhotos[0] ?? null
 
   const sizeForMessage = selectedSize ?? product.size
-  const whatsappMessage = `Oi! Vi a camisa ${product.team} tamanho ${sizeForMessage} no catálogo e tenho interesse!`
+  const sizeLabel = CATALOG_SIZE_LABELS[sizeForMessage] ?? sizeForMessage
+  const whatsappMessage = `Oi! Vi a camisa ${product.team} tamanho ${sizeLabel} no catálogo e tenho interesse!`
   const whatsappUrl = getWhatsAppLink(WHATSAPP_NUMBER, whatsappMessage)
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
@@ -185,7 +186,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       const cleanPhone = leadWhatsapp.replace(/\D/g, '')
       const phone = cleanPhone.startsWith('55') ? cleanPhone : '55' + cleanPhone
 
-      await supabase.from('leads').insert({
+      // Build WhatsApp URL before any async work (to avoid popup blocker)
+      const msg = `Oi! Meu nome é ${leadName.trim()}. Vi a camisa ${product!.team} tamanho ${sizeLabel} no catálogo e tenho interesse!`
+      const url = getWhatsAppLink(WHATSAPP_NUMBER, msg)
+
+      // Save lead in background — don't block the redirect
+      supabase.from('leads').insert({
         name: leadName.trim(),
         whatsapp: phone,
         product_id: product!.id,
@@ -193,19 +199,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         model: product!.model,
         size: sizeForMessage,
         sell_price: product!.sell_price,
-      })
+      }).then(() => {}).catch((err) => console.error('Error saving lead:', err))
 
-      // Build WhatsApp message with name
-      const msg = `Oi! Meu nome é ${leadName.trim()}. Vi a camisa ${product!.team} tamanho ${sizeForMessage} no catálogo e tenho interesse!`
-      const url = getWhatsAppLink(WHATSAPP_NUMBER, msg)
-      window.open(url, '_blank')
+      // Redirect immediately (no await = no popup block)
+      window.location.href = url
       setShowLeadModal(false)
       setLeadName('')
       setLeadWhatsapp('')
     } catch (err) {
-      console.error('Error saving lead:', err)
-      // Even if save fails, still redirect to WhatsApp
-      window.open(whatsappUrl, '_blank')
+      console.error('Error in lead flow:', err)
+      // Even if something fails, still redirect to WhatsApp
+      window.location.href = whatsappUrl
       setShowLeadModal(false)
     } finally {
       setSavingLead(false)
@@ -297,7 +301,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                           : 'bg-[#1A1A1A] border border-white/10 text-gray-300 hover:border-[#C9A84C]/50'
                       }`}
                     >
-                      {sib.size}
+                      {CATALOG_SIZE_LABELS[sib.size] ?? sib.size}
                     </button>
                   ))}
                 </div>
@@ -306,7 +310,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
             {siblings.length <= 1 && (
               <div className="mt-4">
-                <InfoChip>Tamanho {product.size}</InfoChip>
+                <InfoChip>Tamanho {CATALOG_SIZE_LABELS[product.size] ?? product.size}</InfoChip>
               </div>
             )}
 
@@ -428,19 +432,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   </thead>
                   <tbody className="text-gray-300">
                     {[
-                      { size: 'PP', length: '67-69', width: '51-53', height: '155-162', weight: '45-50' },
-                      { size: 'P', length: '69-71', width: '53-55', height: '162-170', weight: '50-62' },
-                      { size: 'M', length: '71-73', width: '55-57', height: '170-176', weight: '62-78' },
-                      { size: 'G', length: '73-75', width: '57-58', height: '176-182', weight: '78-83' },
-                      { size: 'GG', length: '75-78', width: '58-60', height: '182-190', weight: '83-90' },
-                      { size: '2XG', length: '78-81', width: '60-62', height: '190-195', weight: '90-97' },
-                      { size: '3XG', length: '81-83', width: '62-64', height: '192-197', weight: '97-104' },
+                      { size: 'PP', label: 'XS', length: '67-69', width: '51-53', height: '155-162', weight: '45-50' },
+                      { size: 'P', label: 'S', length: '69-71', width: '53-55', height: '162-170', weight: '50-62' },
+                      { size: 'M', label: 'M', length: '71-73', width: '55-57', height: '170-176', weight: '62-78' },
+                      { size: 'G', label: 'L', length: '73-75', width: '57-58', height: '176-182', weight: '78-83' },
+                      { size: 'GG', label: 'XL', length: '75-78', width: '58-60', height: '182-190', weight: '83-90' },
+                      { size: '2XG', label: '2XL', length: '78-81', width: '60-62', height: '190-195', weight: '90-97' },
+                      { size: '3XG', label: '3XL', length: '81-83', width: '62-64', height: '192-197', weight: '97-104' },
                     ].map((row) => (
                       <tr
                         key={row.size}
                         className={`border-b border-white/5 ${selectedSize === row.size ? 'bg-[#C9A84C]/15 text-[#C9A84C] font-bold' : ''}`}
                       >
-                        <td className="py-2.5 px-2 font-semibold">{row.size}</td>
+                        <td className="py-2.5 px-2 font-semibold">{row.label}</td>
                         <td className="py-2.5 px-2 text-center text-xs">{row.length}</td>
                         <td className="py-2.5 px-2 text-center text-xs">{row.width}</td>
                         <td className="py-2.5 px-2 text-center text-xs">{row.height}</td>

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils/format'
-import { MODEL_LABELS } from '@/lib/constants/products'
+import { MODEL_LABELS, CATALOG_SIZE_LABELS, COLLECTION_IMAGES } from '@/lib/constants/products'
 import type { Database, ProductSize } from '@/types/database'
 import CatalogShell from './_components/CatalogShell'
 import TeamBadge from './_components/TeamBadge'
@@ -271,19 +271,27 @@ export default function CatalogoPage() {
                 >
                   Todas as Coleções
                 </button>
-                {collections.map((col) => (
-                  <button
-                    key={col.name}
-                    onClick={() => handleCollectionTab(col.name)}
-                    className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
-                      activeCollection === col.name
-                        ? 'bg-[#C9A84C] text-black'
-                        : 'bg-white/10 text-gray-400 hover:bg-white/20'
-                    }`}
-                  >
-                    {col.name === '__outros__' ? 'Outros' : col.name} ({col.count})
-                  </button>
-                ))}
+                {collections.map((col) => {
+                  const colLabel = col.name === '__outros__' ? 'Outros' : col.name
+                  const colImage = COLLECTION_IMAGES[colLabel]
+                  return (
+                    <button
+                      key={col.name}
+                      onClick={() => handleCollectionTab(col.name)}
+                      className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors flex items-center gap-1.5 ${
+                        activeCollection === col.name
+                          ? 'bg-[#C9A84C] text-black'
+                          : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                      }`}
+                    >
+                      {colImage && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={colImage} alt={colLabel} className="w-5 h-5 object-contain rounded-sm" />
+                      )}
+                      {colLabel} ({col.count})
+                    </button>
+                  )
+                })}
               </>
             )}
           </div>
@@ -421,7 +429,7 @@ export default function CatalogoPage() {
                               key={s.size}
                               className="px-1.5 py-0.5 rounded bg-white/10 text-[10px] font-semibold text-gray-300"
                             >
-                              {s.size}
+                              {CATALOG_SIZE_LABELS[s.size] ?? s.size}
                             </span>
                           ))}
                         </div>

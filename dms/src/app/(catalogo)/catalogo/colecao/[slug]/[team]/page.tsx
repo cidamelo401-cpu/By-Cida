@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, use as usePromise } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils/format'
-import { MODEL_LABELS } from '@/lib/constants/products'
+import { MODEL_LABELS, CATALOG_SIZE_LABELS } from '@/lib/constants/products'
 import type { Database, ProductSize } from '@/types/database'
 import CatalogShell from '../../../_components/CatalogShell'
 import TeamBadge from '../../../_components/TeamBadge'
@@ -190,7 +190,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
                             key={s.size}
                             className="px-1.5 py-0.5 rounded bg-white/10 text-[10px] font-semibold text-gray-300"
                           >
-                            {s.size}
+                            {CATALOG_SIZE_LABELS[s.size] ?? s.size}
                           </span>
                         ))}
                       </div>
