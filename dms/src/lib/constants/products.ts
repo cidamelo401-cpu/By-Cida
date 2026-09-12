@@ -80,9 +80,9 @@ export const CATALOG_SIZE_LABELS: Record<ProductSize, string> = {
 }
 
 /** Collection header images for the catalog */
+/** Collection header images for the catalog */
 export const COLLECTION_IMAGES: Record<string, string> = {
-  'Copa do Mundo': '/copa-do-mundo-2026.png',
-  'Copa do Mundo 2026': '/copa-do-mundo-2026.png',
+  'Copa': '/copa-do-mundo-2026.png',
 }
 
 export const MOVEMENT_TYPE_LABELS: Record<string, string> = {
