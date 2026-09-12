@@ -8,7 +8,6 @@ import { formatCurrency } from '@/lib/utils/format'
 import {
   MODEL_LABELS,
   SIZE_OPTIONS,
-  VERSION_LABELS,
 } from '@/lib/constants/products'
 import type { Database, ProductSize } from '@/types/database'
 
@@ -232,14 +231,47 @@ export default function CatalogoPage() {
 
   const badges = useTeamBadges(teams)
 
-  const filtered = useMemo(() => {
+  /* ── Group products by shirt (team + model + color/notes) ── */
+  const grouped = useMemo(() => {
     const term = search.trim().toLowerCase()
-    return products.filter((p) => {
-      if (term && !p.team.toLowerCase().includes(term)) return false
-      if (sizeFilter && p.size !== sizeFilter) return false
-      if (teamFilter && p.team !== teamFilter) return false
-      return true
-    })
+    const map = new Map<string, GroupedShirt>()
+
+    for (const p of products) {
+      if (term && !p.team.toLowerCase().includes(term)) continue
+      if (teamFilter && p.team !== teamFilter) continue
+      if (sizeFilter && p.size !== sizeFilter) continue
+
+      // Group key: same shirt = same team + model + season + color (from notes)
+      const colorNote = p.notes?.match(/Cor:\s*(\w+)/i)?.[1] ?? ''
+      const key = `${p.team}|${p.model}|${p.season ?? ''}|${colorNote}`
+
+      const existing = map.get(key)
+      if (existing) {
+        existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
+        // Use photo if this variant has one and existing doesn't
+        if (!existing.photo_url && p.photo_url) existing.photo_url = p.photo_url
+      } else {
+        map.set(key, {
+          key,
+          team: p.team,
+          model: p.model,
+          season: p.season,
+          notes: p.notes,
+          photo_url: p.photo_url,
+          version: p.version,
+          sell_price: p.sell_price,
+          sizes: [{ size: p.size, quantity: p.quantity, id: p.id }],
+        })
+      }
+    }
+
+    // Sort sizes in each group
+    const sizeOrder = ['T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
+    for (const g of map.values()) {
+      g.sizes.sort((a, b) => sizeOrder.indexOf(a.size) - sizeOrder.indexOf(b.size))
+    }
+
+    return Array.from(map.values()).sort((a, b) => a.team.localeCompare(b.team))
   }, [products, search, sizeFilter, teamFilter])
 
   const hasFilters = Boolean(sizeFilter || teamFilter)
@@ -403,7 +435,7 @@ export default function CatalogoPage() {
             </svg>
             <span className="ml-3 text-sm text-gray-500">Carregando catálogo...</span>
           </div>
-        ) : filtered.length === 0 ? (
+        ) : grouped.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <ShirtPlaceholder />
             <p className="mt-4 font-semibold text-white">Nenhuma camisa encontrada</p>
@@ -412,11 +444,11 @@ export default function CatalogoPage() {
         ) : (
           <>
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-4">
-              {filtered.length} {filtered.length === 1 ? 'produto' : 'produtos'}
+              {grouped.length} {grouped.length === 1 ? 'camisa' : 'camisas'}
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {filtered.map((product) => (
-                <CatalogCard key={product.id} product={product} />
+              {grouped.map((shirt) => (
+                <CatalogCard key={shirt.key} shirt={shirt} />
               ))}
             </div>
           </>
@@ -529,32 +561,46 @@ function TeamBadge({
   )
 }
 
-function CatalogCard({ product }: { product: Product }) {
+function CatalogCard({ shirt }: { shirt: GroupedShirt }) {
+  const totalQty = shirt.sizes.reduce((sum, s) => sum + s.quantity, 0)
+  // Link to first product's detail page
+  const firstId = shirt.sizes[0]?.id
+
   return (
-    <Link href={`/catalogo/${product.id}`}>
+    <Link href={`/catalogo/${firstId}`}>
       <div className="bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5 hover:border-[#C9A84C]/40 transition-colors h-full flex flex-col">
         <div className="relative aspect-square bg-gradient-to-b from-[#0F1F12] to-[#1A1A1A] flex items-center justify-center">
-          {product.photo_url ? (
+          {shirt.photo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={product.photo_url} alt={product.team} className="h-full w-full object-cover" />
+            <img src={shirt.photo_url} alt={shirt.team} className="h-full w-full object-cover" />
           ) : (
             <ShirtPlaceholder />
           )}
-          <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur text-[9px] font-bold uppercase tracking-wide text-[#C9A84C] border border-[#C9A84C]/30">
-            {VERSION_LABELS[product.version]}
-          </span>
-          {product.quantity === 1 && (
+          {totalQty <= shirt.sizes.length && (
             <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-red-950/80 text-red-400 text-[9px] font-semibold">
-              Última unidade!
+              {totalQty === 1 ? 'Última unidade!' : 'Últimas unidades!'}
             </span>
           )}
         </div>
-        <div className="p-3 flex flex-col gap-1 flex-1">
-          <p className="font-semibold text-white text-sm leading-tight line-clamp-2">{product.team}</p>
+        <div className="p-3 flex flex-col gap-1.5 flex-1">
+          <p className="font-semibold text-white text-sm leading-tight line-clamp-2">{shirt.team}</p>
           <p className="text-[11px] text-gray-500">
-            {product.season ?? ''} · {MODEL_LABELS[product.model]} · {product.size}
+            {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}
           </p>
-          <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{formatCurrency(product.sell_price)}</p>
+
+          {/* Available sizes */}
+          <div className="flex flex-wrap gap-1 mt-1">
+            {shirt.sizes.map((s) => (
+              <span
+                key={s.size}
+                className="px-1.5 py-0.5 rounded bg-white/10 text-[10px] font-semibold text-gray-300"
+              >
+                {s.size}
+              </span>
+            ))}
+          </div>
+
+          <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{formatCurrency(shirt.sell_price)}</p>
           <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C] text-black text-xs font-bold uppercase py-2 tracking-wide">
             Comprar
           </span>
@@ -562,6 +608,19 @@ function CatalogCard({ product }: { product: Product }) {
       </div>
     </Link>
   )
+}
+
+/* ── Reuse the GroupedShirt type at module level ── */
+type GroupedShirt = {
+  key: string
+  team: string
+  model: Product['model']
+  season: string | null
+  notes: string | null
+  photo_url: string | null
+  version: Product['version']
+  sell_price: number
+  sizes: { size: Product['size']; quantity: number; id: string }[]
 }
 
 function Chip({
