@@ -284,11 +284,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               {product.archived ? 'Reativar' : 'Arquivar'}
             </Button>
           )}
-          {isAdmin && (
-            <Button variant="danger" onClick={() => setDeleteOpen(true)}>
-              Excluir
-            </Button>
-          )}
+          <Button variant="danger" onClick={() => setDeleteOpen(true)}>
+            🗑️ Excluir
+          </Button>
         </div>
 
         <Card className="p-5">
