@@ -22,6 +22,7 @@ import {
 import { registerStockMovement, archiveProduct, deleteProduct } from '@/lib/actions/products'
 import { formatCurrency, formatDateTime } from '@/lib/utils/format'
 import {
+  CATALOG_SIZE_LABELS,
   MODEL_LABELS,
   MOVEMENT_TYPE_LABELS,
   STATUS_BADGE,
@@ -233,7 +234,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
               <InfoItem label="Modelo" value={MODEL_LABELS[product.model]} />
               <InfoItem label="Versão" value={VERSION_LABELS[product.version]} />
-              <InfoItem label="Tamanho" value={product.size} />
+              <InfoItem label="Tamanho" value={CATALOG_SIZE_LABELS[product.size] ?? product.size} />
               <InfoItem label="SKU" value={product.sku ?? '—'} mono />
             </div>
 

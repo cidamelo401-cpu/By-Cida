@@ -3,6 +3,7 @@
 import CatalogHeader from './CatalogHeader'
 import CatalogFooter from './CatalogFooter'
 import WhatsAppFloat from './WhatsAppFloat'
+import CartFloat from './CartFloat'
 
 export default function CatalogShell({ children }: { children: React.ReactNode }) {
   return (
@@ -10,6 +11,7 @@ export default function CatalogShell({ children }: { children: React.ReactNode }
       <CatalogHeader />
       {children}
       <CatalogFooter />
+      <CartFloat />
       <WhatsAppFloat />
     </div>
   )

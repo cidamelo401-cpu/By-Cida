@@ -6,6 +6,8 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, getWhatsAppLink } from '@/lib/utils/format'
 import { MODEL_LABELS, VERSION_LABELS, CATALOG_SIZE_LABELS } from '@/lib/constants/products'
+import { useCart } from '../_components/useCart'
+import CartFloat from '../_components/CartFloat'
 import type { Database, ProductSize } from '@/types/database'
 
 type Product = Database['public']['Tables']['products']['Row']
@@ -36,6 +38,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [leadName, setLeadName] = useState('')
   const [leadWhatsapp, setLeadWhatsapp] = useState('')
   const [savingLead, setSavingLead] = useState(false)
+
+  const { addItem, isInCart } = useCart()
 
   useEffect(() => {
     async function load() {
@@ -97,17 +101,20 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   }, [id])
 
   const handleShare = async () => {
+    const shareText = `Olha que linda essa camisa que eu vi na DMS Sports! 🔥⚽`
+    const shareUrl = typeof window !== 'undefined' ? window.location.href : ''
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share({
           title: product?.team ?? 'DMS Sports',
-          url: typeof window !== 'undefined' ? window.location.href : '',
+          text: shareText,
+          url: shareUrl,
         })
       } catch {
         // user cancelled share — ignore
       }
     } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      await navigator.clipboard.writeText(window.location.href)
+      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`)
     }
   }
 
@@ -175,7 +182,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const sizeForMessage = selectedSize ?? product.size
   const sizeLabel = CATALOG_SIZE_LABELS[sizeForMessage] ?? sizeForMessage
-  const whatsappMessage = `Oi! Vi a camisa ${product.team} tamanho ${sizeLabel} no catálogo e tenho interesse!`
+  const productUrl = typeof window !== 'undefined' ? window.location.href : `https://dms-sports.vercel.app/catalogo/${id}`
+  const modelLabel = MODEL_LABELS[product.model]
+  const versionLabel = VERSION_LABELS[product.version]
+  const whatsappMessage = `Oi! Vi essa camisa no catálogo e tenho interesse!\n\n⚽ ${product.team}\n📋 ${modelLabel} · ${versionLabel}\n📏 Tamanho ${sizeLabel}\n\n🔗 ${productUrl}`
   const whatsappUrl = getWhatsAppLink(WHATSAPP_NUMBER, whatsappMessage)
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
@@ -187,7 +197,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       const phone = cleanPhone.startsWith('55') ? cleanPhone : '55' + cleanPhone
 
       // Build WhatsApp URL before any async work (to avoid popup blocker)
-      const msg = `Oi! Meu nome é ${leadName.trim()}. Vi a camisa ${product!.team} tamanho ${sizeLabel} no catálogo e tenho interesse!`
+      const msg = `Oi! Meu nome é ${leadName.trim()}. Vi essa camisa no catálogo e tenho interesse!\n\n⚽ ${product!.team}\n📋 ${MODEL_LABELS[product!.model]} · ${VERSION_LABELS[product!.version]}\n📏 Tamanho ${sizeLabel}\n\n🔗 ${productUrl}`
       const url = getWhatsAppLink(WHATSAPP_NUMBER, msg)
 
       // Save lead in background — don't block the redirect
@@ -226,11 +236,20 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       <Header />
 
       <main className="mx-auto max-w-4xl px-4 py-6">
-        {/* Breadcrumb */}
+        {/* Breadcrumb + Back */}
         <nav className="mb-4 flex items-center gap-2 text-xs text-gray-500">
-          <Link href="/catalogo" className="hover:text-[#C9A84C] transition-colors">
+          <button
+            onClick={() => { window.history.length > 1 ? window.history.back() : (window.location.href = '/catalogo') }}
+            className="flex items-center gap-1 text-gray-400 hover:text-[#C9A84C] transition-colors bg-transparent border-0 cursor-pointer p-0"
+            aria-label="Voltar"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button onClick={() => { window.location.href = '/catalogo' }} className="hover:text-[#C9A84C] transition-colors cursor-pointer bg-transparent border-0 p-0 text-xs text-gray-500">
             Catálogo
-          </Link>
+          </button>
           <span>/</span>
           <span className="text-gray-400">{product.team}</span>
         </nav>
@@ -347,6 +366,35 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </svg>
               Comprar pelo WhatsApp
             </button>
+            {/* Add to cart */}
+            <button
+              type="button"
+              onClick={() => {
+                if (!product) return
+                const selectedProduct = siblings.find((s) => s.size === sizeForMessage) ?? product
+                addItem({
+                  id: selectedProduct.id,
+                  team: product.team,
+                  model: MODEL_LABELS[product.model],
+                  size: sizeForMessage,
+                  sizeLabel: sizeLabel,
+                  price: product.sell_price,
+                  photo_url: photoUrl,
+                })
+              }}
+              disabled={isInCart(product?.id ?? '')}
+              className={`mt-3 flex items-center justify-center gap-2 w-full px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-wide transition-colors cursor-pointer border-0 ${
+                isInCart(product?.id ?? '')
+                  ? 'bg-white/10 text-gray-500'
+                  : 'bg-[#1A1A1A] border border-[#C9A84C]/30 text-[#C9A84C] hover:bg-[#C9A84C]/10'
+              }`}
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+              </svg>
+              {isInCart(product?.id ?? '') ? 'Já no carrinho ✓' : 'Adicionar ao carrinho'}
+            </button>
+
             {/* Fallback link visível caso JS falhe */}
             <noscript>
               <a href={whatsappUrl} className="mt-2 block text-center text-sm text-[#C9A84C] underline">
@@ -537,6 +585,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
       )}
+
+      <CartFloat />
 
       {/* Floating WhatsApp button */}
       <button

@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { Button, Card, CurrencyInput, Input, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
 import { generateSKU } from '@/lib/utils/format'
-import { COMMON_TEAMS, MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
+import { CATALOG_SIZE_LABELS, COMMON_TEAMS, MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
 import type { ProductModel, ProductSize, ProductVersion } from '@/types/database'
 
 type FormState = {
@@ -255,7 +255,7 @@ export default function NewProductPage() {
             >
               {SIZE_OPTIONS.map((size) => (
                 <option key={size} value={size}>
-                  {size}
+                  {CATALOG_SIZE_LABELS[size] ?? size}
                 </option>
               ))}
             </Select>
