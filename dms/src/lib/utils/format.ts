@@ -70,7 +70,7 @@ export function generateSKU(team: string, season: string, model: string, version
 export function getWhatsAppLink(phone: string, message: string): string {
   const digits = phone.replace(/\D/g, '')
   const withCountryCode = digits.startsWith('55') ? digits : `55${digits}`
-  return `https://wa.me/${withCountryCode}?text=${encodeURIComponent(message)}`
+  return `https://api.whatsapp.com/send?phone=${withCountryCode}&text=${encodeURIComponent(message)}`
 }
 
 /** Export an array of flat objects to a downloadable CSV file (pt-BR friendly, semicolon-separated) */

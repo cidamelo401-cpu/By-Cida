@@ -339,7 +339,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             {/* WhatsApp CTA — direct <a> link, no JS dependency */}
             <a
               href={whatsappUrl}
-              target="_blank"
               rel="noopener noreferrer"
               className="mt-6 flex items-center justify-center gap-3 w-full px-6 py-4 rounded-xl bg-[#C9A84C] text-black font-bold uppercase tracking-wide text-base hover:bg-[#b8983f] transition-colors no-underline"
             >
