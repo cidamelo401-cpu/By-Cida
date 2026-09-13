@@ -406,7 +406,14 @@ export default function CatalogoPage() {
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                 {groupedShirts.map((shirt) => (
-                  <Link key={shirt.key} href={`/catalogo/${shirt.sizes[0]?.id}`}>
+                  <div
+                    key={shirt.key}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => { window.location.href = `/catalogo/${shirt.sizes[0]?.id}` }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = `/catalogo/${shirt.sizes[0]?.id}` }}
+                    className="cursor-pointer"
+                  >
                     <div className="bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5 hover:border-[#C9A84C]/40 transition-colors h-full flex flex-col">
                       <div className="relative aspect-square bg-gradient-to-b from-[#0F1F12] to-[#1A1A1A] flex items-center justify-center">
                         {shirt.photo_url ? (
@@ -439,7 +446,7 @@ export default function CatalogoPage() {
                         </span>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             </>
@@ -461,7 +468,14 @@ export default function CatalogoPage() {
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                 {teams.map((team) => (
-                  <Link key={team.name} href={teamHref(team)}>
+                  <div
+                    key={team.name}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => { window.location.href = teamHref(team) }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = teamHref(team) }}
+                    className="cursor-pointer"
+                  >
                     <div className="bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5 hover:border-[#C9A84C]/40 transition-colors h-full flex flex-col">
                       <div className="relative aspect-square bg-gradient-to-b from-[#0F1F12] to-[#1A1A1A] flex items-center justify-center">
                         {team.photo ? (
@@ -491,7 +505,7 @@ export default function CatalogoPage() {
                         </span>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             </>
