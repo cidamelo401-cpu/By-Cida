@@ -191,15 +191,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       const url = getWhatsAppLink(WHATSAPP_NUMBER, msg)
 
       // Save lead in background — don't block the redirect
-      supabase.from('leads').insert({
-        name: leadName.trim(),
-        whatsapp: phone,
-        product_id: product!.id,
-        team: product!.team,
-        model: product!.model,
-        size: sizeForMessage,
-        sell_price: product!.sell_price,
-      }).then(() => {}).catch((err) => console.error('Error saving lead:', err))
+      Promise.resolve(
+        supabase.from('leads').insert({
+          name: leadName.trim(),
+          whatsapp: phone,
+          product_id: product!.id,
+          team: product!.team,
+          model: product!.model,
+          size: sizeForMessage,
+          sell_price: product!.sell_price,
+        })
+      ).catch((err: unknown) => console.error('Error saving lead:', err))
 
       // Redirect immediately (no await = no popup block)
       window.location.href = url
