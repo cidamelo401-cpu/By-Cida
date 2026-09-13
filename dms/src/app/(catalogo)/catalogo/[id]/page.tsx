@@ -336,10 +336,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               {formatCurrency(product.sell_price)}
             </p>
 
-            {/* WhatsApp CTA — direct <a> link, no JS dependency */}
+            {/* WhatsApp CTA — forces navigation even if Next.js intercepts */}
             <a
               href={whatsappUrl}
               rel="noopener noreferrer"
+              onClick={(e) => { e.preventDefault(); window.location.href = whatsappUrl }}
               className="mt-6 flex items-center justify-center gap-3 w-full px-6 py-4 rounded-xl bg-[#C9A84C] text-black font-bold uppercase tracking-wide text-base hover:bg-[#b8983f] transition-colors no-underline"
             >
               <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -535,8 +536,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       {/* Floating WhatsApp button */}
       <a
         href={whatsappUrl}
-        target="_blank"
         rel="noopener noreferrer"
+        onClick={(e) => { e.preventDefault(); window.location.href = whatsappUrl }}
         className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg hover:bg-[#1ebe5a] transition-colors"
         aria-label="Falar no WhatsApp"
       >
