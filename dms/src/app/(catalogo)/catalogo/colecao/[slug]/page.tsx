@@ -168,9 +168,13 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {teams.map((team) => (
-                <Link
+                <div
                   key={team.name}
-                  href={`/catalogo/colecao/${slug}/${encodeURIComponent(team.name)}`}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => { window.location.href = `/catalogo/colecao/${slug}/${encodeURIComponent(team.name)}` }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = `/catalogo/colecao/${slug}/${encodeURIComponent(team.name)}` }}
+                  className="cursor-pointer"
                 >
                   <div className="bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5 hover:border-[#C9A84C]/40 transition-colors h-full flex flex-col">
                     <div className="relative aspect-square bg-gradient-to-b from-[#0F1F12] to-[#1A1A1A] flex items-center justify-center">
@@ -201,7 +205,7 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
                       </span>
                     </div>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           </>
