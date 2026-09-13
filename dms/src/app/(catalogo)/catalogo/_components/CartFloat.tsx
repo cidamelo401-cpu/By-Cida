@@ -15,10 +15,11 @@ export default function CartFloat() {
   const total = items.reduce((sum, i) => sum + i.price, 0)
 
   function handleWhatsApp() {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://dms-sports.vercel.app'
     const lines = items.map(
-      (item, i) => `${i + 1}. ${item.team} — ${item.model} — Tam. ${item.sizeLabel} — ${formatCurrency(item.price)}`
+      (item, i) => `${i + 1}. ${item.team} — ${item.model} — Tam. ${item.sizeLabel} — ${formatCurrency(item.price)}\n   🔗 ${baseUrl}/catalogo/${item.id}`
     )
-    const message = `Oi! Tenho interesse nas seguintes camisas:\n\n${lines.join('\n')}\n\nTotal: ${formatCurrency(total)}`
+    const message = `Oi! Tenho interesse nas seguintes camisas:\n\n${lines.join('\n\n')}\n\nTotal: ${formatCurrency(total)}`
     const url = getWhatsAppLink(WHATSAPP_NUMBER, message)
     window.location.assign(url)
   }

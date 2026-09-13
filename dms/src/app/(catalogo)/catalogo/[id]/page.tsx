@@ -182,7 +182,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const sizeForMessage = selectedSize ?? product.size
   const sizeLabel = CATALOG_SIZE_LABELS[sizeForMessage] ?? sizeForMessage
-  const whatsappMessage = `Oi! Vi a camisa ${product.team} tamanho ${sizeLabel} no catálogo e tenho interesse!`
+  const productUrl = typeof window !== 'undefined' ? window.location.href : `https://dms-sports.vercel.app/catalogo/${id}`
+  const modelLabel = MODEL_LABELS[product.model]
+  const versionLabel = VERSION_LABELS[product.version]
+  const whatsappMessage = `Oi! Vi essa camisa no catálogo e tenho interesse!\n\n⚽ ${product.team}\n📋 ${modelLabel} · ${versionLabel}\n📏 Tamanho ${sizeLabel}\n\n🔗 ${productUrl}`
   const whatsappUrl = getWhatsAppLink(WHATSAPP_NUMBER, whatsappMessage)
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
@@ -194,7 +197,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       const phone = cleanPhone.startsWith('55') ? cleanPhone : '55' + cleanPhone
 
       // Build WhatsApp URL before any async work (to avoid popup blocker)
-      const msg = `Oi! Meu nome é ${leadName.trim()}. Vi a camisa ${product!.team} tamanho ${sizeLabel} no catálogo e tenho interesse!`
+      const msg = `Oi! Meu nome é ${leadName.trim()}. Vi essa camisa no catálogo e tenho interesse!\n\n⚽ ${product!.team}\n📋 ${MODEL_LABELS[product!.model]} · ${VERSION_LABELS[product!.version]}\n📏 Tamanho ${sizeLabel}\n\n🔗 ${productUrl}`
       const url = getWhatsAppLink(WHATSAPP_NUMBER, msg)
 
       // Save lead in background — don't block the redirect
