@@ -1,10 +1,8 @@
 'use client'
 
 import { useEffect, useMemo, useState, use as usePromise } from 'react'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils/format'
-import { COLLECTION_IMAGES } from '@/lib/constants/products'
 import type { Database } from '@/types/database'
 import CatalogShell from '../../_components/CatalogShell'
 import TeamBadge from '../../_components/TeamBadge'
@@ -100,15 +98,20 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
       {/* Breadcrumb */}
       <div className="mx-auto max-w-6xl px-4 pt-5 pb-2">
         <nav className="flex items-center gap-1.5 text-xs text-gray-500">
-          <Link href="/catalogo" className="hover:text-[#C9A84C] transition-colors">Catálogo</Link>
+          <button onClick={() => { window.location.href = '/catalogo' }} className="hover:text-[#C9A84C] transition-colors cursor-pointer bg-transparent border-0 p-0 text-xs text-gray-500">Catálogo</button>
           <span>/</span>
           <span className="text-gray-300">{collectionName}</span>
         </nav>
         <div className="mt-3 flex items-center gap-3">
-          {COLLECTION_IMAGES[collectionName] && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={COLLECTION_IMAGES[collectionName]} alt={collectionName} className="w-12 h-12 object-contain rounded-lg" />
-          )}
+          <button
+            onClick={() => { window.location.href = '/catalogo' }}
+            className="flex items-center gap-1.5 text-gray-400 hover:text-[#C9A84C] transition-colors bg-transparent border-0 cursor-pointer p-0"
+            aria-label="Voltar"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
           <h1 className="text-2xl sm:text-3xl font-extrabold uppercase text-white tracking-tight">
             {collectionName}
           </h1>
@@ -163,9 +166,6 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
           </div>
         ) : (
           <>
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-4">
-              {teams.length} {teams.length === 1 ? 'time' : 'times'}
-            </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {teams.map((team) => (
                 <div
@@ -193,9 +193,6 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
                     <div className="p-3 flex flex-col gap-1 flex-1">
                       <p className="font-extrabold text-white text-sm uppercase leading-tight line-clamp-2">
                         {team.name}
-                      </p>
-                      <p className="text-[11px] text-gray-500">
-                        {team.shirtCount} {team.shirtCount === 1 ? 'camisa' : 'camisas'}
                       </p>
                       <p className="text-xs text-[#C9A84C] font-bold mt-auto pt-1">
                         a partir de {formatCurrency(team.minPrice)}

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils/format'
-import { MODEL_LABELS, CATALOG_SIZE_LABELS, COLLECTION_IMAGES } from '@/lib/constants/products'
+import { MODEL_LABELS, CATALOG_SIZE_LABELS } from '@/lib/constants/products'
 import type { Database, ProductSize } from '@/types/database'
 import CatalogShell from './_components/CatalogShell'
 import TeamBadge from './_components/TeamBadge'
@@ -213,8 +213,6 @@ export default function CatalogoPage() {
     setSearch('')
   }
 
-  const totalShirts = filteredProducts.length
-
   return (
     <CatalogShell>
       {/* Search */}
@@ -273,22 +271,17 @@ export default function CatalogoPage() {
                 </button>
                 {collections.map((col) => {
                   const colLabel = col.name === '__outros__' ? 'Outros' : col.name
-                  const colImage = COLLECTION_IMAGES[colLabel]
                   return (
                     <button
                       key={col.name}
                       onClick={() => handleCollectionTab(col.name)}
-                      className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors flex items-center gap-1.5 ${
+                      className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
                         activeCollection === col.name
                           ? 'bg-[#C9A84C] text-black'
                           : 'bg-white/10 text-gray-400 hover:bg-white/20'
                       }`}
                     >
-                      {colImage && (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={colImage} alt={colLabel} className="w-5 h-5 object-contain rounded-sm" />
-                      )}
-                      {colLabel} ({col.count})
+                      {colLabel}
                     </button>
                   )
                 })}
@@ -347,11 +340,9 @@ export default function CatalogoPage() {
                   : 'bg-white/10 text-gray-400 hover:bg-white/20'
               }`}
             >
-              Todos ({totalShirts})
+              Todos
             </button>
-            {teamNames.map((name) => {
-              const count = filteredProducts.filter((p) => p.team === name).length
-              return (
+            {teamNames.map((name) => (
                 <button
                   key={name}
                   onClick={() => handleTeamTab(name)}
@@ -361,10 +352,9 @@ export default function CatalogoPage() {
                       : 'bg-white/10 text-gray-400 hover:bg-white/20'
                   }`}
                 >
-                  {name} ({count})
+                  {name}
                 </button>
-              )
-            })}
+              ))}
           </div>
         </section>
       )}
@@ -399,9 +389,6 @@ export default function CatalogoPage() {
                 )}
                 <div>
                   <h2 className="text-lg font-extrabold uppercase text-white">{activeTeam}</h2>
-                  <p className="text-xs text-gray-500">
-                    {groupedShirts.length} {groupedShirts.length === 1 ? 'modelo' : 'modelos'}
-                  </p>
                 </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -463,9 +450,6 @@ export default function CatalogoPage() {
             </div>
           ) : (
             <>
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-4">
-                {teams.length} {teams.length === 1 ? 'time' : 'times'} · {totalShirts} {totalShirts === 1 ? 'camisa' : 'camisas'}
-              </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                 {teams.map((team) => (
                   <div
@@ -493,9 +477,6 @@ export default function CatalogoPage() {
                       <div className="p-3 flex flex-col gap-1 flex-1">
                         <p className="font-extrabold text-white text-sm uppercase leading-tight line-clamp-2">
                           {team.name}
-                        </p>
-                        <p className="text-[11px] text-gray-500">
-                          {team.shirtCount} {team.shirtCount === 1 ? 'camisa' : 'camisas'}
                         </p>
                         <p className="text-xs text-[#C9A84C] font-bold mt-auto pt-1">
                           a partir de {formatCurrency(team.minPrice)}

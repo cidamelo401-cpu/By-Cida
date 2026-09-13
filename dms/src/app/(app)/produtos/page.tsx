@@ -7,6 +7,7 @@ import { AppLayout } from '@/components/layout/AppLayout'
 import { Badge, Card, EmptyState, LoadingSpinner, SearchInput } from '@/components/ui'
 import { formatCurrency } from '@/lib/utils/format'
 import {
+  CATALOG_SIZE_LABELS,
   MODEL_LABELS,
   SIZE_OPTIONS,
   STATUS_BADGE,
@@ -116,7 +117,7 @@ export default function ProductsPage() {
           <FilterChip
             label="Tamanho"
             value={sizeFilter}
-            options={SIZE_OPTIONS.map((s) => ({ value: s, label: s }))}
+            options={SIZE_OPTIONS.map((s) => ({ value: s, label: CATALOG_SIZE_LABELS[s] ?? s }))}
             onChange={(v) => setSizeFilter(v as ProductSize | '')}
           />
           <FilterChip
@@ -222,7 +223,7 @@ function ProductCard({ product }: { product: Product }) {
           </p>
           <div className="flex items-center justify-between mt-auto pt-2">
             <span className="text-xs font-medium px-2 py-0.5 rounded bg-gray-100 text-gray-700">
-              {product.size}
+              {CATALOG_SIZE_LABELS[product.size] ?? product.size}
             </span>
             <span className={`text-xs font-semibold ${lowStock ? 'text-red-600' : 'text-gray-600'}`}>
               {product.quantity} un.

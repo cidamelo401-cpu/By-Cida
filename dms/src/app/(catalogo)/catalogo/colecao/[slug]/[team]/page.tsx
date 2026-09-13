@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useMemo, useState, use as usePromise } from 'react'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils/format'
 import { MODEL_LABELS, CATALOG_SIZE_LABELS } from '@/lib/constants/products'
@@ -113,11 +112,11 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
       {/* Breadcrumb */}
       <div className="mx-auto max-w-6xl px-4 pt-5 pb-2">
         <nav className="flex items-center gap-1.5 text-xs text-gray-500">
-          <Link href="/catalogo" className="hover:text-[#C9A84C] transition-colors">Catálogo</Link>
+          <button onClick={() => { window.location.href = '/catalogo' }} className="hover:text-[#C9A84C] transition-colors cursor-pointer bg-transparent border-0 p-0 text-xs text-gray-500">Catálogo</button>
           <span>/</span>
-          <Link href={`/catalogo/colecao/${slug}`} className="hover:text-[#C9A84C] transition-colors">
+          <button onClick={() => { window.location.href = `/catalogo/colecao/${slug}` }} className="hover:text-[#C9A84C] transition-colors cursor-pointer bg-transparent border-0 p-0 text-xs text-gray-500">
             {collectionName}
-          </Link>
+          </button>
           <span>/</span>
           <span className="text-gray-300">{teamName}</span>
         </nav>
@@ -126,6 +125,15 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
       {/* Hero */}
       <div className="mx-auto max-w-6xl px-4 pb-6">
         <div className="flex items-center gap-4">
+          <button
+            onClick={() => { window.location.href = `/catalogo/colecao/${slug}` }}
+            className="flex items-center gap-1.5 text-gray-400 hover:text-[#C9A84C] transition-colors bg-transparent border-0 cursor-pointer p-0"
+            aria-label="Voltar"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
           <TeamBadge team={teamName} badgeUrl={badges[teamName]} size="lg" />
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold uppercase text-white tracking-tight">
@@ -160,9 +168,6 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
           </div>
         ) : (
           <>
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-4">
-              {grouped.length} {grouped.length === 1 ? 'modelo' : 'modelos'}
-            </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {grouped.map((shirt) => (
                 <div

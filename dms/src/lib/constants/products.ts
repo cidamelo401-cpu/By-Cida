@@ -1,16 +1,16 @@
 import type { ProductModel, ProductSize, ProductStatus, ProductVersion } from '@/types/database'
 
 export const MODEL_LABELS: Record<ProductModel, string> = {
-  titular: 'Titular',
-  reserva: 'Reserva',
-  terceiro: 'Terceiro Uniforme',
-  goleiro: 'Goleiro',
-  treino: 'Treino',
+  titular: 'Home',
+  reserva: 'Away',
+  terceiro: 'Third',
+  goleiro: 'Goalkeeper',
+  treino: 'Training',
 }
 
 export const VERSION_LABELS: Record<ProductVersion, string> = {
-  torcedor: 'Torcedor',
-  jogador: 'Jogador',
+  torcedor: 'Fan',
+  jogador: 'Player',
 }
 
 export const SIZE_OPTIONS: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
@@ -80,10 +80,7 @@ export const CATALOG_SIZE_LABELS: Record<ProductSize, string> = {
 }
 
 /** Collection header images for the catalog */
-/** Collection header images for the catalog */
-export const COLLECTION_IMAGES: Record<string, string> = {
-  'Copa': '/copa-do-mundo-2026.png',
-}
+export const COLLECTION_IMAGES: Record<string, string> = {}
 
 export const MOVEMENT_TYPE_LABELS: Record<string, string> = {
   entrada: 'Entrada',
