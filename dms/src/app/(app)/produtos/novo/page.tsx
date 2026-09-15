@@ -94,7 +94,7 @@ export default function NewProductPage() {
     if (!form.team.trim()) return 'Informe o time.'
     const qty = Number(form.quantity)
     if (Number.isNaN(qty) || qty < 0) return 'Quantidade inválida.'
-    if (form.sell_price <= 0) return 'Informe o preço de venda.'
+    if (!form.sob_encomenda && form.sell_price <= 0) return 'Informe o preço de venda.'
     return null
   }
 
