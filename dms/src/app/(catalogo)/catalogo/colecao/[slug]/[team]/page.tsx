@@ -24,7 +24,7 @@ type GroupedShirt = {
   sizes: { size: Product['size']; quantity: number; id: string }[]
 }
 
-const SIZE_ORDER: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
+const SIZE_ORDER: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
 
 export default function TeamShirtsPage({ params }: { params: Promise<{ slug: string; team: string }> }) {
   const { slug, team: teamSlug } = usePromise(params)

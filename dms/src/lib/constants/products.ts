@@ -13,7 +13,7 @@ export const VERSION_LABELS: Record<ProductVersion, string> = {
   jogador: 'Player',
 }
 
-export const SIZE_OPTIONS: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
+export const SIZE_OPTIONS: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
 
 export const STATUS_LABELS: Record<ProductStatus, string> = {
   disponivel: 'Disponível',
@@ -67,6 +67,7 @@ export const COMMON_TEAMS = [
 
 /** Display labels for sizes in the public catalog (international naming) */
 export const CATALOG_SIZE_LABELS: Record<ProductSize, string> = {
+  AD: 'A definir',
   T20: 'T20',
   T22: 'T22',
   T24: 'T24',
