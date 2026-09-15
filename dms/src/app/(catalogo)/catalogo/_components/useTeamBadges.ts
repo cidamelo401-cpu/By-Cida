@@ -88,12 +88,30 @@ export function getInitials(team: string): string {
   return words.map((w) => w[0]).join('').toUpperCase().slice(0, 3)
 }
 
+/* ── Local badge overrides (bypass API) ── */
+const LOCAL_BADGES: Record<string, string> = {
+  'Al-Hilal': '/badges/al-hilal.png',
+}
+
 /* ── Hook to fetch team badges from TheSportsDB ── */
 export function useTeamBadges(teams: string[]) {
   const [badges, setBadges] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (teams.length === 0) return
+
+    // Apply local overrides immediately
+    const localOverrides: Record<string, string> = {}
+    for (const t of teams) {
+      if (LOCAL_BADGES[t]) localOverrides[t] = LOCAL_BADGES[t]
+    }
+    if (Object.keys(localOverrides).length > 0) {
+      setBadges((prev) => ({ ...prev, ...localOverrides }))
+    }
+
+    // Only fetch from API for teams without local overrides
+    const teamsToFetch = teams.filter((t) => !LOCAL_BADGES[t])
+    if (teamsToFetch.length === 0) return
 
     const CACHE_KEY = 'dms_team_badges'
     const CACHE_TTL = 7 * 24 * 60 * 60 * 1000
@@ -103,7 +121,7 @@ export function useTeamBadges(teams: string[]) {
         const { data, ts } = JSON.parse(cached)
         if (Date.now() - ts < CACHE_TTL && data && typeof data === 'object') {
           setBadges(data)
-          const missing = teams.filter((t) => !data[t])
+          const missing = teamsToFetch.filter((t) => !data[t])
           if (missing.length === 0) return
         }
       }
@@ -114,9 +132,9 @@ export function useTeamBadges(teams: string[]) {
     async function fetchBadges() {
       const results: Record<string, string> = {}
 
-      for (let i = 0; i < teams.length; i += 5) {
+      for (let i = 0; i < teamsToFetch.length; i += 5) {
         if (cancelled) break
-        const batch = teams.slice(i, i + 5)
+        const batch = teamsToFetch.slice(i, i + 5)
 
         await Promise.all(
           batch.map(async (team) => {
@@ -135,7 +153,7 @@ export function useTeamBadges(teams: string[]) {
           })
         )
 
-        if (i + 5 < teams.length) {
+        if (i + 5 < teamsToFetch.length) {
           await new Promise((r) => setTimeout(r, 200))
         }
       }
@@ -143,7 +161,7 @@ export function useTeamBadges(teams: string[]) {
       if (cancelled) return
 
       setBadges((prev) => {
-        const merged = { ...prev, ...results }
+        const merged = { ...prev, ...results, ...localOverrides }
         try {
           localStorage.setItem(CACHE_KEY, JSON.stringify({ data: merged, ts: Date.now() }))
         } catch { /* ignore */ }

@@ -36,8 +36,7 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
           .from('products')
           .select('*')
           .eq('archived', false)
-          .eq('status', 'disponivel')
-          .gt('quantity', 0)
+          .in('status', ['disponivel', 'sob_encomenda'])
           .order('team')
 
         if (collectionName === 'Outros') {
@@ -52,7 +51,8 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
           setError(queryError.message)
           return
         }
-        setProducts(data ?? [])
+        const filtered = (data ?? []).filter((p) => p.status === 'sob_encomenda' || p.quantity > 0)
+        setProducts(filtered)
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Erro desconhecido'
         setError(msg)
@@ -195,7 +195,7 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
                         {team.name}
                       </p>
                       <p className="text-xs text-[#C9A84C] font-bold mt-auto pt-1">
-                        a partir de {formatCurrency(team.minPrice)}
+                        {formatCurrency(team.minPrice)}
                       </p>
                       <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C]/10 text-[#C9A84C] text-xs font-bold uppercase py-2 tracking-wide">
                         Ver Camisas

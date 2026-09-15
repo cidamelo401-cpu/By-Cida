@@ -9,7 +9,7 @@ export type Json =
 export type ProductModel = 'titular' | 'reserva' | 'terceiro' | 'goleiro' | 'treino'
 export type ProductVersion = 'torcedor' | 'jogador'
 export type ProductSize = 'T20' | 'T22' | 'T24' | 'T26' | 'T28' | 'PP' | 'P' | 'M' | 'G' | 'GG' | '2XG' | '3XG'
-export type ProductStatus = 'disponivel' | 'reservado' | 'esgotado'
+export type ProductStatus = 'disponivel' | 'reservado' | 'esgotado' | 'sob_encomenda'
 
 export type SaleChannel = 'whatsapp' | 'instagram'
 export type PaymentMethod = 'pix' | 'dinheiro' | 'credito' | 'debito' | 'transferencia' | 'outro'

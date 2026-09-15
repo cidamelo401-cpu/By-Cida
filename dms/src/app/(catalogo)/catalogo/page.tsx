@@ -10,6 +10,8 @@ import CatalogShell from './_components/CatalogShell'
 import TeamBadge from './_components/TeamBadge'
 import { useTeamBadges } from './_components/useTeamBadges'
 
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '5511992963041'
+
 type Product = Database['public']['Tables']['products']['Row']
 
 type TeamInfo = {
@@ -29,6 +31,7 @@ type GroupedShirt = {
   photo_url: string | null
   version: Product['version']
   sell_price: number
+  status: Product['status']
   sizes: { size: ProductSize; quantity: number; id: string }[]
 }
 
@@ -54,15 +57,16 @@ export default function CatalogoPage() {
           .from('products')
           .select('*')
           .eq('archived', false)
-          .eq('status', 'disponivel')
-          .gt('quantity', 0)
+          .in('status', ['disponivel', 'sob_encomenda'])
           .order('team')
 
         if (queryError) {
           setError(queryError.message)
           return
         }
-        setProducts(data ?? [])
+        // sob_encomenda shows regardless of quantity; disponivel needs quantity > 0
+        const filtered = (data ?? []).filter((p) => p.status === 'sob_encomenda' || p.quantity > 0)
+        setProducts(filtered)
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Erro desconhecido'
         setError(msg)
@@ -164,12 +168,16 @@ export default function CatalogoPage() {
     const map = new Map<string, GroupedShirt>()
 
     for (const p of teamProducts) {
-      const colorNote = p.notes?.match(/Cor[:\s]*(\w+)/i)?.[1]?.toLowerCase() ?? ''
-      const key = `${p.team}|${p.model}|${colorNote}|${p.season ?? ''}`
+      const key = `${p.team}|${p.model}`
 
       const existing = map.get(key)
       if (existing) {
-        existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
+        const existingSize = existing.sizes.find((s) => s.size === p.size)
+        if (existingSize) {
+          existingSize.quantity += p.quantity
+        } else {
+          existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
+        }
         if (!existing.photo_url && p.photo_url) existing.photo_url = p.photo_url
       } else {
         map.set(key, {
@@ -181,6 +189,7 @@ export default function CatalogoPage() {
           photo_url: p.photo_url,
           version: p.version,
           sell_price: p.sell_price,
+          status: p.status,
           sizes: [{ size: p.size, quantity: p.quantity, id: p.id }],
         })
       }
@@ -242,21 +251,7 @@ export default function CatalogoPage() {
       {!loading && (collections.length > 0 || hasKidsProducts) && (
         <section className="mx-auto max-w-6xl px-4 pb-3">
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            {/* Kids toggle */}
-            {hasKidsProducts && (
-              <button
-                onClick={() => { setKidsOnly(!kidsOnly); setActiveTeam(null) }}
-                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors flex items-center gap-1.5 ${
-                  kidsOnly
-                    ? 'bg-[#C9A84C] text-black'
-                    : 'bg-white/10 text-gray-400 hover:bg-white/20'
-                }`}
-              >
-                👶 Kids
-              </button>
-            )}
-
-            {/* Collection tabs */}
+            {/* Collection tabs — "Todas as Coleções" first */}
             {collections.length > 0 && (
               <>
                 <button
@@ -286,6 +281,20 @@ export default function CatalogoPage() {
                   )
                 })}
               </>
+            )}
+
+            {/* Kids toggle — after collections */}
+            {hasKidsProducts && (
+              <button
+                onClick={() => { setKidsOnly(!kidsOnly); setActiveTeam(null) }}
+                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors flex items-center gap-1.5 ${
+                  kidsOnly
+                    ? 'bg-[#C9A84C] text-black'
+                    : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                }`}
+              >
+                👶 Kids
+              </button>
             )}
           </div>
         </section>
@@ -392,13 +401,16 @@ export default function CatalogoPage() {
                 </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                {groupedShirts.map((shirt) => (
+                {groupedShirts.map((shirt) => {
+                  const isSobEncomenda = shirt.status === 'sob_encomenda'
+                  const href = isSobEncomenda ? '/catalogo/sob-encomenda' : `/catalogo/${shirt.sizes[0]?.id}`
+                  return (
                   <div
                     key={shirt.key}
                     role="button"
                     tabIndex={0}
-                    onClick={() => { window.location.href = `/catalogo/${shirt.sizes[0]?.id}` }}
-                    onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = `/catalogo/${shirt.sizes[0]?.id}` }}
+                    onClick={() => { window.location.href = href }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = href }}
                     className="cursor-pointer"
                   >
                     <div className="bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5 hover:border-[#C9A84C]/40 transition-colors h-full flex flex-col">
@@ -428,13 +440,20 @@ export default function CatalogoPage() {
                           ))}
                         </div>
                         <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{formatCurrency(shirt.sell_price)}</p>
-                        <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C] text-black text-xs font-bold uppercase py-2 tracking-wide">
-                          Comprar
-                        </span>
+                        {isSobEncomenda ? (
+                          <span className="mt-1 w-full text-center rounded-lg bg-blue-600/20 text-blue-400 text-xs font-bold uppercase py-2 tracking-wide">
+                            Sob Encomenda
+                          </span>
+                        ) : (
+                          <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C] text-black text-xs font-bold uppercase py-2 tracking-wide">
+                            Comprar
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
-                ))}
+                  )
+                })}
               </div>
             </>
           )
@@ -479,7 +498,7 @@ export default function CatalogoPage() {
                           {team.name}
                         </p>
                         <p className="text-xs text-[#C9A84C] font-bold mt-auto pt-1">
-                          a partir de {formatCurrency(team.minPrice)}
+                          {formatCurrency(team.minPrice)}
                         </p>
                         <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C]/10 text-[#C9A84C] text-xs font-bold uppercase py-2 tracking-wide">
                           Ver Camisas
@@ -488,6 +507,40 @@ export default function CatalogoPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Não encontrou? Fale conosco */}
+              <div className="mt-8">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => {
+                    const msg = 'Olá! Não encontrei a camisa que procuro no catálogo. Vocês conseguem me ajudar?'
+                    window.location.assign(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}`)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const msg = 'Olá! Não encontrei a camisa que procuro no catálogo. Vocês conseguem me ajudar?'
+                      window.location.assign(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}`)
+                    }
+                  }}
+                  className="cursor-pointer"
+                >
+                  <div className="bg-[#1A1A1A] rounded-2xl border border-dashed border-[#C9A84C]/40 p-5 flex items-center gap-4 hover:border-[#25D366] transition-colors">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366]/10 flex-shrink-0">
+                      <svg className="h-6 w-6 text-[#25D366]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-bold text-white text-sm">Não encontrou o que procura?</p>
+                      <p className="text-xs text-gray-400 mt-0.5">Manda uma mensagem que a gente te ajuda! 💬</p>
+                    </div>
+                    <svg className="h-5 w-5 text-[#25D366] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
             </>
           )
