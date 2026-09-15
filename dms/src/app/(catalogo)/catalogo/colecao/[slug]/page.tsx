@@ -20,6 +20,8 @@ type TeamInfo = {
 export default function CollectionTeamsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = usePromise(params)
   const collectionName = slug === 'outros' ? 'Outros' : decodeURIComponent(slug)
+  const COLLECTION_LABELS: Record<string, string> = { 'Copa': 'Seleções' }
+  const collectionLabel = COLLECTION_LABELS[collectionName] ?? collectionName
 
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -100,7 +102,7 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
         <nav className="flex items-center gap-1.5 text-xs text-gray-500">
           <button onClick={() => { window.location.href = '/catalogo' }} className="hover:text-[#C9A84C] transition-colors cursor-pointer bg-transparent border-0 p-0 text-xs text-gray-500">Catálogo</button>
           <span>/</span>
-          <span className="text-gray-300">{collectionName}</span>
+          <span className="text-gray-300">{collectionLabel}</span>
         </nav>
         <div className="mt-3 flex items-center gap-3">
           <button
@@ -113,7 +115,7 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
             </svg>
           </button>
           <h1 className="text-2xl sm:text-3xl font-extrabold uppercase text-white tracking-tight">
-            {collectionName}
+            {collectionLabel}
           </h1>
         </div>
       </div>

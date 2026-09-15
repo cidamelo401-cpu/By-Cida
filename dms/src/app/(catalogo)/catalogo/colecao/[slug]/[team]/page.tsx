@@ -29,6 +29,8 @@ const SIZE_ORDER: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P',
 export default function TeamShirtsPage({ params }: { params: Promise<{ slug: string; team: string }> }) {
   const { slug, team: teamSlug } = usePromise(params)
   const collectionName = slug === 'outros' ? 'Outros' : decodeURIComponent(slug)
+  const COLLECTION_LABELS: Record<string, string> = { 'Copa': 'Seleções' }
+  const collectionLabel = COLLECTION_LABELS[collectionName] ?? collectionName
   const teamName = decodeURIComponent(teamSlug)
 
   const [products, setProducts] = useState<Product[]>([])
@@ -121,7 +123,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
           <button onClick={() => { window.location.href = '/catalogo' }} className="hover:text-[#C9A84C] transition-colors cursor-pointer bg-transparent border-0 p-0 text-xs text-gray-500">Catálogo</button>
           <span>/</span>
           <button onClick={() => { window.location.href = `/catalogo/colecao/${slug}` }} className="hover:text-[#C9A84C] transition-colors cursor-pointer bg-transparent border-0 p-0 text-xs text-gray-500">
-            {collectionName}
+            {collectionLabel}
           </button>
           <span>/</span>
           <span className="text-gray-300">{teamName}</span>
@@ -145,7 +147,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
             <h1 className="text-2xl sm:text-3xl font-extrabold uppercase text-white tracking-tight">
               {teamName}
             </h1>
-            <p className="text-sm text-gray-500 mt-1">{collectionName}</p>
+            <p className="text-sm text-gray-500 mt-1">{collectionLabel}</p>
           </div>
         </div>
       </div>
