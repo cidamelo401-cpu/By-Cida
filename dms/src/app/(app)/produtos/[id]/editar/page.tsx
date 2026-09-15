@@ -83,7 +83,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       toast.error('Informe o time.')
       return
     }
-    if (form.sell_price <= 0) {
+    if (!form.sob_encomenda && form.sell_price <= 0) {
       toast.error('Informe o preço de venda.')
       return
     }
