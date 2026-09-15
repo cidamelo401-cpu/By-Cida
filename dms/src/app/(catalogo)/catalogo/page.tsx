@@ -309,9 +309,9 @@ export default function CatalogoPage() {
               <button
                 key={name}
                 onClick={() => handleTeamTab(name)}
-                className="flex-shrink-0 flex flex-col items-center gap-1.5 w-16 group"
+                className="flex-shrink-0 flex flex-col items-center gap-1.5 w-20 group"
               >
-                <div className={`w-14 h-14 rounded-full bg-[#1A1A1A] border-2 transition-colors flex items-center justify-center overflow-hidden ${
+                <div className={`w-16 h-16 rounded-full bg-[#1A1A1A] border-2 transition-colors flex items-center justify-center overflow-hidden ${
                   activeTeam === name
                     ? 'border-[#C9A84C] shadow-[0_0_12px_rgba(201,168,76,0.4)]'
                     : 'border-white/10 group-hover:border-[#C9A84C]'
@@ -321,7 +321,7 @@ export default function CatalogoPage() {
                     <img
                       src={badges[name]}
                       alt={name}
-                      className="w-10 h-10 object-contain"
+                      className="w-12 h-12 object-contain"
                     />
                   ) : (
                     <TeamBadge team={name} badgeUrl={undefined} size="md" />
@@ -338,36 +338,6 @@ export default function CatalogoPage() {
         </section>
       )}
 
-      {/* Team filter tabs */}
-      {!loading && teamNames.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 pb-4">
-          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            <button
-              onClick={() => { setActiveTeam(null); setSearch('') }}
-              className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
-                activeTeam === null
-                  ? 'bg-[#C9A84C] text-black'
-                  : 'bg-white/10 text-gray-400 hover:bg-white/20'
-              }`}
-            >
-              Todos
-            </button>
-            {teamNames.map((name) => (
-                <button
-                  key={name}
-                  onClick={() => handleTeamTab(name)}
-                  className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
-                    activeTeam === name
-                      ? 'bg-[#C9A84C] text-black'
-                      : 'bg-white/10 text-gray-400 hover:bg-white/20'
-                  }`}
-                >
-                  {name}
-                </button>
-              ))}
-          </div>
-        </section>
-      )}
 
       {/* Content */}
       <main className="mx-auto max-w-6xl px-4 py-4">

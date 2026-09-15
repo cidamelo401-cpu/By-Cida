@@ -2,18 +2,12 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
 
 export default function CatalogHeader() {
-  const pathname = usePathname()
-  const router = useRouter()
 
   function handleLogoClick(e: React.MouseEvent) {
-    if (pathname === '/catalogo') {
-      e.preventDefault()
-      router.refresh()
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
+    e.preventDefault()
+    window.location.href = '/catalogo'
   }
 
   return (
