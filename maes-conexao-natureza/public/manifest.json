@@ -1,0 +1,24 @@
+{
+  "name": "Mães, Conexão e Natureza",
+  "short_name": "Mães e Natureza",
+  "description": "App das participantes da 3ª edição — programação, mochila e agendamento da massagem.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EFE7D8",
+  "theme_color": "#1E3123",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

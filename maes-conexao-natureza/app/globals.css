@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --safe-top: 60px;
+  --safe-bottom: 28px;
+}
+
+html,
+body {
+  margin: 0;
+  background: theme('colors.sand');
+  color: theme('colors.forest');
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: theme('colors.terracotta');
+  text-decoration: none;
+}
+
+a:hover {
+  color: theme('colors.terracotta-dark');
+}
+
+/* O app é mobile-first: em telas grandes ele fica centralizado com a largura de um iPhone. */
+.app-viewport {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background: theme('colors.sand');
+}
+
+.app-frame {
+  width: 100%;
+  max-width: 402px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: theme('colors.cream');
+  position: relative;
+}
+
+@media (min-width: 640px) {
+  .app-frame {
+    box-shadow: 0 24px 60px rgba(20, 38, 22, 0.18);
+  }
+}

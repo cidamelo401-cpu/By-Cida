@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet"><style>body{margin:0;background:#EFE7D8;font-family:Quicksand,system-ui,sans-serif}a{color:#D5533B;text-decoration:none}a:hover{color:#B33F2A}</style><script src="./image-slot.js"></script></helmet>
+<div style="padding:44px 52px 60px;display:flex;flex-direction:column;gap:26px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="font:600 11px/1 Quicksand,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#6E8A3C">Protótipo de app · Sítio Anju · 17 out</div>
+<div style="font:700 32px/1.1 'Baloo 2',cursive;color:#1E3123">Mães, Conexão e Natureza</div>
+<div style="font:500 14px/1.5 Quicksand,sans-serif;color:rgba(30,49,35,.6);max-width:520px">App das participantes confirmadas: preparação, guia do dia, agendamento da massagem com Pix e mural da comunidade.</div>
+</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+<div style="height:100%;display:flex;flex-direction:column;background:#F6F1E6;font-family:Quicksand,system-ui,sans-serif;overflow:hidden">
+<div style="flex:1;overflow:auto">
+
+<sc-if value="{{ isEntrada }}" hint-placeholder-val="{{ false }}">
+<div style="position:relative;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-end;padding:60px 22px 30px">
+<img src="img/capa.jpeg" alt="Mães reunidas no gramado do sítio" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%">
+<div style="position:absolute;inset:0;background:linear-gradient(178deg,rgba(20,38,22,.55) 0%,rgba(20,38,22,.35) 28%,rgba(20,38,22,.95) 72%)"></div>
+<div style="position:relative;display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font:600 10px/1 Quicksand,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#EFC94C">3ª edição · 17 de outubro</div>
+<div style="font:700 34px/1.02 'Baloo 2',cursive;color:#fff">Mães, Conexão<br>e Natureza</div>
+<div style="font:500 13px/1.5 Quicksand,sans-serif;color:rgba(255,255,255,.78)">Este app é das participantes confirmadas. Entre com seu nome e WhatsApp para acessar a programação e agendar sua massagem.</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="background:rgba(246,241,230,.95);border-radius:18px;padding:13px 16px;display:flex;flex-direction:column;gap:5px">
+<label for="mcn-nome" style="font:600 9px/1 Quicksand,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:rgba(30,49,35,.5)">Seu nome</label>
+<input id="mcn-nome" type="text" value="{{ nome }}" onChange="{{ setNome }}" placeholder="Nome e sobrenome" style="border:0;background:transparent;outline:none;font:600 16px/1.3 Quicksand,sans-serif;color:#1E3123;width:100%;padding:0">
+</div>
+<div style="background:rgba(246,241,230,.95);border-radius:18px;padding:13px 16px;display:flex;flex-direction:column;gap:5px">
+<label for="mcn-zap" style="font:600 9px/1 Quicksand,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:rgba(30,49,35,.5)">WhatsApp</label>
+<input id="mcn-zap" type="tel" value="{{ whats }}" onChange="{{ setWhats }}" placeholder="(00) 00000-0000" style="border:0;background:transparent;outline:none;font:600 16px/1.3 Quicksand,sans-serif;color:#1E3123;width:100%;padding:0">
+</div>
+<div onClick="{{ entrar }}" style="background:{{ entrarBg }};border-radius:18px;padding:17px;text-align:center;font:700 16px/1 Quicksand,sans-serif;color:#fff;cursor:{{ entrarCursor }};min-height:44px;box-sizing:border-box">Entrar no app</div>
+<sc-if value="{{ temCadastro }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ limparCadastro }}" style="text-align:center;font:600 12px/1 Quicksand,sans-serif;color:rgba(255,255,255,.6);cursor:pointer;padding:10px;min-height:44px;box-sizing:border-box">Não sou eu — limpar cadastro</div>
+</sc-if>
+<div style="text-align:center;font:500 11px/1.45 Quicksand,sans-serif;color:rgba(255,255,255,.55)">Usamos seu WhatsApp só para avisos do evento e para confirmar sua massagem.</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div style="padding-bottom:14px">
+<div style="position:relative;height:400px;overflow:hidden">
+<img src="img/cachoeira.jpeg" alt="Roda de mães na grama diante da cachoeira do Sítio Anju" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 42%">
+<div style="position:absolute;inset:0;background:linear-gradient(178deg,rgba(20,38,22,.5) 0%,rgba(20,38,22,0) 32%,rgba(20,38,22,.86) 100%)"></div>
+<div style="position:absolute;left:22px;right:22px;bottom:24px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;gap:8px">
+<span style="font:700 10px/1 Quicksand,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#1E3123;background:#EFC94C;padding:7px 11px;border-radius:999px">3ª edição</span>
+<span style="font:700 10px/1 Quicksand,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);padding:7px 11px;border-radius:999px">Sítio Anju</span>
+</div>
+<div style="font:700 40px/.96 'Baloo 2',cursive;color:#fff;text-wrap:balance">Mães, Conexão<br>e Natureza</div>
+<div style="font:600 14px/1.45 Quicksand,sans-serif;color:rgba(255,255,255,.88)">17 de outubro · 10h às 17h<br>Sítio Anju · Mata Atlântica</div>
+</div>
+</div>
+<div style="padding:20px 18px 0;display:flex;flex-direction:column;gap:12px">
+<div style="background:#1E3123;border-radius:26px;padding:20px;display:flex;flex-direction:column;gap:15px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+<div style="display:flex;flex-direction:column;gap:4px">
+<div style="font:600 10px/1 Quicksand,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#A8C27A">Sua vaga está confirmada</div>
+<div style="font:700 32px/1.05 'Baloo 2',cursive;color:#F6F1E6">{{ saudacao }}</div>
+</div>
+<div style="text-align:right"><div style="font:700 30px/1 'Baloo 2',cursive;color:#EFC94C">12</div><div style="font:500 11px/1.3 Quicksand,sans-serif;color:rgba(246,241,230,.6)">dias para<br>o encontro</div></div>
+</div>
+<div style="height:1px;background:rgba(246,241,230,.14)"></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<div style="flex:1;font:500 12px/1.55 Quicksand,sans-serif;color:rgba(246,241,230,.7)">Tudo que você precisa para o dia 17 está aqui. A massagem é o único item que se agenda à parte.</div>
+<div onClick="{{ sair }}" style="flex:none;font:600 11px/1 Quicksand,sans-serif;color:rgba(246,241,230,.5);cursor:pointer;padding:12px 0 12px 8px;min-height:44px;display:flex;align-items:center">Sair</div>
+</div>
+<div onClick="{{ goMassagem }}" style="background:#D5533B;border-radius:18px;padding:16px;text-align:center;font:700 16px/1 Quicksand,sans-serif;color:#fff;cursor:pointer;min-height:44px;box-sizing:border-box" style-hover="background:#C24730">Agendar minha massagem</div>
+</div>
+<div onClick="{{ goInscricao }}" style="background:#fff;border:1px solid rgba(30,49,35,.08);border-radius:22px;padding:15px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;min-height:44px" style-hover="border-color:rgba(30,49,35,.3)">
+<div style="width:34px;height:34px;border-radius:12px;background:#E7EED6;display:flex;align-items:center;justify-content:center;font:700 15px/1 Quicksand,sans-serif;color:#5C7A2E;flex:none">✓</div>
+<div style="flex:1"><div style="font:700 15px/1.2 'Baloo 2',cursive;color:#1E3123">Minha vaga</div><div style="font:500 12px/1.3 Quicksand,sans-serif;color:rgba(30,49,35,.5)">Código MCN-042 · o que está incluso</div></div>
+<div style="font:600 20px/1 Quicksand,sans-serif;color:rgba(30,49,35,.3)">›</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div onClick="{{ goPrograma }}" style="background:#fff;border:1px solid rgba(30,49,35,.08);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:24px;cursor:pointer" style-hover="border-color:rgba(30,49,35,.3)">
+<div style="width:34px;height:34px;border-radius:12px;background:#E7EED6;display:flex;align-items:center;justify-content:center;font:700 15px/1 'Baloo 2',cursive;color:#5C7A2E">17</div>
+<div><div style="font:700 15px/1.2 'Baloo 2',cursive;color:#1E3123">Programação</div><div style="font:500 12px/1.3 Quicksand,sans-serif;color:rgba(30,49,35,.5)">9 momentos do dia</div></div>
+</div>
+<div onClick="{{ goMassagem }}" style="background:#fff;border:1px solid rgba(30,49,35,.08);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:24px;cursor:pointer" style-hover="border-color:rgba(30,49,35,.3)">
+<div style="width:34px;height:34px;border-radius:12px;background:#F7E0D9;display:flex;align-items:center;justify-content:center;font:700 14px/1 'Baloo 2',cursive;color:#C24730">30'</div>
+<div><div style="font:700 15px/1.2 'Baloo 2',cursive;color:#1E3123">Massagem</div><div style="font:500 12px/1.3 Quicksand,sans-serif;color:rgba(30,49,35,.5)">Agendar horário</div></div>
+</div>
+</div>
+<div onClick="{{ goFacilitadoras }}" style="background:#fff;border:1px solid rgba(30,49,35,.08);border-radius:22px;padding:15px 18px;display:flex;align-items:center;gap:14px;cursor:pointer" style-hover="border-color:rgba(30,49,35,.3)">
+<div style="display:flex">
+<div style="width:36px;height:36px;border-radius:999px;background:#8FAE4B;border:2px solid #fff;font:700 13px/32px 'Baloo 2',cursive;color:#fff;text-align:center">A</div>
+<div style="width:36px;height:36px;border-radius:999px;background:#D5533B;border:2px solid #fff;margin-left:-12px;font:700 13px/32px 'Baloo 2',cursive;color:#fff;text-align:center">L</div>
+<div style="width:36px;height:36px;border-radius:999px;background:#5C7A2E;border:2px solid #fff;margin-left:-12px;font:700 13px/32px 'Baloo 2',cursive;color:#fff;text-align:center">A</div>
+<div style="width:36px;height:36px;border-radius:999px;background:#E0A03A;border:2px solid #fff;margin-left:-12px;font:700 13px/32px 'Baloo 2',cursive;color:#fff;text-align:center">F</div>
+</div>
+<div style="flex:1"><div style="font:700 15px/1.2 'Baloo 2',cursive;color:#1E3123">4 facilitadoras</div><div style="font:500 12px/1.3 Quicksand,sans-serif;color:rgba(30,49,35,.5)">Quem conduz cada momento</div></div>
+<div style="font:600 20px/1 Quicksand,sans-serif;color:rgba(30,49,35,.3)">›</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div onClick="{{ goLocal }}" style="position:relative;height:130px;border-radius:22px;overflow:hidden;cursor:pointer">
+<img src="img/cachoeira.jpeg" alt="Cachoeira e mata ao fundo do gramado do sítio" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 26%">
+<div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,38,22,.82),rgba(20,38,22,.05))"></div>
+<div style="position:absolute;left:14px;bottom:12px;font:700 15px/1.15 'Baloo 2',cursive;color:#fff">Local e<br>como chegar</div>
+</div>
+<div onClick="{{ goChecklist }}" style="height:130px;border-radius:22px;background:#6E8A3C;padding:14px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer">
+<div style="font:700 22px/1 'Baloo 2',cursive;color:rgba(255,255,255,.55)">7</div>
+<div style="font:700 15px/1.15 'Baloo 2',cursive;color:#fff">O que levar<br>na mochila</div>
+</div>
+</div>
+<div onClick="{{ goGaleria }}" style="display:flex;align-items:center;gap:12px;padding:6px 4px 10px;cursor:pointer;min-height:44px">
+<div style="flex:1;font:600 13px/1 Quicksand,sans-serif;color:#5C7A2E">Fotos das edições anteriores</div>
+<div style="font:600 18px/1 Quicksand,sans-serif;color:#5C7A2E">→</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isInscricao }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="padding:60px 18px 8px;display:flex;align-items:center;gap:12px">
+<div onClick="{{ goHome }}" style="width:38px;height:38px;border-radius:999px;background:#fff;border:1px solid rgba(30,49,35,.1);display:flex;align-items:center;justify-content:center;font:600 18px/1 Quicksand,sans-serif;color:#1E3123;cursor:pointer">‹</div>
+<div style="font:700 19px/1 'Baloo 2',cursive;color:#1E3123">Minha vaga</div>
+</div>
+<div style="padding:8px 18px 20px;display:flex;flex-direction:column;gap:12px">
+<div style="background:#1E3123;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="width:26px;height:26px;border-radius:999px;background:#8FAE4B;display:flex;align-items:center;justify-content:center;font:700 13px/1 Quicksand,sans-serif;color:#fff">✓</div>
+<div style="font:600 11px/1 Quicksand,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#A8C27A">Inscrição confirmada</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:3px">
+<div style="font:700 22px/1.15 'Baloo 2',cursive;color:#F6F1E6">{{ nomeCompleto }}</div>
+<div style="font:500 12px/1.4 Quicksand,sans-serif;color:rgba(246,241,230,.6)">Pagamento recebido em 02/10 · 2º lote</div>
+</div>
+<div style="display:flex;gap:10px">
+<div style="flex:1;background:rgba(246,241,230,.08);border-radius:16px;padding:13px"><div style="font:600 9px/1 Quicksand,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,241,230,.45)">Data</div><div style="margin-top:5px;font:700 15px/1 'Baloo 2',cursive;color:#F6F1E6">17 out · 10h</div></div>
+<div style="flex:1;background:rgba(246,241,230,.08);border-radius:16px;padding:13px"><div style="font:600 9px/1 Quicksand,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,241,230,.45)">Código</div><div style="margin-top:5px;font:700 15px/1 'Baloo 2',cursive;color:#F6F1E6">MCN-042</div></div>
+</div>
+</div>
+<div style="font:500 13px/1.5 Quicksand,sans-serif;color:rgba(30,49,35,.6)">O que já está incluso na sua vaga:</div>
+<div style="background:#fff;border:1px solid rgba(30,49,35,.08);border-radius:22px;padding:6px 18px">
+<sc-for list="{{ inclui }}" as="i" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(30,49,35,.06)">
+<div style="width:20px;height:20px;border-radius:999px;background:#E7EED6;display:flex;align-items:center;justify-content:center;font:700 11px/1 Quicksand,sans-serif;color:#5C7A2E">✓</div>
+<div style="font:500 13px/1.3 Quicksand,sans-serif;color:#1E3123">{{ i }}</div>
+</div>
+</sc-for>
+</div>
+<div style="background:#E7EED6;border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:6px">
+<div style="font:700 13px/1 'Baloo 2',cursive;color:#3D5424">Não incluso</div>
+<div style="font:500 12px/1.5 Quicksand,sans-serif;color:rgba(30,49,35,.7)">A massagem de relaxamento é opcional, com horário agendado e pagamento por Pix dentro do app.</div>
+</div>
+</div>
+<div style="padding:0 18px 22px;display:flex;flex-direction:column;gap:10px">
+<div onClick="{{ goMassagem }}" style="background:#D5533B;border-radius:18px;padding:17px;text-align:center;font:700 16px/1 Quicksand,sans-serif;color:#fff;cursor:pointer;min-height:44px;box-sizing:border-box" style-hover="background:#C24730">Agendar massagem</div>
+<div style="text-align:center;font:500 11px/1.4 Quicksand,sans-serif;color:rgba(30,49,35,.45)">Dúvidas sobre a sua inscrição? Fale com a organização no WhatsApp</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPrograma }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="padding:60px 18px 6px;display:flex;flex-direction:column;gap:3px">
+<div style="font:600 10px/1 Quicksand,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6E8A3C">Sábado, 17 de outubro</div>
+<div style="font:700 26px/1.1 'Baloo 2',cursive;color:#1E3123">O dia inteiro</div>
+</div>
+<div style="padding:12px 18px 22px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ programa }}" as="p" hint-placeholder-count="5">
+<div style="display:flex;gap:12px">
+<div style="width:46px;flex:none;padding-top:16px;font:700 13px/1 Quicksand,sans-serif;color:rgba(30,49,35,.55)">{{ p.h }}</div>
+<div style="flex:1;background:#fff;border:1px solid rgba(30,49,35,.07);border-left:4px solid {{ p.cor }};border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+<div style="font:700 15px/1.2 'Baloo 2',cursive;color:#1E3123">{{ p.t }}</div>
+<div style="font:500 12px/1.45 Quicksand,sans-serif;color:rgba(30,49,35,.6)">{{ p.d }}</div>
+<div style="font:600 10px/1 Quicksand,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6E8A3C;padding-top:3px">{{ p.quem }}</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isFacilitadoras }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="padding:60px 18px 6px;display:flex;align-items:center;gap:12px">
+<div onClick="{{ goHome }}" style="width:38px;height:38px;border-radius:999px;background:#fff;border:1px solid rgba(30,49,35,.1);display:flex;align-items:center;justify-content:center;font:600 18px/1 Quicksand,sans-serif;color:#1E3123;cursor:pointer">‹</div>
+<div style="font:700 19px/1 'Baloo 2',cursive;color:#1E3123">Facilitadoras</div>
+</div>
+<div style="padding:12px 18px 22px;display:flex;flex-direction:column;gap:12px">
+<div style="font:500 12px/1.5 Quicksand,sans-serif;color:rgba(30,49,35,.55)">As quatro mulheres que conduzem o dia. Toque no @ para conhecer o trabalho de cada uma.</div>
+<sc-for list="{{ facilitadoras }}" as="f" hint-placeholder-count="4">
+<div style="background:#fff;border:1px solid rgba(30,49,35,.07);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:13px">
+<div style="display:flex;align-items:center;gap:14px">
+<div style="width:96px;height:96px;flex:none;border-radius:999px;overflow:hidden;background:{{ f.cor }}">
+<image-slot id="{{ f.slotId }}" shape="circle" style="width:96px;height:96px" placeholder="Arraste a foto"></image-slot>
+</div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+<div style="font:700 17px/1.1 'Baloo 2',cursive;color:#1E3123">{{ f.n }}</div>
+<div style="font:500 12px/1.35 Quicksand,sans-serif;color:rgba(30,49,35,.6)">{{ f.s }}</div>
+</div>
+</div>
+<sc-if value="{{ f.temBio }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 13px/1.55 Quicksand,sans-serif;color:rgba(30,49,35,.72)">{{ f.bio }}</div>
+</sc-if>
+<a href="{{ f.link }}" target="_blank" style="align-self:flex-start;display:flex;align-items:center;gap:8px;background:#F7E0D9;border-radius:999px;padding:9px 14px;text-decoration:none;min-height:44px;box-sizing:border-box">
+<span style="font:700 12px/1 Quicksand,sans-serif;color:#C24730">{{ f.at }}</span>
+<span style="font:600 12px/1 Quicksand,sans-serif;color:#A83C28">Instagram ↗</span>
+</a>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLocal }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="position:relative;height:250px;overflow:hidden">
+<img src="img/cachoeira.jpeg" alt="Gramado, casa e cachoeira do Sítio Anju" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 22%">
+<div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,38,22,.85),rgba(20,38,22,.1))"></div>
+<div onClick="{{ goHome }}" style="position:absolute;top:58px;left:18px;width:38px;height:38px;border-radius:999px;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;font:600 18px/1 Quicksand,sans-serif;color:#1E3123;cursor:pointer">‹</div>
+<div style="position:absolute;left:20px;bottom:18px;font:700 30px/1 'Baloo 2',cursive;color:#fff">Sítio Anju</div>
+</div>
+<div style="padding:18px;display:flex;flex-direction:column;gap:12px">
+<div style="background:#fff;border:1px solid rgba(30,49,35,.07);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;flex-direction:column;gap:3px"><div style="font:600 10px/1 Quicksand,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#6E8A3C">Endereço</div><div style="font:600 14px/1.45 Quicksand,sans-serif;color:#1E3123">Estrada do Sítio Anju · Mata Atlântica<br>Grande São Paulo</div></div>
+<div style="display:flex;gap:10px">
+<div style="flex:1;background:#E7EED6;border-radius:14px;padding:12px;text-align:center;font:700 12px/1 Quicksand,sans-serif;color:#3D5424;cursor:pointer;min-height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center">Abrir no mapa</div>
+<div style="flex:1;background:#E7EED6;border-radius:14px;padding:12px;text-align:center;font:700 12px/1 Quicksand,sans-serif;color:#3D5424;cursor:pointer;min-height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center">Copiar endereço</div>
+</div>
+</div>
+<div style="background:#1E3123;border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px">
+<div style="font:700 15px/1 'Baloo 2',cursive;color:#F6F1E6">Como chegar</div>
+<div style="font:500 12px/1.55 Quicksand,sans-serif;color:rgba(246,241,230,.75)">Cerca de 1h20 saindo da zona sul de São Paulo. Os últimos 2 km são de estrada de terra, tranquila para carro baixo em tempo seco.</div>
+<div onClick="{{ goMural }}" style="background:rgba(246,241,230,.12);border-radius:14px;padding:13px;text-align:center;font:700 12px/1 Quicksand,sans-serif;color:#EFC94C;cursor:pointer;min-height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center">Procurar carona no mural</div>
+</div>
+<div style="background:#fff;border:1px solid rgba(30,49,35,.07);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px">
+<div style="font:700 15px/1 'Baloo 2',cursive;color:#1E3123">Bom saber</div>
+<div style="font:500 12px/1.55 Quicksand,sans-serif;color:rgba(30,49,35,.65)">Estacionamento gratuito no sítio · sinal de celular fraco em parte da mata · cachoeira com poço raso, banho permitido · evento apenas para mães, sem crianças.</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isChecklist }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="padding:60px 18px 6px;display:flex;align-items:center;gap:12px">
+<div onClick="{{ goHome }}" style="width:38px;height:38px;border-radius:999px;background:#fff;border:1px solid rgba(30,49,35,.1);display:flex;align-items:center;justify-content:center;font:600 18px/1 Quicksand,sans-serif;color:#1E3123;cursor:pointer">‹</div>
+<div style="font:700 19px/1 'Baloo 2',cursive;color:#1E3123">Minha mochila</div>
+</div>
+<div style="padding:10px 18px 22px;display:flex;flex-direction:column;gap:14px">
+<div style="font:600 13px/1 Quicksand,sans-serif;color:#6E8A3C">{{ feitos }} de {{ totalItens }} itens separados</div>
+<div style="background:#fff;border:1px solid rgba(30,49,35,.07);border-radius:22px;padding:4px 18px">
+<sc-for list="{{ checklist }}" as="c" hint-placeholder-count="7">
+<div onClick="{{ c.toggle }}" style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid rgba(30,49,35,.06);cursor:pointer;min-height:44px;box-sizing:border-box">
+<div style="width:24px;height:24px;flex:none;border-radius:8px;border:2px solid {{ c.boxBorder }};background:{{ c.box }};display:flex;align-items:center;justify-content:center;font:700 12px/1 Quicksand,sans-serif;color:#fff">{{ c.mark }}</div>
+<div style="font:500 14px/1.35 Quicksand,sans-serif;color:{{ c.textColor }};text-decoration:{{ c.deco }}">{{ c.t }}</div>
+</div>
+</sc-for>
+</div>
+<div style="background:#F7E0D9;border-radius:22px;padding:16px 18px;font:500 12px/1.55 Quicksand,sans-serif;color:#7A2E1F">A foto de criança é usada na roda de encerramento. Pode ser no celular, mas impressa emociona mais.</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isMassagem }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="position:relative;height:190px;overflow:hidden">
+<img src="img/cachoeira.jpeg" alt="Gramado do sítio junto à cachoeira" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%">
+<div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,38,22,.92) 35%,rgba(20,38,22,.5))"></div>
+<div style="position:absolute;left:20px;right:20px;bottom:16px">
+<div style="font:700 27px/1.05 'Baloo 2',cursive;color:#fff">Massagem de<br>relaxamento</div>
+</div>
+</div>
+<div style="padding:18px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;gap:10px">
+<div style="flex:1;background:#fff;border:1px solid rgba(30,49,35,.07);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:3px"><div style="font:700 18px/1 'Baloo 2',cursive;color:#1E3123">30 min</div><div style="font:500 11px/1 Quicksand,sans-serif;color:rgba(30,49,35,.5)">duração</div></div>
+<div style="flex:1;background:#fff;border:1px solid rgba(30,49,35,.07);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:3px"><div style="font:700 18px/1 'Baloo 2',cursive;color:#1E3123">{{ precoMassagemLabel }}</div><div style="font:500 11px/1 Quicksand,sans-serif;color:rgba(30,49,35,.5)">à parte da vaga</div></div>
+</div>
+<div style="font:500 12px/1.55 Quicksand,sans-serif;color:rgba(30,49,35,.62)">Atendimento individual na tenda ao lado das redes. Denise e Ligia atendem em paralelo, das 10h30 às 16h30.</div>
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<div style="font:700 13px/1 'Baloo 2',cursive;color:#1E3123">Escolha o horário</div>
+<div style="font:500 11px/1 Quicksand,sans-serif;color:rgba(30,49,35,.45)">{{ livresLabel }}</div>
+</div>
+<div style="display:flex;gap:8px;padding:0 2px 2px">
+<div style="width:62px;flex:none"></div>
+<div style="flex:1;text-align:center;font:700 11px/1 Quicksand,sans-serif;letter-spacing:.06em;color:#6E8A3C">Denise</div>
+<div style="flex:1;text-align:center;font:700 11px/1 Quicksand,sans-serif;letter-spacing:.06em;color:#6E8A3C">Ligia</div>
+</div>
+<sc-for list="{{ agenda }}" as="r" hint-placeholder-count="12">
+<div style="display:flex;align-items:stretch;gap:8px">
+<div style="width:62px;flex:none;display:flex;align-items:center;font:600 12px/1.2 Quicksand,sans-serif;color:rgba(30,49,35,.6)">{{ r.curto }}</div>
+<div onClick="{{ r.a.select }}" style="flex:1;background:{{ r.a.bg }};border:2px solid {{ r.a.border }};border-radius:13px;padding:10px 4px;display:flex;align-items:center;justify-content:center;text-align:center;font:600 11px/1.2 Quicksand,sans-serif;color:{{ r.a.color }};cursor:{{ r.a.cursor }};min-height:44px;box-sizing:border-box">{{ r.a.label }}</div>
+<div onClick="{{ r.b.select }}" style="flex:1;background:{{ r.b.bg }};border:2px solid {{ r.b.border }};border-radius:13px;padding:10px 4px;display:flex;align-items:center;justify-content:center;text-align:center;font:600 11px/1.2 Quicksand,sans-serif;color:{{ r.b.color }};cursor:{{ r.b.cursor }};min-height:44px;box-sizing:border-box">{{ r.b.label }}</div>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ etapaResumo }}" hint-placeholder-val="{{ false }}">
+<div style="background:#1E3123;border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;justify-content:space-between">
+<div style="display:flex;flex-direction:column;gap:3px"><div style="font:600 10px/1 Quicksand,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#A8C27A">Seu horário</div><div style="font:700 19px/1.15 'Baloo 2',cursive;color:#F6F1E6">{{ slotEscolhido }}</div></div>
+<div style="font:700 20px/1 'Baloo 2',cursive;color:#EFC94C">{{ precoMassagemLabel }}</div>
+</div>
+<div onClick="{{ irParaPix }}" style="background:#D5533B;border-radius:16px;padding:15px;text-align:center;font:700 15px/1 Quicksand,sans-serif;color:#fff;cursor:pointer;min-height:44px;box-sizing:border-box" style-hover="background:#C24730">Pagar com Pix</div>
+<div style="text-align:center;font:500 11px/1.4 Quicksand,sans-serif;color:rgba(246,241,230,.5)">O horário fica reservado por 20 minutos até o pagamento</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ etapaPix }}" hint-placeholder-val="{{ false }}">
+<div style="background:#fff;border:1px solid rgba(30,49,35,.1);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<div style="display:flex;flex-direction:column;gap:3px">
+<div style="font:600 10px/1.3 Quicksand,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6E8A3C">{{ slotEscolhido }}</div>
+<div style="font:700 26px/1 'Baloo 2',cursive;color:#1E3123">{{ precoMassagemLabel }}</div>
+</div>
+<div onClick="{{ voltarResumo }}" style="font:600 12px/1 Quicksand,sans-serif;color:rgba(30,49,35,.45);cursor:pointer;padding:8px">trocar</div>
+</div>
+<div style="align-self:center;width:150px;height:150px;border-radius:16px;border:2px dashed rgba(30,49,35,.2);background:#F6F1E6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:12px;box-sizing:border-box">
+<div style="font:700 13px/1.2 'Baloo 2',cursive;color:#1E3123">QR Code Pix</div>
+<div style="font:500 10px/1.35 Quicksand,sans-serif;color:rgba(30,49,35,.5)">gerado com o valor<br>já preenchido</div>
+</div>
+<div style="background:#F6F1E6;border-radius:16px;padding:13px 14px;display:flex;align-items:center;gap:12px">
+<div style="flex:1;min-width:0">
+<div style="font:600 9px/1 Quicksand,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(30,49,35,.45)">Chave Pix</div>
+<div style="margin-top:5px;font:600 13px/1.2 Quicksand,sans-serif;color:#1E3123;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ chavePix }}</div>
+</div>
+<div onClick="{{ copiarPix }}" style="flex:none;background:#1E3123;border-radius:12px;padding:11px 14px;font:700 12px/1 Quicksand,sans-serif;color:#F6F1E6;cursor:pointer;min-height:44px;display:flex;align-items:center;box-sizing:border-box">{{ labelCopiar }}</div>
+</div>
+<div onClick="{{ confirmarPix }}" style="background:#D5533B;border-radius:16px;padding:15px;text-align:center;font:700 15px/1 Quicksand,sans-serif;color:#fff;cursor:pointer;min-height:44px;box-sizing:border-box" style-hover="background:#C24730">Já fiz o pagamento</div>
+<div style="text-align:center;font:500 11px/1.45 Quicksand,sans-serif;color:rgba(30,49,35,.45)">A organização confere o comprovante e seu horário fica fixo</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ etapaOk }}" hint-placeholder-val="{{ false }}">
+<div style="background:#E7EED6;border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:11px">
+<div style="width:28px;height:28px;border-radius:999px;background:#6E8A3C;display:flex;align-items:center;justify-content:center;font:700 14px/1 Quicksand,sans-serif;color:#fff">✓</div>
+<div style="font:700 17px/1.1 'Baloo 2',cursive;color:#1E3123">Massagem agendada</div>
+</div>
+<div style="display:flex;gap:10px">
+<div style="flex:1;background:#fff;border-radius:16px;padding:13px"><div style="font:600 9px/1 Quicksand,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(30,49,35,.45)">Horário</div><div style="margin-top:5px;font:700 13px/1.2 'Baloo 2',cursive;color:#1E3123">{{ slotEscolhido }}</div></div>
+<div style="flex:1;background:#fff;border-radius:16px;padding:13px"><div style="font:600 9px/1 Quicksand,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:rgba(30,49,35,.45)">Pagamento</div><div style="margin-top:5px;font:700 16px/1 'Baloo 2',cursive;color:#E0A03A">Em conferência</div></div>
+</div>
+<div style="font:500 12px/1.5 Quicksand,sans-serif;color:rgba(30,49,35,.65)">Chegue na tenda cinco minutos antes. Se precisar trocar de horário, avise a organização até o dia 16.</div>
+<div onClick="{{ voltarResumo }}" style="align-self:flex-start;font:600 12px/1 Quicksand,sans-serif;color:#C24730;cursor:pointer;padding:8px 0;min-height:44px;display:flex;align-items:center">Trocar horário</div>
+</div>
+</sc-if>
+<sc-if value="{{ semSlot }}" hint-placeholder-val="{{ true }}">
+<div style="background:rgba(30,49,35,.05);border-radius:22px;padding:18px;text-align:center;font:500 12px/1.5 Quicksand,sans-serif;color:rgba(30,49,35,.5)">Toque em um horário livre para reservar</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isGaleria }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="padding:60px 18px 6px;display:flex;align-items:center;gap:12px">
+<div onClick="{{ goHome }}" style="width:38px;height:38px;border-radius:999px;background:#fff;border:1px solid rgba(30,49,35,.1);display:flex;align-items:center;justify-content:center;font:600 18px/1 Quicksand,sans-serif;color:#1E3123;cursor:pointer">‹</div>
+<div style="font:700 19px/1 'Baloo 2',cursive;color:#1E3123">Edições anteriores</div>
+</div>
+<div style="padding:12px 18px 24px;display:flex;flex-direction:column;gap:14px">
+<div style="font:500 12px/1.5 Quicksand,sans-serif;color:rgba(30,49,35,.55)">Posts das duas primeiras edições, como foram publicados.</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:#1E3123"><img src="img/edicoes.jpeg" alt="Mosaico de fotos das edições anteriores do evento" style="display:block;width:100%;height:100%;object-fit:contain"></div>
+<div style="aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:#1E3123"><img src="img/trilha.jpeg" alt="Grupo em fila na trilha entre a vegetação" style="display:block;width:100%;height:100%;object-fit:contain"></div>
+<div style="aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:#1E3123"><img src="img/mandala.jpeg" alt="Mãos pintando uma mandala na oficina" style="display:block;width:100%;height:100%;object-fit:contain"></div>
+<div style="aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:#1E3123"><img src="img/yoga.jpeg" alt="Mães em pé sobre cangas coloridas na grama durante a prática de yoga" style="display:block;width:100%;height:100%;object-fit:contain"></div>
+<div style="aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:#1E3123"><img src="img/roda.jpeg" alt="Roda de mãos dadas no gramado em frente à casa" style="display:block;width:100%;height:100%;object-fit:contain"></div>
+<div style="aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:#1E3123"><img src="img/refeicoes.jpeg" alt="Mesa comprida montada na grama para o almoço" style="display:block;width:100%;height:100%;object-fit:contain"></div>
+</div>
+<div style="aspect-ratio:3/4;border-radius:20px;overflow:hidden"><img src="img/cachoeira.jpeg" alt="Piquenique em roda diante da cachoeira" style="display:block;width:100%;height:100%;object-fit:cover"></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isMural }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="padding:60px 18px 6px;display:flex;flex-direction:column;gap:3px">
+<div style="font:600 10px/1 Quicksand,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6E8A3C">25 mães · 3ª edição</div>
+<div style="font:700 26px/1.1 'Baloo 2',cursive;color:#1E3123">Mural da roda</div>
+</div>
+<div style="padding:12px 18px 24px;display:flex;flex-direction:column;gap:12px">
+<div style="background:#fff;border:1px solid rgba(30,49,35,.08);border-radius:20px;padding:15px 16px;display:flex;align-items:center;gap:12px">
+<div style="width:34px;height:34px;flex:none;border-radius:999px;background:#E7EED6;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Baloo 2',cursive;color:#5C7A2E">V</div>
+<div style="flex:1;font:500 13px/1 Quicksand,sans-serif;color:rgba(30,49,35,.42)">Escrever para o grupo…</div>
+</div>
+<div style="background:#EFC94C;border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:5px">
+<div style="font:600 10px/1 Quicksand,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#7A5A0B">Aviso das facilitadoras</div>
+<div style="font:600 13px/1.5 Quicksand,sans-serif;color:#3D2E05">Chegue até 10h para não perder o café. O portão fecha às 10h30 e reabre no fim do dia.</div>
+</div>
+<sc-for list="{{ mural }}" as="m" hint-placeholder-count="3">
+<div style="background:#fff;border:1px solid rgba(30,49,35,.07);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="width:32px;height:32px;flex:none;border-radius:999px;background:{{ m.cor }};display:flex;align-items:center;justify-content:center;font:700 13px/1 'Baloo 2',cursive;color:#fff">{{ m.ini }}</div>
+<div style="flex:1;font:700 13px/1 Quicksand,sans-serif;color:#1E3123">{{ m.a }}</div>
+<div style="font:500 11px/1 Quicksand,sans-serif;color:rgba(30,49,35,.4)">{{ m.m }}</div>
+</div>
+<div style="font:500 13px/1.5 Quicksand,sans-serif;color:rgba(30,49,35,.75)">{{ m.t }}</div>
+<div style="display:flex;gap:16px;font:600 11px/1 Quicksand,sans-serif;color:#6E8A3C"><div>♡ {{ m.r }}</div><div>Responder</div></div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+</div>
+<div style="flex:none;background:rgba(246,241,230,.94);border-top:1px solid rgba(30,49,35,.1);padding:9px 6px 28px;display:{{ tabBarDisplay }}">
+<div onClick="{{ goHome }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0;cursor:pointer;min-height:44px">
+<div style="width:20px;height:20px;border-radius:7px;background:{{ tabHomeColor }}"></div>
+<div style="font:600 10px/1 Quicksand,sans-serif;color:{{ tabHomeColor }}">Início</div>
+</div>
+<div onClick="{{ goPrograma }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0;cursor:pointer;min-height:44px">
+<div style="width:20px;height:20px;border-radius:7px;background:{{ tabProgColor }}"></div>
+<div style="font:600 10px/1 Quicksand,sans-serif;color:{{ tabProgColor }}">Programa</div>
+</div>
+<div onClick="{{ goMassagem }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0;cursor:pointer;min-height:44px">
+<div style="width:20px;height:20px;border-radius:7px;background:{{ tabMassColor }}"></div>
+<div style="font:600 10px/1 Quicksand,sans-serif;color:{{ tabMassColor }}">Massagem</div>
+</div>
+<div onClick="{{ goMural }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0;cursor:pointer;min-height:44px">
+<div style="width:20px;height:20px;border-radius:7px;background:{{ tabMuralColor }}"></div>
+<div style="font:600 10px/1 Quicksand,sans-serif;color:{{ tabMuralColor }}">Comunidade</div>
+</div>
+</div>
+</div>
+</x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1120,&quot;height&quot;:1060},&quot;telaInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;inscricao&quot;,&quot;programa&quot;,&quot;facilitadoras&quot;,&quot;local&quot;,&quot;checklist&quot;,&quot;massagem&quot;,&quot;galeria&quot;,&quot;mural&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Protótipo&quot;},&quot;precoMassagem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:60,&quot;min&quot;:0,&quot;max&quot;:300,&quot;step&quot;:10,&quot;unit&quot;:&quot;R$&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Massagem&quot;},&quot;chavePix&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;61477650000117&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Massagem&quot;}}">
+const PROGRAMA = [
+  { h: '10:00', t: 'Chegada e café da manhã', d: 'Recepção, crachá e café caseiro na varanda azul.', quem: 'Todas', cor: '#EFC94C' },
+  { h: '10:45', t: 'Roda de abertura', d: 'Dinâmica focada nas emoções e no alinhamento das suas demandas pessoais.', quem: 'Ana Claudia', cor: '#8FAE4B' },
+  { h: '11:30', t: 'Trilha nível iniciante', d: 'Caminhada guiada pela mata até a cachoeira. Ritmo tranquilo.', quem: 'Lethycia', cor: '#5C7A2E' },
+  { h: '12:30', t: 'Meditação guiada junto à água', d: 'Vinte minutos de silêncio e respiração.', quem: 'Lethycia', cor: '#5C7A2E' },
+  { h: '13:00', t: 'Almoço', d: 'Alimentação saudável e caseira, feita pela @malo.an.', quem: 'Todas', cor: '#EFC94C' },
+  { h: '14:15', t: 'Yoga leve e dança intuitiva', d: 'Integração do corpo. Traga uma canga ou tapetinho.', quem: 'Anastacia', cor: '#D5533B' },
+  { h: '15:15', t: 'Oficina Mandala', d: 'Atividade prática para soltar a criatividade e olhar para dentro.', quem: 'Fabiana', cor: '#E0A03A' },
+  { h: '16:15', t: 'Pausa na rede + massagem', d: 'Descanso livre. Massagens acontecem por horário agendado.', quem: 'Livre', cor: '#8FAE4B' },
+  { h: '16:40', t: 'Lanche da tarde e roda de encerramento', d: 'Partilhas finais e foto do grupo.', quem: 'Todas', cor: '#EFC94C' }
+];
+
+const FACILITADORAS = [
+  { id: 'ana', n: 'Ana Claudia', s: 'Roda de abertura e dinâmicas', at: '@anaclaudiasbandrade', ini: 'A', cor: '#8FAE4B', bio: '' },
+  { id: 'lethycia', n: 'Lethycia Abreu', s: 'Trilha e meditação guiada', at: '@rosaemterapia', ini: 'L', cor: '#D5533B', bio: '' },
+  { id: 'anastacia', n: 'Anastacia Harlamova', s: 'Yoga leve e dança intuitiva', at: '@anastasiaharlamova', ini: 'A', cor: '#5C7A2E', bio: '' },
+  { id: 'fabiana', n: 'Fabiana Franco', s: 'Oficina Mandala', at: '@fabianafranco.psico', ini: 'F', cor: '#E0A03A', bio: '' }
+];
+
+const CHECKLIST = [
+  { id: 'c1', t: 'Tênis ou bota leve para a trilha' },
+  { id: 'c2', t: 'Canga ou tapetinho para o yoga' },
+  { id: 'c3', t: 'Garrafa de água reutilizável' },
+  { id: 'c4', t: 'Roupa de banho e toalha' },
+  { id: 'c5', t: 'Repelente e protetor solar' },
+  { id: 'c6', t: 'Blusa de frio para o fim da tarde' },
+  { id: 'c7', t: 'Uma foto sua de quando era criança' }
+];
+
+const AGENDA = [
+  { curto: '10h30', faixa: '10h30 às 11h', denise: '', ligia: '' },
+  { curto: '11h', faixa: '11h às 11h30', denise: 'Vanessa Coelho', ligia: 'Léia Valleo' },
+  { curto: '11h30', faixa: '11h30 às 12h', denise: '', ligia: '' },
+  { curto: '12h', faixa: '12h às 12h30', denise: '', ligia: '' },
+  { curto: '12h30', faixa: '12h30 às 13h', denise: 'Thaís Gazeta', ligia: '' },
+  { curto: '13h', faixa: '13h às 13h30', denise: 'Thaís Gazeta', ligia: 'Marcela Queiroz' },
+  { curto: '13h30', faixa: '13h30 às 14h', denise: 'Aline Dias', ligia: 'Anne Cristine' },
+  { curto: '14h', faixa: '14h às 14h30', denise: 'almoço', ligia: 'almoço' },
+  { curto: '14h30', faixa: '14h30 às 15h', denise: 'Kamila Teixeira', ligia: 'Luna Teixeira' },
+  { curto: '15h', faixa: '15h às 15h30', denise: 'Paula Durelli', ligia: 'Silma França' },
+  { curto: '15h30', faixa: '15h30 às 16h', denise: 'Janete Aparecida', ligia: 'Érica Cristina' },
+  { curto: '16h', faixa: '16h às 16h30', denise: 'Nívea Vieira', ligia: '' }
+];
+
+const MURAL = [
+  { a: 'Carol', ini: 'C', cor: '#D5533B', t: 'Alguém vindo da zona sul quer dividir carona? Saio às 8h30 de Santo Amaro.', m: 'há 2 h', r: 4 },
+  { a: 'Juliana', ini: 'J', cor: '#8FAE4B', t: 'É a minha primeira vez. Estou nervosa e animada ao mesmo tempo!', m: 'há 5 h', r: 11 },
+  { a: 'Ana Claudia', ini: 'A', cor: '#1E3123', t: 'Meninas, a trilha é tranquila mas o chão fica úmido. Tênis fechado ajuda muito.', m: 'ontem', r: 8 }
+];
+
+class Component extends DCLogic {
+  state = { screen: null, checked: {}, slot: null, pix: null, copiado: false, nome: '', whats: '', logado: false };
+  componentDidMount() {
+    try {
+      const raw = localStorage.getItem('mcn_participante');
+      if (raw) {
+        const u = JSON.parse(raw);
+        if (u && u.nome) this.setState({ nome: u.nome, whats: u.whats || '', logado: true });
+      }
+    } catch (e) {}
+  }
+  esquecer() {
+    try { localStorage.removeItem('mcn_participante'); } catch (e) {}
+    this.setState({ nome: '', whats: '', logado: false, screen: null });
+  }
+  entrarNoApp() {
+    const nome = (this.state.nome || '').trim();
+    const whats = (this.state.whats || '').trim();
+    if (nome.length < 3 || whats.replace(/\D/g, '').length < 10) return;
+    try {
+      localStorage.setItem('mcn_participante', JSON.stringify({ nome, whats, entrou: new Date().toISOString() }));
+    } catch (e) {}
+    this.setState({ logado: true, screen: 'home' });
+  }
+  componentDidUpdate(prev) {
+    if (prev.telaInicial !== this.props.telaInicial) this.setState({ screen: this.props.telaInicial });
+  }
+  go(screen) { return () => this.setState({ screen }); }
+  cell(row, quem, nome) {
+    const almoco = nome === 'almoço';
+    const busy = !!nome;
+    const id = row.faixa + ' · ' + quem;
+    const on = this.state.slot === id;
+    return {
+      label: busy ? nome : (on ? 'escolhido' : 'livre'),
+      select: busy ? null : () => this.setState({ slot: id, pix: null, copiado: false }),
+      bg: almoco ? 'rgba(30,49,35,.08)' : (busy ? 'rgba(30,49,35,.06)' : (on ? '#1E3123' : '#fff')),
+      border: on ? '#1E3123' : (busy ? 'transparent' : 'rgba(110,138,60,.45)'),
+      color: almoco ? 'rgba(30,49,35,.45)' : (busy ? 'rgba(30,49,35,.72)' : (on ? '#F6F1E6' : '#5C7A2E')),
+      cursor: busy ? 'default' : 'pointer'
+    };
+  }
+  renderVals() {
+    const s = this.state.logado ? (this.state.screen || this.props.telaInicial || 'home') : 'entrada';
+    const tab = (name) => (s === name ? '#D5533B' : 'rgba(30,49,35,.35)');
+    const nomeOk = (this.state.nome || '').trim().length >= 3 && (this.state.whats || '').replace(/\D/g, '').length >= 10;
+    const primeiro = (this.state.nome || '').trim().split(' ')[0];
+    return {
+      isEntrada: s === 'entrada',
+      tabBarDisplay: s === 'entrada' ? 'none' : 'flex',
+      nome: this.state.nome,
+      whats: this.state.whats,
+      nomeCompleto: (this.state.nome || '').trim() || 'Participante',
+      saudacao: primeiro ? 'Olá, ' + primeiro : 'Bem-vinda',
+      setNome: (e) => this.setState({ nome: e.target.value }),
+      setWhats: (e) => this.setState({ whats: e.target.value }),
+      entrar: () => this.entrarNoApp(),
+      temCadastro: !!(this.state.nome || this.state.whats),
+      limparCadastro: () => this.esquecer(),
+      sair: () => this.setState({ logado: false, screen: null }),
+      entrarBg: nomeOk ? '#D5533B' : 'rgba(213,83,59,.45)',
+      entrarCursor: nomeOk ? 'pointer' : 'default',
+      isHome: s === 'home',
+      isInscricao: s === 'inscricao',
+      isPrograma: s === 'programa',
+      isFacilitadoras: s === 'facilitadoras',
+      isLocal: s === 'local',
+      isChecklist: s === 'checklist',
+      isMassagem: s === 'massagem',
+      isGaleria: s === 'galeria',
+      isMural: s === 'mural',
+      goHome: this.go('home'),
+      goInscricao: this.go('inscricao'),
+      goPrograma: this.go('programa'),
+      goFacilitadoras: this.go('facilitadoras'),
+      goLocal: this.go('local'),
+      goChecklist: this.go('checklist'),
+      goMassagem: this.go('massagem'),
+      goGaleria: this.go('galeria'),
+      goMural: this.go('mural'),
+      tabHomeColor: tab('home'),
+      tabProgColor: tab('programa'),
+      tabMassColor: tab('massagem'),
+      tabMuralColor: tab('mural'),
+      programa: PROGRAMA,
+      facilitadoras: FACILITADORAS.map(f => Object.assign({}, f, {
+        slotId: 'fac-' + f.id,
+        link: 'https://instagram.com/' + f.at.replace('@', ''),
+        temBio: !!f.bio
+      })),
+      checklist: CHECKLIST.map(c => {
+        const on = !!this.state.checked[c.id];
+        return Object.assign({}, c, {
+          toggle: () => this.setState(st => ({ checked: Object.assign({}, st.checked, { [c.id]: !st.checked[c.id] }) })),
+          box: on ? '#5C7A2E' : 'transparent',
+          boxBorder: on ? '#5C7A2E' : 'rgba(30,49,35,.22)',
+          mark: on ? '✓' : '',
+          textColor: on ? 'rgba(30,49,35,.4)' : '#1E3123',
+          deco: on ? 'line-through' : 'none'
+        });
+      }),
+      feitos: Object.keys(this.state.checked).filter(k => this.state.checked[k]).length,
+      totalItens: CHECKLIST.length,
+      agenda: AGENDA.map(r => ({
+        curto: r.curto,
+        a: this.cell(r, 'Denise', r.denise),
+        b: this.cell(r, 'Ligia', r.ligia)
+      })),
+      livresLabel: AGENDA.reduce((n, r) => n + (r.denise ? 0 : 1) + (r.ligia ? 0 : 1), 0) + ' livres',
+      etapaResumo: !!this.state.slot && !this.state.pix,
+      etapaPix: !!this.state.slot && this.state.pix === 'pix',
+      etapaOk: !!this.state.slot && this.state.pix === 'ok',
+      irParaPix: () => this.setState({ pix: 'pix', copiado: false }),
+      confirmarPix: () => this.setState({ pix: 'ok' }),
+      voltarResumo: () => this.setState({ pix: null, copiado: false }),
+      chavePix: this.props.chavePix ?? 'maesconexao@gmail.com',
+      labelCopiar: this.state.copiado ? 'Copiada' : 'Copiar',
+      copiarPix: () => {
+        const k = this.props.chavePix ?? 'maesconexao@gmail.com';
+        if (navigator.clipboard) navigator.clipboard.writeText(k).catch(() => {});
+        this.setState({ copiado: true });
+      },
+      slotEscolhido: this.state.slot,
+      temSlot: !!this.state.slot,
+      semSlot: !this.state.slot,
+      mural: MURAL,
+      precoMassagemLabel: 'R$ ' + (this.props.precoMassagem ?? 90),
+      inclui: ['Café da manhã, almoço e lanche da tarde', 'Trilha guiada nível iniciante', 'Yoga leve, dança intuitiva e meditação', 'Oficina de mandala e dinâmicas em roda']
+    };
+  }
+}
+</script>
+</body>
+</html>
