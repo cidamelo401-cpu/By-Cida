@@ -164,12 +164,16 @@ export default function CatalogoPage() {
     const map = new Map<string, GroupedShirt>()
 
     for (const p of teamProducts) {
-      const colorNote = p.notes?.match(/Cor[:\s]*(\w+)/i)?.[1]?.toLowerCase() ?? ''
-      const key = `${p.team}|${p.model}|${colorNote}|${p.season ?? ''}`
+      const key = `${p.team}|${p.model}`
 
       const existing = map.get(key)
       if (existing) {
-        existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
+        const existingSize = existing.sizes.find((s) => s.size === p.size)
+        if (existingSize) {
+          existingSize.quantity += p.quantity
+        } else {
+          existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
+        }
         if (!existing.photo_url && p.photo_url) existing.photo_url = p.photo_url
       } else {
         map.set(key, {
@@ -242,21 +246,7 @@ export default function CatalogoPage() {
       {!loading && (collections.length > 0 || hasKidsProducts) && (
         <section className="mx-auto max-w-6xl px-4 pb-3">
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            {/* Kids toggle */}
-            {hasKidsProducts && (
-              <button
-                onClick={() => { setKidsOnly(!kidsOnly); setActiveTeam(null) }}
-                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors flex items-center gap-1.5 ${
-                  kidsOnly
-                    ? 'bg-[#C9A84C] text-black'
-                    : 'bg-white/10 text-gray-400 hover:bg-white/20'
-                }`}
-              >
-                👶 Kids
-              </button>
-            )}
-
-            {/* Collection tabs */}
+            {/* Collection tabs — "Todas as Coleções" first */}
             {collections.length > 0 && (
               <>
                 <button
@@ -286,6 +276,20 @@ export default function CatalogoPage() {
                   )
                 })}
               </>
+            )}
+
+            {/* Kids toggle — after collections */}
+            {hasKidsProducts && (
+              <button
+                onClick={() => { setKidsOnly(!kidsOnly); setActiveTeam(null) }}
+                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors flex items-center gap-1.5 ${
+                  kidsOnly
+                    ? 'bg-[#C9A84C] text-black'
+                    : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                }`}
+              >
+                👶 Kids
+              </button>
             )}
           </div>
         </section>
@@ -479,7 +483,7 @@ export default function CatalogoPage() {
                           {team.name}
                         </p>
                         <p className="text-xs text-[#C9A84C] font-bold mt-auto pt-1">
-                          a partir de {formatCurrency(team.minPrice)}
+                          {formatCurrency(team.minPrice)}
                         </p>
                         <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C]/10 text-[#C9A84C] text-xs font-bold uppercase py-2 tracking-wide">
                           Ver Camisas
@@ -488,6 +492,32 @@ export default function CatalogoPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Sob Encomenda card */}
+              <div className="mt-8">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => { window.location.href = '/catalogo/sob-encomenda' }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = '/catalogo/sob-encomenda' }}
+                  className="cursor-pointer"
+                >
+                  <div className="bg-[#1A1A1A] rounded-2xl border border-dashed border-[#C9A84C]/40 p-6 flex items-center gap-4 hover:border-[#C9A84C] transition-colors">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#C9A84C]/10 flex-shrink-0">
+                      <svg className="h-6 w-6 text-[#C9A84C]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 4l4 2 4-2 4 3-3 3v10H7V10L4 7l4-3z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-bold text-white text-sm uppercase">Sob Encomenda</p>
+                      <p className="text-xs text-gray-400 mt-0.5">Não encontrou o que procura? Consulte-nos!</p>
+                    </div>
+                    <svg className="h-5 w-5 text-gray-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
             </>
           )

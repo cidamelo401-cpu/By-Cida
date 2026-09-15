@@ -78,12 +78,16 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
     const map = new Map<string, GroupedShirt>()
 
     for (const p of products) {
-      const colorNote = p.notes?.match(/Cor[:\s]*(\w+)/i)?.[1]?.toLowerCase() ?? ''
-      const key = `${p.team}|${p.model}|${colorNote}|${p.season ?? ''}`
+      const key = `${p.team}|${p.model}`
 
       const existing = map.get(key)
       if (existing) {
-        existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
+        const existingSize = existing.sizes.find((s) => s.size === p.size)
+        if (existingSize) {
+          existingSize.quantity += p.quantity
+        } else {
+          existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
+        }
         if (!existing.photo_url && p.photo_url) existing.photo_url = p.photo_url
       } else {
         map.set(key, {
