@@ -19,12 +19,14 @@ export const STATUS_LABELS: Record<ProductStatus, string> = {
   disponivel: 'Disponível',
   reservado: 'Reservado',
   esgotado: 'Esgotado',
+  sob_encomenda: 'Sob Encomenda',
 }
 
-export const STATUS_BADGE: Record<ProductStatus, 'success' | 'warning' | 'danger'> = {
+export const STATUS_BADGE: Record<ProductStatus, 'success' | 'warning' | 'danger' | 'info'> = {
   disponivel: 'success',
   reservado: 'warning',
   esgotado: 'danger',
+  sob_encomenda: 'info',
 }
 
 export const COMMON_TEAMS = [

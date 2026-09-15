@@ -26,6 +26,7 @@ type FormState = {
   photos: string[]
   notes: string
   min_stock: string
+  sob_encomenda: boolean
 }
 
 const initialState: FormState = {
@@ -43,6 +44,7 @@ const initialState: FormState = {
   photos: [],
   notes: '',
   min_stock: '2',
+  sob_encomenda: false,
 }
 
 export default function NewProductPage() {
@@ -131,7 +133,7 @@ export default function NewProductPage() {
           photos: form.photos.length > 0 ? form.photos : null,
           notes: form.notes.trim() || null,
           min_stock: minStock,
-          status: quantity > 0 ? 'disponivel' : 'esgotado',
+          status: form.sob_encomenda ? 'sob_encomenda' : quantity > 0 ? 'disponivel' : 'esgotado',
           sku,
           archived: false,
         })
@@ -319,6 +321,16 @@ export default function NewProductPage() {
             onChange={(e) => updateField('notes', e.target.value)}
             placeholder="Detalhes adicionais sobre a camisa..."
           />
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.sob_encomenda}
+              onChange={(e) => updateField('sob_encomenda', e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-sm text-gray-700">Sob Encomenda</span>
+            <span className="text-xs text-gray-400">(não disponível a pronta entrega)</span>
+          </label>
         </Card>
 
         <div className="flex flex-col sm:flex-row gap-3">

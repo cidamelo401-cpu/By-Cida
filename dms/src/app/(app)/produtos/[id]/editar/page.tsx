@@ -36,6 +36,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     photos: [] as string[],
     notes: '',
     min_stock: '2',
+    sob_encomenda: false,
   })
 
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           photos: (data as any).photos?.length ? (data as any).photos : (data.photo_url ? [data.photo_url] : []),
           notes: data.notes ?? '',
           min_stock: String(data.min_stock),
+          sob_encomenda: data.status === 'sob_encomenda',
         })
       } catch {
         toast.error('Erro ao carregar produto.')
@@ -104,6 +106,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           photos: form.photos.length > 0 ? form.photos : null,
           notes: form.notes.trim() || null,
           min_stock: Number(form.min_stock) || 0,
+          status: form.sob_encomenda ? 'sob_encomenda' : (product.quantity > 0 ? 'disponivel' : 'esgotado'),
         })
         .eq('id', product.id)
 
@@ -252,6 +255,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             value={form.notes}
             onChange={(e) => updateField('notes', e.target.value)}
           />
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.sob_encomenda}
+              onChange={(e) => updateField('sob_encomenda', e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-sm text-gray-700">Sob Encomenda</span>
+            <span className="text-xs text-gray-400">(não disponível a pronta entrega)</span>
+          </label>
           <p className="text-xs text-gray-400">
             A quantidade em estoque é alterada apenas por movimentações, na página do produto.
           </p>

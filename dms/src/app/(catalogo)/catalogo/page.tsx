@@ -29,6 +29,7 @@ type GroupedShirt = {
   photo_url: string | null
   version: Product['version']
   sell_price: number
+  status: Product['status']
   sizes: { size: ProductSize; quantity: number; id: string }[]
 }
 
@@ -54,15 +55,16 @@ export default function CatalogoPage() {
           .from('products')
           .select('*')
           .eq('archived', false)
-          .eq('status', 'disponivel')
-          .gt('quantity', 0)
+          .in('status', ['disponivel', 'sob_encomenda'])
           .order('team')
 
         if (queryError) {
           setError(queryError.message)
           return
         }
-        setProducts(data ?? [])
+        // sob_encomenda shows regardless of quantity; disponivel needs quantity > 0
+        const filtered = (data ?? []).filter((p) => p.status === 'sob_encomenda' || p.quantity > 0)
+        setProducts(filtered)
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Erro desconhecido'
         setError(msg)
@@ -185,6 +187,7 @@ export default function CatalogoPage() {
           photo_url: p.photo_url,
           version: p.version,
           sell_price: p.sell_price,
+          status: p.status,
           sizes: [{ size: p.size, quantity: p.quantity, id: p.id }],
         })
       }
@@ -396,13 +399,16 @@ export default function CatalogoPage() {
                 </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                {groupedShirts.map((shirt) => (
+                {groupedShirts.map((shirt) => {
+                  const isSobEncomenda = shirt.status === 'sob_encomenda'
+                  const href = isSobEncomenda ? '/catalogo/sob-encomenda' : `/catalogo/${shirt.sizes[0]?.id}`
+                  return (
                   <div
                     key={shirt.key}
                     role="button"
                     tabIndex={0}
-                    onClick={() => { window.location.href = `/catalogo/${shirt.sizes[0]?.id}` }}
-                    onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = `/catalogo/${shirt.sizes[0]?.id}` }}
+                    onClick={() => { window.location.href = href }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = href }}
                     className="cursor-pointer"
                   >
                     <div className="bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5 hover:border-[#C9A84C]/40 transition-colors h-full flex flex-col">
@@ -432,13 +438,20 @@ export default function CatalogoPage() {
                           ))}
                         </div>
                         <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{formatCurrency(shirt.sell_price)}</p>
-                        <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C] text-black text-xs font-bold uppercase py-2 tracking-wide">
-                          Comprar
-                        </span>
+                        {isSobEncomenda ? (
+                          <span className="mt-1 w-full text-center rounded-lg bg-blue-600/20 text-blue-400 text-xs font-bold uppercase py-2 tracking-wide">
+                            Sob Encomenda
+                          </span>
+                        ) : (
+                          <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C] text-black text-xs font-bold uppercase py-2 tracking-wide">
+                            Comprar
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
-                ))}
+                  )
+                })}
               </div>
             </>
           )

@@ -36,8 +36,7 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
           .from('products')
           .select('*')
           .eq('archived', false)
-          .eq('status', 'disponivel')
-          .gt('quantity', 0)
+          .in('status', ['disponivel', 'sob_encomenda'])
           .order('team')
 
         if (collectionName === 'Outros') {
@@ -52,7 +51,8 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
           setError(queryError.message)
           return
         }
-        setProducts(data ?? [])
+        const filtered = (data ?? []).filter((p) => p.status === 'sob_encomenda' || p.quantity > 0)
+        setProducts(filtered)
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Erro desconhecido'
         setError(msg)
