@@ -265,7 +265,8 @@ export default function CatalogoPage() {
                   Todas as Coleções
                 </button>
                 {collections.map((col) => {
-                  const colLabel = col.name === '__outros__' ? 'Outros' : col.name
+                  const COLLECTION_LABELS: Record<string, string> = { '__outros__': 'Outros', 'Copa': 'Seleções' }
+                  const colLabel = COLLECTION_LABELS[col.name] ?? col.name
                   return (
                     <button
                       key={col.name}
