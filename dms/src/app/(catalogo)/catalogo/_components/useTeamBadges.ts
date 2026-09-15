@@ -120,7 +120,7 @@ export function useTeamBadges(teams: string[]) {
       if (cached) {
         const { data, ts } = JSON.parse(cached)
         if (Date.now() - ts < CACHE_TTL && data && typeof data === 'object') {
-          setBadges(data)
+          setBadges({ ...data, ...localOverrides })
           const missing = teamsToFetch.filter((t) => !data[t])
           if (missing.length === 0) return
         }
