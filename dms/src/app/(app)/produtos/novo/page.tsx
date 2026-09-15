@@ -325,7 +325,13 @@ export default function NewProductPage() {
             <input
               type="checkbox"
               checked={form.sob_encomenda}
-              onChange={(e) => updateField('sob_encomenda', e.target.checked)}
+              onChange={(e) => {
+                updateField('sob_encomenda', e.target.checked)
+                if (e.target.checked) {
+                  updateField('size', 'AD' as ProductSize)
+                  updateField('quantity', '0')
+                }
+              }}
               className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
             <span className="text-sm text-gray-700">Sob Encomenda</span>
