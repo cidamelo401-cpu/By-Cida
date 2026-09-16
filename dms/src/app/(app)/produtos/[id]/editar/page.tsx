@@ -16,7 +16,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const { id } = usePromise(params)
   const router = useRouter()
   const supabase = createClient()
-  const { signOut, profile } = useAuth()
+  const { user, signOut, profile } = useAuth()
 
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -36,6 +36,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     photos: [] as string[],
     notes: '',
     min_stock: '2',
+    quantity: '0',
     sob_encomenda: false,
   })
 
@@ -60,6 +61,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           photos: (data as any).photos?.length ? (data as any).photos : (data.photo_url ? [data.photo_url] : []),
           notes: data.notes ?? '',
           min_stock: String(data.min_stock),
+          quantity: String(data.quantity),
           sob_encomenda: data.status === 'sob_encomenda',
         })
       } catch {
@@ -90,6 +92,15 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
     setSaving(true)
     try {
+      const newQuantity = Number(form.quantity) || 0
+      const prevQuantity = product.quantity
+
+      const newStatus = form.sob_encomenda
+        ? 'sob_encomenda'
+        : newQuantity > 0
+          ? 'disponivel'
+          : 'esgotado'
+
       const { error } = await supabase
         .from('products')
         .update({
@@ -106,11 +117,26 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           photos: form.photos.length > 0 ? form.photos : null,
           notes: form.notes.trim() || null,
           min_stock: Number(form.min_stock) || 0,
-          status: form.sob_encomenda ? 'sob_encomenda' : (product.quantity > 0 ? 'disponivel' : 'esgotado'),
+          quantity: newQuantity,
+          status: newStatus,
         })
         .eq('id', product.id)
 
       if (error) throw error
+
+      // Registrar movimentação de estoque se a quantidade mudou
+      if (newQuantity !== prevQuantity && user) {
+        const diff = newQuantity - prevQuantity
+        await supabase.from('stock_movements').insert({
+          product_id: product.id,
+          type: diff > 0 ? 'entrada' : 'saida',
+          quantity: Math.abs(diff),
+          previous_quantity: prevQuantity,
+          new_quantity: newQuantity,
+          reason: 'Ajuste manual via edição do produto',
+          created_by: user.id,
+        })
+      }
 
       toast.success('Produto atualizado com sucesso!')
       router.push(`/produtos/${product.id}`)
@@ -243,13 +269,22 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
         <Card className="p-5 flex flex-col gap-4">
           <h2 className="font-semibold text-gray-900">Estoque e observações</h2>
-          <Input
-            label="Estoque mínimo"
-            type="number"
-            min={0}
-            value={form.min_stock}
-            onChange={(e) => updateField('min_stock', e.target.value)}
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              label="Quantidade em estoque"
+              type="number"
+              min={0}
+              value={form.quantity}
+              onChange={(e) => updateField('quantity', e.target.value)}
+            />
+            <Input
+              label="Estoque mínimo"
+              type="number"
+              min={0}
+              value={form.min_stock}
+              onChange={(e) => updateField('min_stock', e.target.value)}
+            />
+          </div>
           <Textarea
             label="Observações"
             value={form.notes}
@@ -265,9 +300,6 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             <span className="text-sm text-gray-700">Sob Encomenda</span>
             <span className="text-xs text-gray-400">(não disponível a pronta entrega)</span>
           </label>
-          <p className="text-xs text-gray-400">
-            A quantidade em estoque é alterada apenas por movimentações, na página do produto.
-          </p>
         </Card>
 
         <div className="flex flex-col sm:flex-row gap-3">
