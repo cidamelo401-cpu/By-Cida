@@ -129,7 +129,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         const diff = newQuantity - prevQuantity
         await supabase.from('stock_movements').insert({
           product_id: product.id,
-          type: diff > 0 ? 'entrada' : 'saida',
+          type: 'ajuste',
           quantity: Math.abs(diff),
           previous_quantity: prevQuantity,
           new_quantity: newQuantity,
