@@ -25,7 +25,6 @@ type FormState = {
   photo_url: string
   photos: string[]
   notes: string
-  min_stock: string
   sob_encomenda: boolean
 }
 
@@ -43,7 +42,6 @@ const initialState: FormState = {
   photo_url: '',
   photos: [],
   notes: '',
-  min_stock: '2',
   sob_encomenda: false,
 }
 
@@ -68,7 +66,6 @@ export default function NewProductPage() {
       supplier: searchParams.get('supplier') ?? initialState.supplier,
       photo_url: searchParams.get('photo_url') ?? initialState.photo_url,
       notes: searchParams.get('notes') ?? initialState.notes,
-      min_stock: searchParams.get('min_stock') ?? initialState.min_stock,
       quantity: '0',
     }
   })
@@ -114,8 +111,6 @@ export default function NewProductPage() {
     try {
       const sku = generateSKU(form.team, form.season, form.model, form.version, form.size)
       const quantity = Number(form.quantity) || 0
-      const minStock = Number(form.min_stock) || 0
-
       const { data: product, error: insertError } = await supabase
         .from('products')
         .insert({
@@ -132,7 +127,7 @@ export default function NewProductPage() {
           photo_url: form.photos[0]?.trim() || form.photo_url.trim() || null,
           photos: form.photos.length > 0 ? form.photos : null,
           notes: form.notes.trim() || null,
-          min_stock: minStock,
+          min_stock: 0,
           status: form.sob_encomenda ? 'sob_encomenda' : quantity > 0 ? 'disponivel' : 'esgotado',
           sku,
           archived: false,
@@ -308,13 +303,6 @@ export default function NewProductPage() {
 
         <Card className="p-5 flex flex-col gap-4">
           <h2 className="font-semibold text-gray-900">Estoque e observações</h2>
-          <Input
-            label="Estoque mínimo"
-            type="number"
-            min={0}
-            value={form.min_stock}
-            onChange={(e) => updateField('min_stock', e.target.value)}
-          />
           <Textarea
             label="Observações"
             value={form.notes}
