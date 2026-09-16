@@ -35,7 +35,6 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     photo_url: '',
     photos: [] as string[],
     notes: '',
-    min_stock: '2',
     quantity: '0',
     sob_encomenda: false,
   })
@@ -60,7 +59,6 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           photo_url: data.photo_url ?? '',
           photos: (data as any).photos?.length ? (data as any).photos : (data.photo_url ? [data.photo_url] : []),
           notes: data.notes ?? '',
-          min_stock: String(data.min_stock),
           quantity: String(data.quantity),
           sob_encomenda: data.status === 'sob_encomenda',
         })
@@ -116,7 +114,6 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           photo_url: form.photos[0]?.trim() || form.photo_url.trim() || null,
           photos: form.photos.length > 0 ? form.photos : null,
           notes: form.notes.trim() || null,
-          min_stock: Number(form.min_stock) || 0,
           quantity: newQuantity,
           status: newStatus,
         })
@@ -269,22 +266,13 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
         <Card className="p-5 flex flex-col gap-4">
           <h2 className="font-semibold text-gray-900">Estoque e observações</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="Quantidade em estoque"
-              type="number"
-              min={0}
-              value={form.quantity}
-              onChange={(e) => updateField('quantity', e.target.value)}
-            />
-            <Input
-              label="Estoque mínimo"
-              type="number"
-              min={0}
-              value={form.min_stock}
-              onChange={(e) => updateField('min_stock', e.target.value)}
-            />
-          </div>
+          <Input
+            label="Quantidade em estoque"
+            type="number"
+            min={0}
+            value={form.quantity}
+            onChange={(e) => updateField('quantity', e.target.value)}
+          />
           <Textarea
             label="Observações"
             value={form.notes}
