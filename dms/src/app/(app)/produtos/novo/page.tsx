@@ -26,6 +26,7 @@ type FormState = {
   photos: string[]
   notes: string
   sob_encomenda: boolean
+  nova_camisa: boolean
 }
 
 const initialState: FormState = {
@@ -43,6 +44,7 @@ const initialState: FormState = {
   photos: [],
   notes: '',
   sob_encomenda: false,
+  nova_camisa: false,
 }
 
 export default function NewProductPage() {
@@ -111,6 +113,8 @@ export default function NewProductPage() {
     try {
       const sku = generateSKU(form.team, form.season, form.model, form.version, form.size)
       const quantity = Number(form.quantity) || 0
+      const catalogGroup = form.nova_camisa ? crypto.randomUUID() : null
+
       const { data: product, error: insertError } = await supabase
         .from('products')
         .insert({
@@ -131,6 +135,7 @@ export default function NewProductPage() {
           status: form.sob_encomenda ? 'sob_encomenda' : quantity > 0 ? 'disponivel' : 'esgotado',
           sku,
           archived: false,
+          catalog_group: catalogGroup,
         })
         .select()
         .single()
@@ -324,6 +329,16 @@ export default function NewProductPage() {
             />
             <span className="text-sm text-gray-700">Sob Encomenda</span>
             <span className="text-xs text-gray-400">(não disponível a pronta entrega)</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.nova_camisa}
+              onChange={(e) => updateField('nova_camisa', e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-sm text-gray-700">Nova camisa</span>
+            <span className="text-xs text-gray-400">(criar card separado no catálogo)</span>
           </label>
         </Card>
 
