@@ -37,6 +37,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     notes: '',
     quantity: '0',
     sob_encomenda: false,
+    nova_camisa: false,
   })
 
   useEffect(() => {
@@ -61,6 +62,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           notes: data.notes ?? '',
           quantity: String(data.quantity),
           sob_encomenda: data.status === 'sob_encomenda',
+          nova_camisa: !!(data as any).catalog_group,
         })
       } catch {
         toast.error('Erro ao carregar produto.')
@@ -99,6 +101,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           ? 'disponivel'
           : 'esgotado'
 
+      const hadGroup = !!(product as any).catalog_group
+      const catalogGroup = form.nova_camisa
+        ? (hadGroup ? (product as any).catalog_group : crypto.randomUUID())
+        : null
+
       const { error } = await supabase
         .from('products')
         .update({
@@ -116,6 +123,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           notes: form.notes.trim() || null,
           quantity: newQuantity,
           status: newStatus,
+          catalog_group: catalogGroup,
         })
         .eq('id', product.id)
 
@@ -287,6 +295,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             />
             <span className="text-sm text-gray-700">Sob Encomenda</span>
             <span className="text-xs text-gray-400">(não disponível a pronta entrega)</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.nova_camisa}
+              onChange={(e) => updateField('nova_camisa', e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-sm text-gray-700">Nova camisa</span>
+            <span className="text-xs text-gray-400">(criar card separado no catálogo)</span>
           </label>
         </Card>
 
