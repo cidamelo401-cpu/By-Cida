@@ -11,22 +11,22 @@ import { generateSKU } from '@/lib/utils/format'
 import { CATALOG_SIZE_LABELS, COMMON_TEAMS, MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
 import type { ProductModel, ProductSize, ProductVersion } from '@/types/database'
 
+type SizeEntry = { size: ProductSize; quantity: string }
+
 type FormState = {
   team: string
   country_league: string
   season: string
   model: ProductModel
   version: ProductVersion
-  size: ProductSize
-  quantity: string
-  cost_price: number // cents
-  sell_price: number // cents
+  cost_price: number
+  sell_price: number
   supplier: string
   photo_url: string
   photos: string[]
   notes: string
   sob_encomenda: boolean
-  nova_camisa: boolean
+  sizes: SizeEntry[]
 }
 
 const initialState: FormState = {
@@ -35,8 +35,6 @@ const initialState: FormState = {
   season: '',
   model: 'titular',
   version: 'torcedor',
-  size: 'M',
-  quantity: '1',
   cost_price: 0,
   sell_price: 0,
   supplier: '',
@@ -44,7 +42,7 @@ const initialState: FormState = {
   photos: [],
   notes: '',
   sob_encomenda: false,
-  nova_camisa: false,
+  sizes: [{ size: 'M', quantity: '1' }],
 }
 
 export default function NewProductPage() {
@@ -62,13 +60,14 @@ export default function NewProductPage() {
       season: searchParams.get('season') ?? initialState.season,
       model: (searchParams.get('model') as ProductModel) ?? initialState.model,
       version: (searchParams.get('version') as ProductVersion) ?? initialState.version,
-      size: (searchParams.get('size') as ProductSize) ?? initialState.size,
       cost_price: Number(searchParams.get('cost_price')) || initialState.cost_price,
       sell_price: Number(searchParams.get('sell_price')) || initialState.sell_price,
       supplier: searchParams.get('supplier') ?? initialState.supplier,
       photo_url: searchParams.get('photo_url') ?? initialState.photo_url,
       notes: searchParams.get('notes') ?? initialState.notes,
-      quantity: '0',
+      sizes: searchParams.get('size')
+        ? [{ size: searchParams.get('size') as ProductSize, quantity: '0' }]
+        : initialState.sizes,
     }
   })
   const [saving, setSaving] = useState(false)
@@ -80,20 +79,38 @@ export default function NewProductPage() {
     return COMMON_TEAMS.filter((t) => t.toLowerCase().includes(term))
   }, [form.team])
 
-  const skuPreview = useMemo(
-    () => generateSKU(form.team || 'TIME', form.season, form.model, form.version, form.size),
-    [form.team, form.season, form.model, form.version, form.size]
-  )
-
   function updateField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 
+  function updateSize(index: number, field: keyof SizeEntry, value: string) {
+    setForm((prev) => {
+      const sizes = [...prev.sizes]
+      sizes[index] = { ...sizes[index], [field]: value }
+      return { ...prev, sizes }
+    })
+  }
+
+  function addSize() {
+    const usedSizes = form.sizes.map((s) => s.size)
+    const nextSize = SIZE_OPTIONS.find((s) => !usedSizes.includes(s)) ?? 'M'
+    setForm((prev) => ({ ...prev, sizes: [...prev.sizes, { size: nextSize as ProductSize, quantity: '1' }] }))
+  }
+
+  function removeSize(index: number) {
+    if (form.sizes.length <= 1) return
+    setForm((prev) => ({ ...prev, sizes: prev.sizes.filter((_, i) => i !== index) }))
+  }
+
   function validate(): string | null {
     if (!form.team.trim()) return 'Informe o time.'
-    const qty = Number(form.quantity)
-    if (Number.isNaN(qty) || qty < 0) return 'Quantidade inválida.'
     if (!form.sob_encomenda && form.sell_price <= 0) return 'Informe o preço de venda.'
+    for (const entry of form.sizes) {
+      const qty = Number(entry.quantity)
+      if (Number.isNaN(qty) || qty < 0) return `Quantidade inválida para tamanho ${CATALOG_SIZE_LABELS[entry.size] ?? entry.size}.`
+    }
+    const sizeValues = form.sizes.map((s) => s.size)
+    if (new Set(sizeValues).size !== sizeValues.length) return 'Não repita tamanhos. Remova os duplicados.'
     return null
   }
 
@@ -111,51 +128,63 @@ export default function NewProductPage() {
 
     setSaving(true)
     try {
-      const sku = generateSKU(form.team, form.season, form.model, form.version, form.size)
-      const quantity = Number(form.quantity) || 0
-      const catalogGroup = form.nova_camisa ? crypto.randomUUID() : null
+      const catalogGroup = crypto.randomUUID()
+      const entries = form.sob_encomenda
+        ? [{ size: 'AD' as ProductSize, quantity: 0 }]
+        : form.sizes.map((s) => ({ size: s.size, quantity: Number(s.quantity) || 0 }))
 
-      const { data: product, error: insertError } = await supabase
+      const products = entries.map((entry) => ({
+        team: form.team.trim(),
+        country_league: form.country_league.trim() || null,
+        season: form.season.trim() || null,
+        model: form.model,
+        version: form.version,
+        size: entry.size,
+        quantity: entry.quantity,
+        cost_price: form.cost_price,
+        sell_price: form.sell_price,
+        supplier: form.supplier.trim() || null,
+        photo_url: form.photos[0]?.trim() || form.photo_url.trim() || null,
+        photos: form.photos.length > 0 ? form.photos : null,
+        notes: form.notes.trim() || null,
+        min_stock: 0,
+        status: (form.sob_encomenda ? 'sob_encomenda' : entry.quantity > 0 ? 'disponivel' : 'esgotado') as 'disponivel' | 'esgotado' | 'sob_encomenda',
+        sku: generateSKU(form.team, form.season, form.model, form.version, entry.size),
+        archived: false,
+        catalog_group: entries.length > 1 ? catalogGroup : null,
+      }))
+
+      const { data: inserted, error: insertError } = await supabase
         .from('products')
-        .insert({
-          team: form.team.trim(),
-          country_league: form.country_league.trim() || null,
-          season: form.season.trim() || null,
-          model: form.model,
-          version: form.version,
-          size: form.size,
-          quantity,
-          cost_price: form.cost_price,
-          sell_price: form.sell_price,
-          supplier: form.supplier.trim() || null,
-          photo_url: form.photos[0]?.trim() || form.photo_url.trim() || null,
-          photos: form.photos.length > 0 ? form.photos : null,
-          notes: form.notes.trim() || null,
-          min_stock: 0,
-          status: form.sob_encomenda ? 'sob_encomenda' : quantity > 0 ? 'disponivel' : 'esgotado',
-          sku,
-          archived: false,
-          catalog_group: catalogGroup,
-        })
+        .insert(products)
         .select()
-        .single()
 
       if (insertError) throw insertError
 
-      if (quantity > 0 && product) {
-        const { error: moveError } = await supabase.from('stock_movements').insert({
-          product_id: product.id,
-          type: 'entrada',
-          quantity,
+      const movements = (inserted ?? [])
+        .filter((p) => p.quantity > 0)
+        .map((p) => ({
+          product_id: p.id,
+          type: 'entrada' as const,
+          quantity: p.quantity,
           previous_quantity: 0,
-          new_quantity: quantity,
+          new_quantity: p.quantity,
           reason: 'Cadastro inicial do produto',
           created_by: user.id,
-        })
+        }))
+
+      if (movements.length > 0) {
+        const { error: moveError } = await supabase.from('stock_movements').insert(movements)
         if (moveError) throw moveError
       }
 
-      toast.success('Camisa cadastrada com sucesso!')
+      const total = entries.reduce((sum, e) => sum + e.quantity, 0)
+      const sizeCount = entries.length
+      toast.success(
+        sizeCount > 1
+          ? `${sizeCount} tamanhos cadastrados (${total} un. no total)`
+          : 'Camisa cadastrada com sucesso!'
+      )
 
       if (andNew) {
         setForm(initialState)
@@ -248,32 +277,68 @@ export default function NewProductPage() {
               ))}
             </Select>
           </div>
+        </Card>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Select
-              label="Tamanho"
-              value={form.size}
-              onChange={(e) => updateField('size', e.target.value as ProductSize)}
-            >
-              {SIZE_OPTIONS.map((size) => (
-                <option key={size} value={size}>
-                  {CATALOG_SIZE_LABELS[size] ?? size}
-                </option>
-              ))}
-            </Select>
-            <Input
-              label="Quantidade"
-              type="number"
-              min={0}
-              value={form.quantity}
-              onChange={(e) => updateField('quantity', e.target.value)}
-            />
-          </div>
-
-          <div className="rounded-xl bg-primary-50 border border-primary-100 px-4 py-3">
-            <p className="text-xs font-medium text-primary-800 uppercase tracking-wide">SKU (gerado automaticamente)</p>
-            <p className="mt-1 font-mono text-sm font-semibold text-primary-900">{skuPreview}</p>
-          </div>
+        <Card className="p-5 flex flex-col gap-4">
+          <h2 className="font-semibold text-gray-900">Tamanhos e quantidades</h2>
+          {form.sob_encomenda ? (
+            <p className="text-sm text-gray-500">Sob encomenda — tamanho definido na hora do pedido.</p>
+          ) : (
+            <>
+              <div className="flex flex-col gap-3">
+                {form.sizes.map((entry, index) => (
+                  <div key={index} className="flex items-end gap-2">
+                    <div className="flex-1">
+                      <Select
+                        label={index === 0 ? 'Tamanho' : undefined}
+                        value={entry.size}
+                        onChange={(e) => updateSize(index, 'size', e.target.value)}
+                      >
+                        {SIZE_OPTIONS.map((size) => (
+                          <option key={size} value={size}>
+                            {CATALOG_SIZE_LABELS[size] ?? size}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div className="w-24">
+                      <Input
+                        label={index === 0 ? 'Qtd' : undefined}
+                        type="number"
+                        min={0}
+                        value={entry.quantity}
+                        onChange={(e) => updateSize(index, 'quantity', e.target.value)}
+                      />
+                    </div>
+                    {form.sizes.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeSize(index)}
+                        className="mb-0.5 p-2 text-red-400 hover:text-red-600 transition-colors"
+                        aria-label="Remover tamanho"
+                      >
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {form.sizes.length < SIZE_OPTIONS.length && (
+                <button
+                  type="button"
+                  onClick={addSize}
+                  className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Adicionar tamanho
+                </button>
+              )}
+            </>
+          )}
         </Card>
 
         <Card className="p-5 flex flex-col gap-4">
@@ -307,7 +372,7 @@ export default function NewProductPage() {
         </Card>
 
         <Card className="p-5 flex flex-col gap-4">
-          <h2 className="font-semibold text-gray-900">Estoque e observações</h2>
+          <h2 className="font-semibold text-gray-900">Observações</h2>
           <Textarea
             label="Observações"
             value={form.notes}
@@ -320,25 +385,11 @@ export default function NewProductPage() {
               checked={form.sob_encomenda}
               onChange={(e) => {
                 updateField('sob_encomenda', e.target.checked)
-                if (e.target.checked) {
-                  updateField('size', 'AD' as ProductSize)
-                  updateField('quantity', '0')
-                }
               }}
               className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
             <span className="text-sm text-gray-700">Sob Encomenda</span>
             <span className="text-xs text-gray-400">(não disponível a pronta entrega)</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.nova_camisa}
-              onChange={(e) => updateField('nova_camisa', e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-            <span className="text-sm text-gray-700">Nova camisa</span>
-            <span className="text-xs text-gray-400">(criar card separado no catálogo)</span>
           </label>
         </Card>
 
@@ -360,4 +411,3 @@ export default function NewProductPage() {
     </AppLayout>
   )
 }
-
