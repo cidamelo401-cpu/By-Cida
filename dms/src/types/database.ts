@@ -87,6 +87,7 @@ export interface Database {
           status: ProductStatus
           sku: string | null
           archived: boolean
+          is_cover: boolean
           catalog_group: string | null
           created_at: string
           updated_at: string
@@ -110,6 +111,7 @@ export interface Database {
           status?: ProductStatus
           sku?: string | null
           archived?: boolean
+          is_cover?: boolean
           catalog_group?: string | null
           created_at?: string
           updated_at?: string
@@ -133,6 +135,7 @@ export interface Database {
           status?: ProductStatus
           sku?: string | null
           archived?: boolean
+          is_cover?: boolean
           catalog_group?: string | null
           created_at?: string
           updated_at?: string

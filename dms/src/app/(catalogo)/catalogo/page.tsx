@@ -131,7 +131,11 @@ export default function CatalogoPage() {
       if (existing) {
         existing.shirtCount++
         if (p.sell_price < existing.minPrice) existing.minPrice = p.sell_price
-        if (!existing.photo && p.photo_url) existing.photo = p.photo_url
+        if ((p as any).is_cover && p.photo_url) {
+          existing.photo = p.photo_url
+        } else if (!existing.photo && p.photo_url) {
+          existing.photo = p.photo_url
+        }
         if (league) existing.collections.add(league)
       } else {
         const cols = new Set<string>()
@@ -166,7 +170,11 @@ export default function CatalogoPage() {
         } else {
           existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
         }
-        if (!existing.photo_url && p.photo_url) existing.photo_url = p.photo_url
+        if ((p as any).is_cover && p.photo_url) {
+          existing.photo_url = p.photo_url
+        } else if (!existing.photo_url && p.photo_url) {
+          existing.photo_url = p.photo_url
+        }
       } else {
         map.set(key, {
           key,
