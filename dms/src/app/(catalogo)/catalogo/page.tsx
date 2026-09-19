@@ -203,6 +203,43 @@ export default function CatalogoPage() {
     return Array.from(map.values())
   }, [filteredProducts, activeTeam])
 
+  // When kids filter is active, show all shirts directly (no team step)
+  const allKidsShirts = useMemo(() => {
+    if (!kidsOnly) return []
+    const map = new Map<string, GroupedShirt>()
+    for (const p of filteredProducts) {
+      const isKids = KIDS_SIZES.includes(p.size)
+      const key = (p as any).catalog_group ?? `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+      const existing = map.get(key)
+      if (existing) {
+        const existingSize = existing.sizes.find((s) => s.size === p.size)
+        if (existingSize) {
+          existingSize.quantity += p.quantity
+        } else {
+          existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
+        }
+        if (!existing.photo_url && p.photo_url) existing.photo_url = p.photo_url
+      } else {
+        map.set(key, {
+          key,
+          team: p.team,
+          model: p.model,
+          season: p.season,
+          notes: p.notes,
+          photo_url: p.photo_url,
+          version: p.version,
+          sell_price: p.sell_price,
+          status: p.status,
+          sizes: [{ size: p.size, quantity: p.quantity, id: p.id }],
+        })
+      }
+    }
+    for (const g of map.values()) {
+      g.sizes.sort((a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size))
+    }
+    return Array.from(map.values()).sort((a, b) => a.team.localeCompare(b.team))
+  }, [filteredProducts, kidsOnly])
+
   // Build the link for a team card
   function teamHref(team: TeamInfo) {
     if (team.collections.size === 1) {
@@ -355,6 +392,69 @@ export default function CatalogoPage() {
             </svg>
             <span className="ml-3 text-sm text-gray-500">Carregando catálogo...</span>
           </div>
+        ) : kidsOnly && !activeTeam ? (
+          /* ===== KIDS VIEW: show all kids shirts directly ===== */
+          allKidsShirts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <p className="mt-4 font-semibold text-white">Nenhuma camisa infantil encontrada</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              {allKidsShirts.map((shirt) => {
+                const isSobEncomenda = shirt.status === 'sob_encomenda'
+                const href = isSobEncomenda ? '/catalogo/sob-encomenda' : `/catalogo/${shirt.sizes[0]?.id}`
+                return (
+                <div
+                  key={shirt.key}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => { window.location.href = href }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = href }}
+                  className="cursor-pointer"
+                >
+                  <div className="bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5 hover:border-[#C9A84C]/40 transition-colors h-full flex flex-col">
+                    <div className="relative aspect-square bg-gradient-to-b from-[#0F1F12] to-[#1A1A1A] flex items-center justify-center">
+                      {shirt.photo_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={shirt.photo_url} alt={shirt.team} className="h-full w-full object-cover" />
+                      ) : (
+                        <svg className="h-14 w-14 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 4l4 2 4-2 4 3-3 3v10H7V10L4 7l4-3z" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="p-3 flex flex-col gap-1.5 flex-1">
+                      <p className="font-semibold text-white text-sm leading-tight line-clamp-2">{shirt.team}</p>
+                      <p className="text-[11px] text-gray-500">
+                        {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}
+                      </p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {shirt.sizes.map((s) => (
+                          <span
+                            key={s.size}
+                            className="px-1.5 py-0.5 rounded bg-white/10 text-[10px] font-semibold text-gray-300"
+                          >
+                            {CATALOG_SIZE_LABELS[s.size] ?? s.size}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{formatCurrency(shirt.sell_price)}</p>
+                      {isSobEncomenda ? (
+                        <span className="mt-1 w-full text-center rounded-lg bg-blue-600/20 text-blue-400 text-xs font-bold uppercase py-2 tracking-wide">
+                          Sob Encomenda
+                        </span>
+                      ) : (
+                        <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C] text-black text-xs font-bold uppercase py-2 tracking-wide">
+                          Comprar
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                )
+              })}
+            </div>
+          )
         ) : activeTeam ? (
           /* ===== TEAM VIEW: show grouped shirts ===== */
           groupedShirts.length === 0 ? (
