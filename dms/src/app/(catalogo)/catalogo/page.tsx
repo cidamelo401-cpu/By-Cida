@@ -168,7 +168,7 @@ export default function CatalogoPage() {
     const map = new Map<string, GroupedShirt>()
 
     for (const p of teamProducts) {
-      const key = (p as any).catalog_group ?? `${p.team}|${p.model}`
+      const key = (p as any).catalog_group ?? `${p.team}|${p.model}|${p.season ?? ''}`
 
       const existing = map.get(key)
       if (existing) {
