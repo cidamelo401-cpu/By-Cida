@@ -25,6 +25,7 @@ type GroupedShirt = {
 }
 
 const SIZE_ORDER: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
+const KIDS_SIZES: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28']
 
 export default function TeamShirtsPage({ params }: { params: Promise<{ slug: string; team: string }> }) {
   const { slug, team: teamSlug } = usePromise(params)
@@ -81,7 +82,8 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
     const map = new Map<string, GroupedShirt>()
 
     for (const p of products) {
-      const key = (p as any).catalog_group ?? `${p.team}|${p.model}|${p.season ?? ''}`
+      const isKids = KIDS_SIZES.includes(p.size)
+      const key = (p as any).catalog_group ?? `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
 
       const existing = map.get(key)
       if (existing) {
