@@ -1,0 +1,305 @@
+'use client'
+
+import { useEffect, useState, use as usePromise, type FormEvent } from 'react'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/hooks/useAuth'
+import { AppLayout } from '@/components/layout/AppLayout'
+import { Button, Card, CurrencyInput, EmptyState, Input, LoadingSpinner, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
+import { MODEL_LABELS, SIZE_OPTIONS, FABRIC_LABELS } from '@/lib/constants/products'
+import type { Database, ProductModel, ProductSize, ProductFabric } from '@/types/database'
+
+type Product = Database['public']['Tables']['products']['Row']
+
+export default function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = usePromise(params)
+  const router = useRouter()
+  const supabase = createClient()
+  const { user, signOut, profile } = useAuth()
+
+  const [product, setProduct] = useState<Product | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+
+  const [form, setForm] = useState({
+    name: '',
+    collection: '',
+    color: '',
+    model: 'conjunto' as ProductModel,
+    fabric: 'algodao' as ProductFabric,
+    size: 'M' as ProductSize,
+    cost_price: 0,
+    sell_price: 0,
+    supplier: '',
+    photo_url: '',
+    photos: [] as string[],
+    notes: '',
+    quantity: '0',
+    sob_encomenda: false,
+  })
+
+  useEffect(() => {
+    const loadProduct = async () => {
+      setLoading(true)
+      try {
+        const { data, error } = await supabase.from('products').select('*').eq('id', id).single()
+        if (error) throw error
+        setProduct(data)
+        setForm({
+          name: data.name,
+          collection: data.collection ?? '',
+          color: data.color ?? '',
+          model: data.model,
+          fabric: data.fabric,
+          size: data.size,
+          cost_price: data.cost_price,
+          sell_price: data.sell_price,
+          supplier: data.supplier ?? '',
+          photo_url: data.photo_url ?? '',
+          photos: (data as any).photos?.length ? (data as any).photos : (data.photo_url ? [data.photo_url] : []),
+          notes: data.notes ?? '',
+          quantity: String(data.quantity),
+          sob_encomenda: data.status === 'sob_encomenda',
+        })
+      } catch {
+        toast.error('Erro ao carregar produto.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadProduct()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
+
+  function updateField<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
+    setForm((prev) => ({ ...prev, [key]: value }))
+  }
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    if (!product) return
+    if (!form.name.trim()) {
+      toast.error('Informe o nome do pijama.')
+      return
+    }
+    if (!form.sob_encomenda && form.sell_price <= 0) {
+      toast.error('Informe o preço de venda.')
+      return
+    }
+
+    setSaving(true)
+    try {
+      const newQuantity = Number(form.quantity) || 0
+      const prevQuantity = product.quantity
+
+      const newStatus = form.sob_encomenda
+        ? 'sob_encomenda'
+        : newQuantity > 0
+          ? 'disponivel'
+          : 'esgotado'
+
+      const { error } = await supabase
+        .from('products')
+        .update({
+          name: form.name.trim(),
+          collection: form.collection.trim() || null,
+          color: form.color.trim() || null,
+          model: form.model,
+          fabric: form.fabric,
+          size: form.size,
+          cost_price: form.cost_price,
+          sell_price: form.sell_price,
+          supplier: form.supplier.trim() || null,
+          photo_url: form.photos[0]?.trim() || form.photo_url.trim() || null,
+          photos: form.photos.length > 0 ? form.photos : null,
+          notes: form.notes.trim() || null,
+          quantity: newQuantity,
+          status: newStatus,
+        })
+        .eq('id', product.id)
+
+      if (error) throw error
+
+      // Registrar movimentação de estoque se a quantidade mudou
+      if (newQuantity !== prevQuantity && user) {
+        const diff = newQuantity - prevQuantity
+        await supabase.from('stock_movements').insert({
+          product_id: product.id,
+          type: 'ajuste',
+          quantity: Math.abs(diff),
+          previous_quantity: prevQuantity,
+          new_quantity: newQuantity,
+          reason: 'Ajuste manual via edição do produto',
+          created_by: user.id,
+        })
+      }
+
+      toast.success('Produto atualizado com sucesso!')
+      router.push(`/produtos/${product.id}`)
+    } catch {
+      toast.error('Erro ao atualizar produto.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <AppLayout title="Editar Pijama" showBack userName={profile?.full_name ?? undefined} userRole={profile?.role} onSignOut={signOut}>
+        <LoadingSpinner label="Carregando produto..." />
+      </AppLayout>
+    )
+  }
+
+  if (!product) {
+    return (
+      <AppLayout title="Editar Pijama" showBack userName={profile?.full_name ?? undefined} userRole={profile?.role} onSignOut={signOut}>
+        <EmptyState title="Produto não encontrado" description="Este produto pode ter sido removido." />
+      </AppLayout>
+    )
+  }
+
+  if (product.archived) {
+    return (
+      <AppLayout title="Editar Pijama" showBack userName={profile?.full_name ?? undefined} userRole={profile?.role} onSignOut={signOut}>
+        <EmptyState
+          title="Produto arquivado"
+          description="Reative o produto antes de editá-lo."
+        />
+      </AppLayout>
+    )
+  }
+
+  return (
+    <AppLayout
+      title="Editar Pijama"
+      showBack
+      userName={profile?.full_name ?? undefined}
+      userRole={profile?.role}
+      onSignOut={signOut}
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-2xl mx-auto pb-10">
+        <Card className="p-5 flex flex-col gap-4">
+          <h2 className="font-semibold text-gray-900">Informações do pijama</h2>
+
+          <Input
+            label="Nome do Produto"
+            value={form.name}
+            onChange={(e) => updateField('name', e.target.value)}
+            required
+          />
+
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              label="Coleção"
+              value={form.collection}
+              onChange={(e) => updateField('collection', e.target.value)}
+            />
+            <Input
+              label="Cor"
+              value={form.color}
+              onChange={(e) => updateField('color', e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="Modelo" value={form.model} onChange={(e) => updateField('model', e.target.value as ProductModel)}>
+              {Object.entries(MODEL_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </Select>
+            <Select
+              label="Tecido"
+              value={form.fabric}
+              onChange={(e) => updateField('fabric', e.target.value as ProductFabric)}
+            >
+              {Object.entries(FABRIC_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          <Select label="Tamanho" value={form.size} onChange={(e) => updateField('size', e.target.value as ProductSize)}>
+            {SIZE_OPTIONS.map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </Select>
+
+          <Input label="SKU" value={product.sku ?? '—'} readOnly disabled className="font-mono bg-gray-50" />
+        </Card>
+
+        <Card className="p-5 flex flex-col gap-4">
+          <h2 className="font-semibold text-gray-900">Preços e fornecedor</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <CurrencyInput
+              label="Custo unitário"
+              value={form.cost_price}
+              onValueChange={(v) => updateField('cost_price', v)}
+            />
+            <CurrencyInput
+              label="Preço de venda"
+              value={form.sell_price}
+              onValueChange={(v) => updateField('sell_price', v)}
+            />
+          </div>
+          <Input
+            label="Fornecedor"
+            value={form.supplier}
+            onChange={(e) => updateField('supplier', e.target.value)}
+          />
+          <MultiPhotoUpload
+            photos={form.photos}
+            onChange={(photos) => {
+              updateField('photos', photos)
+              updateField('photo_url', photos[0] ?? '')
+            }}
+            disabled={saving}
+          />
+        </Card>
+
+        <Card className="p-5 flex flex-col gap-4">
+          <h2 className="font-semibold text-gray-900">Estoque e observações</h2>
+          <Input
+            label="Quantidade em estoque"
+            type="number"
+            min={0}
+            value={form.quantity}
+            onChange={(e) => updateField('quantity', e.target.value)}
+          />
+          <Textarea
+            label="Observações"
+            value={form.notes}
+            onChange={(e) => updateField('notes', e.target.value)}
+          />
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.sob_encomenda}
+              onChange={(e) => updateField('sob_encomenda', e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-sm text-gray-700">Sob Encomenda</span>
+            <span className="text-xs text-gray-400">(não disponível a pronta entrega)</span>
+          </label>
+        </Card>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button type="submit" loading={saving} fullWidth>
+            Salvar alterações
+          </Button>
+          <Button type="button" variant="secondary" fullWidth onClick={() => router.push(`/produtos/${product.id}`)}>
+            Cancelar
+          </Button>
+        </div>
+      </form>
+    </AppLayout>
+  )
+}
+
