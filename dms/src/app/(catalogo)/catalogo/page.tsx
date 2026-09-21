@@ -43,7 +43,6 @@ export default function CatalogoPage() {
   const [search, setSearch] = useState('')
   const [error, setError] = useState('')
   const [activeCollection, setActiveCollection] = useState<string | null>(null)
-  const [kidsOnly, setKidsOnly] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -80,41 +79,23 @@ export default function CatalogoPage() {
     if (activeCollection) {
       if (activeCollection === '__sob_encomenda__') {
         result = result.filter((p) => p.status === 'sob_encomenda')
+      } else if (activeCollection === '__kids__') {
+        result = result.filter((p) => KIDS_SIZES.includes(p.size))
       } else {
         result = result.filter((p) => p.country_league?.trim() === activeCollection)
       }
     }
 
-    if (kidsOnly) {
-      result = result.filter((p) => KIDS_SIZES.includes(p.size))
-    }
-
     return result
-  }, [products, activeCollection, kidsOnly])
+  }, [products, activeCollection])
 
-  const hasKidsProducts = useMemo(() => {
-    return products.some((p) => KIDS_SIZES.includes(p.size))
-  }, [products])
-
-  const HIDDEN_COLLECTIONS = ['👶 Kids', 'Kids', 'kids', 'Sob encomenda', 'sob encomenda']
-
-  const collections = useMemo(() => {
-    const map = new Map<string, number>()
-    for (const p of products) {
-      const league = p.country_league?.trim()
-      if (league && !HIDDEN_COLLECTIONS.includes(league)) {
-        map.set(league, (map.get(league) ?? 0) + 1)
-      }
-    }
-    const sobEncomendaCount = products.filter((p) => p.status === 'sob_encomenda').length
-    const result = Array.from(map.entries())
-      .sort((a, b) => b[1] - a[1])
-      .map(([name, count]) => ({ name, count }))
-    if (sobEncomendaCount > 0) {
-      result.push({ name: '__sob_encomenda__', count: sobEncomendaCount })
-    }
-    return result
-  }, [products])
+  const FIXED_TABS = [
+    { key: 'Seleções', label: 'Seleções' },
+    { key: 'Internacional', label: 'Internacional' },
+    { key: 'Nacional', label: 'Nacional' },
+    { key: '__kids__', label: '👶 Kids' },
+    { key: '__sob_encomenda__', label: 'Sob encomenda' },
+  ] as const
 
   const teamNames = useMemo(() => {
     const set = new Set(filteredProducts.map((p) => p.team))
@@ -158,7 +139,7 @@ export default function CatalogoPage() {
   }, [filteredProducts, search])
 
   const allKidsShirts = useMemo(() => {
-    if (!kidsOnly) return []
+    if (activeCollection !== '__kids__') return []
     const map = new Map<string, GroupedShirt>()
 
     for (const p of filteredProducts) {
@@ -197,7 +178,7 @@ export default function CatalogoPage() {
       g.sizes.sort((a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size))
     }
     return Array.from(map.values()).sort((a, b) => a.team.localeCompare(b.team))
-  }, [filteredProducts, kidsOnly])
+  }, [filteredProducts, activeCollection])
 
   // Build the link for a team card
   function teamHref(team: TeamInfo) {
@@ -236,7 +217,7 @@ export default function CatalogoPage() {
             <input
               type="text"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setActiveCollection(null); setKidsOnly(false) }}
+              onChange={(e) => { setSearch(e.target.value); setActiveCollection(null) }}
               placeholder="Buscar time..."
               className="w-full rounded-full bg-white pl-11 pr-4 py-3 text-sm text-black placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-[#C9A84C] transition"
             />
@@ -245,10 +226,10 @@ export default function CatalogoPage() {
       </section>
 
       {/* Filter tabs: collections + kids */}
-      {!loading && (collections.length > 0 || hasKidsProducts) && (
+      {!loading && products.length > 0 && (
         <section className="mx-auto max-w-6xl px-4 pb-3">
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            {collections.length > 0 && (
+            {products.length > 0 && (
               <>
                 <button
                   onClick={() => handleCollectionTab(null)}
@@ -260,44 +241,27 @@ export default function CatalogoPage() {
                 >
                   Todas as Coleções
                 </button>
-                {collections.map((col) => {
-                  const COLLECTION_LABELS: Record<string, string> = { '__sob_encomenda__': 'Sob encomenda', 'Copa': 'Seleções' }
-                  const colLabel = COLLECTION_LABELS[col.name] ?? col.name
-                  return (
+                {FIXED_TABS.map((tab) => (
                     <button
-                      key={col.name}
-                      onClick={() => handleCollectionTab(col.name)}
+                      key={tab.key}
+                      onClick={() => handleCollectionTab(tab.key)}
                       className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
-                        activeCollection === col.name
+                        activeCollection === tab.key
                           ? 'bg-[#C9A84C] text-black'
                           : 'bg-white/10 text-gray-400 hover:bg-white/20'
                       }`}
                     >
-                      {colLabel}
+                      {tab.label}
                     </button>
-                  )
-                })}
+                ))}
               </>
-            )}
-
-            {hasKidsProducts && (
-              <button
-                onClick={() => { setKidsOnly(!kidsOnly) }}
-                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors flex items-center gap-1.5 ${
-                  kidsOnly
-                    ? 'bg-[#C9A84C] text-black'
-                    : 'bg-white/10 text-gray-400 hover:bg-white/20'
-                }`}
-              >
-                👶 Kids
-              </button>
             )}
           </div>
         </section>
       )}
 
       {/* Quick badge bar — horizontal scroll with team crests */}
-      {!loading && teamNames.length > 0 && !kidsOnly && (
+      {!loading && teamNames.length > 0 && activeCollection !== '__kids__' && (
         <section className="mx-auto max-w-6xl px-4 pb-4">
           <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4">
             {teamNames.map((name) => (
@@ -342,7 +306,7 @@ export default function CatalogoPage() {
             </svg>
             <span className="ml-3 text-sm text-gray-500">Carregando catálogo...</span>
           </div>
-        ) : kidsOnly ? (
+        ) : activeCollection === '__kids__' ? (
           /* ===== KIDS VIEW: show all kids shirts directly ===== */
           allKidsShirts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
