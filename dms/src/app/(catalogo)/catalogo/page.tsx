@@ -410,7 +410,7 @@ export default function CatalogoPage() {
                           {team.name}
                         </p>
                         <p className="text-xs text-[#C9A84C] font-bold mt-auto pt-1">
-                          {formatCurrency(team.minPrice)}
+                          {activeCollection === '__sob_encomenda__' && team.minPrice <= 0 ? 'Sob consulta' : formatCurrency(team.minPrice)}
                         </p>
                         <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C]/10 text-[#C9A84C] text-xs font-bold uppercase py-2 tracking-wide">
                           Ver Camisas
