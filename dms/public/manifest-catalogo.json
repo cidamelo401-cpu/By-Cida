@@ -1,0 +1,19 @@
+{
+  "name": "DMS Sports — Catálogo de Camisas",
+  "short_name": "DMS Catálogo",
+  "description": "Catálogo de camisas de futebol originais — DMS Sports",
+  "start_url": "/catalogo",
+  "scope": "/catalogo",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo-dms-sports.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
