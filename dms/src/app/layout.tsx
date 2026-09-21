@@ -16,6 +16,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "DMS Sports — Painel de Gestão",
   description: "Gestão de estoque, vendas e leads — DMS Sports",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "DMS Gestão",
+  },
   openGraph: {
     title: "DMS Sports — Painel de Gestão",
     description: "Gestão de estoque, vendas e leads — DMS Sports",
@@ -34,6 +40,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="apple-touch-icon" href="/logo-dms-sports.jpg" />
+        <meta name="mobile-web-app-capable" content="yes" />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
         <Toaster position="top-center" />
