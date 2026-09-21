@@ -224,7 +224,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
                         ))}
                       </div>
 
-                      <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{formatCurrency(shirt.sell_price)}</p>
+                      <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{shirt.status === 'sob_encomenda' && shirt.sell_price <= 0 ? 'Sob consulta' : formatCurrency(shirt.sell_price)}</p>
                       {isSobEncomenda ? (
                         <span className="mt-1 w-full text-center rounded-lg bg-blue-600/20 text-blue-400 text-xs font-bold uppercase py-2 tracking-wide">
                           Sob Encomenda
