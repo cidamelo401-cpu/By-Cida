@@ -1,0 +1,19 @@
+{
+  "name": "DMS Sports — Painel de Gestão",
+  "short_name": "DMS Gestão",
+  "description": "Gestão de estoque, vendas e leads — DMS Sports",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F8FAF8",
+  "theme_color": "#0A0A0A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo-dms-sports.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
