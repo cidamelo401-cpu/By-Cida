@@ -78,8 +78,8 @@ export default function CatalogoPage() {
     let result = products
 
     if (activeCollection) {
-      if (activeCollection === '__outros__') {
-        result = result.filter((p) => !p.country_league?.trim() || HIDDEN_COLLECTIONS.includes(p.country_league?.trim() ?? ''))
+      if (activeCollection === '__sob_encomenda__') {
+        result = result.filter((p) => p.status === 'sob_encomenda')
       } else {
         result = result.filter((p) => p.country_league?.trim() === activeCollection)
       }
@@ -106,13 +106,12 @@ export default function CatalogoPage() {
         map.set(league, (map.get(league) ?? 0) + 1)
       }
     }
-    const hasOthers = products.some((p) => !p.country_league?.trim() || HIDDEN_COLLECTIONS.includes(p.country_league?.trim() ?? ''))
+    const sobEncomendaCount = products.filter((p) => p.status === 'sob_encomenda').length
     const result = Array.from(map.entries())
       .sort((a, b) => b[1] - a[1])
       .map(([name, count]) => ({ name, count }))
-    if (hasOthers) {
-      const othersCount = products.filter((p) => !p.country_league?.trim() || HIDDEN_COLLECTIONS.includes(p.country_league?.trim() ?? '')).length
-      result.push({ name: '__outros__', count: othersCount })
+    if (sobEncomendaCount > 0) {
+      result.push({ name: '__sob_encomenda__', count: sobEncomendaCount })
     }
     return result
   }, [products])
@@ -262,7 +261,7 @@ export default function CatalogoPage() {
                   Todas as Coleções
                 </button>
                 {collections.map((col) => {
-                  const COLLECTION_LABELS: Record<string, string> = { '__outros__': 'Outros', 'Copa': 'Seleções' }
+                  const COLLECTION_LABELS: Record<string, string> = { '__sob_encomenda__': 'Sob encomenda', 'Copa': 'Seleções' }
                   const colLabel = COLLECTION_LABELS[col.name] ?? col.name
                   return (
                     <button
