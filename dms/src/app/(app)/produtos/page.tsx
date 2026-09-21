@@ -31,13 +31,43 @@ export default function ProductsPage() {
   const supabase = createClient()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
-  const [showArchived, setShowArchived] = useState(false)
+  const [search, setSearch] = useState(() => {
+    try { return sessionStorage.getItem('produtos_search') ?? '' } catch { return '' }
+  })
+  const [showArchived, setShowArchived] = useState(() => {
+    try { return sessionStorage.getItem('produtos_archived') === 'true' } catch { return false }
+  })
+  const [sizeFilter, setSizeFilter] = useState<ProductSize | ''>(() => {
+    try { return (sessionStorage.getItem('produtos_size') ?? '') as ProductSize | '' } catch { return '' }
+  })
+  const [modelFilter, setModelFilter] = useState<ProductModel | ''>(() => {
+    try { return (sessionStorage.getItem('produtos_model') ?? '') as ProductModel | '' } catch { return '' }
+  })
+  const [versionFilter, setVersionFilter] = useState<ProductVersion | ''>(() => {
+    try { return (sessionStorage.getItem('produtos_version') ?? '') as ProductVersion | '' } catch { return '' }
+  })
+  const [statusFilter, setStatusFilter] = useState<ProductStatus | ''>(() => {
+    try { return (sessionStorage.getItem('produtos_status') ?? '') as ProductStatus | '' } catch { return '' }
+  })
 
-  const [sizeFilter, setSizeFilter] = useState<ProductSize | ''>('')
-  const [modelFilter, setModelFilter] = useState<ProductModel | ''>('')
-  const [versionFilter, setVersionFilter] = useState<ProductVersion | ''>('')
-  const [statusFilter, setStatusFilter] = useState<ProductStatus | ''>('')
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('produtos_search', search)
+      sessionStorage.setItem('produtos_archived', String(showArchived))
+      sessionStorage.setItem('produtos_size', sizeFilter)
+      sessionStorage.setItem('produtos_model', modelFilter)
+      sessionStorage.setItem('produtos_version', versionFilter)
+      sessionStorage.setItem('produtos_status', statusFilter)
+    } catch {}
+  }, [search, showArchived, sizeFilter, modelFilter, versionFilter, statusFilter])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      try { sessionStorage.setItem('produtos_scroll', String(window.scrollY)) } catch {}
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -56,6 +86,18 @@ export default function ProductsPage() {
     loadProducts()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showArchived])
+
+  useEffect(() => {
+    if (!loading) {
+      try {
+        const scrollY = Number(sessionStorage.getItem('produtos_scroll') ?? '0')
+        if (scrollY > 0) {
+          requestAnimationFrame(() => window.scrollTo(0, scrollY))
+          sessionStorage.removeItem('produtos_scroll')
+        }
+      } catch {}
+    }
+  }, [loading])
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase()
