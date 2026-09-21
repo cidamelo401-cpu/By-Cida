@@ -351,7 +351,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             )}
 
             <p className="mt-6 text-3xl sm:text-4xl font-extrabold text-[#C9A84C]">
-              {formatCurrency(product.sell_price)}
+              {product.status === 'sob_encomenda' && product.sell_price <= 0 ? 'Sob consulta' : formatCurrency(product.sell_price)}
             </p>
 
             {product.status === 'sob_encomenda' ? (
@@ -429,7 +429,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <button
                   type="button"
                   onClick={() => {
-                    const msg = `Olá! Vi essa camisa no catálogo e gostaria de encomendar um tamanho que não está disponível.\n\n⚽ ${product.team}\n📋 ${modelLabel} · ${versionLabel}\n💰 ${formatCurrency(product.sell_price)}\n\n🔗 ${productUrl}\n\nPoderia verificar a disponibilidade para mim?`
+                    const priceText = product.status === 'sob_encomenda' && product.sell_price <= 0 ? 'Sob consulta' : formatCurrency(product.sell_price)
+                    const msg = `Olá! Vi essa camisa no catálogo e gostaria de encomendar um tamanho que não está disponível.\n\n⚽ ${product.team}\n📋 ${modelLabel} · ${versionLabel}\n💰 ${priceText}\n\n🔗 ${productUrl}\n\nPoderia verificar a disponibilidade para mim?`
                     window.location.assign(getWhatsAppLink(WHATSAPP_NUMBER, msg))
                   }}
                   className="mt-2 flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-blue-800/40 bg-blue-950/20 text-blue-300 text-sm font-medium hover:bg-blue-950/40 hover:border-blue-700/50 transition-colors cursor-pointer"
