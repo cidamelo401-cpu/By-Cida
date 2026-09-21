@@ -93,7 +93,11 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
         } else {
           existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
         }
-        if (!existing.photo_url && p.photo_url) existing.photo_url = p.photo_url
+        if ((p as any).is_cover && p.photo_url) {
+          existing.photo_url = p.photo_url
+        } else if (!existing.photo_url && p.photo_url) {
+          existing.photo_url = p.photo_url
+        }
       } else {
         map.set(key, {
           key,

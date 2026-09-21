@@ -79,7 +79,11 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
       if (existing) {
         existing.shirtCount++
         if (p.sell_price < existing.minPrice) existing.minPrice = p.sell_price
-        if (!existing.photo && p.photo_url) existing.photo = p.photo_url
+        if ((p as any).is_cover && p.photo_url) {
+          existing.photo = p.photo_url
+        } else if (!existing.photo && p.photo_url) {
+          existing.photo = p.photo_url
+        }
       } else {
         map.set(p.team, {
           name: p.team,

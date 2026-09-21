@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils/format'
 import { MODEL_LABELS, CATALOG_SIZE_LABELS } from '@/lib/constants/products'
@@ -43,7 +42,6 @@ export default function CatalogoPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [error, setError] = useState('')
-  const [activeTeam, setActiveTeam] = useState<string | null>(null)
   const [activeCollection, setActiveCollection] = useState<string | null>(null)
   const [kidsOnly, setKidsOnly] = useState(false)
 
@@ -64,7 +62,6 @@ export default function CatalogoPage() {
           setError(queryError.message)
           return
         }
-        // sob_encomenda shows regardless of quantity; disponivel needs quantity > 0
         const filtered = (data ?? []).filter((p) => p.status === 'sob_encomenda' || p.quantity > 0)
         setProducts(filtered)
       } catch (err) {
@@ -77,13 +74,12 @@ export default function CatalogoPage() {
     load()
   }, [])
 
-  // Filtered products by active collection + kids toggle
   const filteredProducts = useMemo(() => {
     let result = products
 
     if (activeCollection) {
       if (activeCollection === '__outros__') {
-        result = result.filter((p) => !p.country_league?.trim())
+        result = result.filter((p) => !p.country_league?.trim() || HIDDEN_COLLECTIONS.includes(p.country_league?.trim() ?? ''))
       } else {
         result = result.filter((p) => p.country_league?.trim() === activeCollection)
       }
@@ -96,32 +92,31 @@ export default function CatalogoPage() {
     return result
   }, [products, activeCollection, kidsOnly])
 
-  // Check if there are any kids products
   const hasKidsProducts = useMemo(() => {
     return products.some((p) => KIDS_SIZES.includes(p.size))
   }, [products])
 
-  // Collections (leagues) for filter tabs
+  const HIDDEN_COLLECTIONS = ['👶 Kids', 'Sob encomenda', 'sob encomenda']
+
   const collections = useMemo(() => {
     const map = new Map<string, number>()
     for (const p of products) {
       const league = p.country_league?.trim()
-      if (league) {
+      if (league && !HIDDEN_COLLECTIONS.includes(league)) {
         map.set(league, (map.get(league) ?? 0) + 1)
       }
     }
-    const hasOthers = products.some((p) => !p.country_league?.trim())
+    const hasOthers = products.some((p) => !p.country_league?.trim() || HIDDEN_COLLECTIONS.includes(p.country_league?.trim() ?? ''))
     const result = Array.from(map.entries())
       .sort((a, b) => b[1] - a[1])
       .map(([name, count]) => ({ name, count }))
     if (hasOthers) {
-      const othersCount = products.filter((p) => !p.country_league?.trim()).length
+      const othersCount = products.filter((p) => !p.country_league?.trim() || HIDDEN_COLLECTIONS.includes(p.country_league?.trim() ?? '')).length
       result.push({ name: '__outros__', count: othersCount })
     }
     return result
   }, [products])
 
-  // Get all unique team names for badge fetching
   const teamNames = useMemo(() => {
     const set = new Set(filteredProducts.map((p) => p.team))
     return Array.from(set).sort()
@@ -129,7 +124,6 @@ export default function CatalogoPage() {
 
   const badges = useTeamBadges(teamNames)
 
-  // Build teams list (for "Todos" view and tabs)
   const teams = useMemo(() => {
     const map = new Map<string, TeamInfo>()
 
@@ -139,7 +133,11 @@ export default function CatalogoPage() {
       if (existing) {
         existing.shirtCount++
         if (p.sell_price < existing.minPrice) existing.minPrice = p.sell_price
-        if (!existing.photo && p.photo_url) existing.photo = p.photo_url
+        if ((p as any).is_cover && p.photo_url) {
+          existing.photo = p.photo_url
+        } else if (!existing.photo && p.photo_url) {
+          existing.photo = p.photo_url
+        }
         if (league) existing.collections.add(league)
       } else {
         const cols = new Set<string>()
@@ -160,56 +158,14 @@ export default function CatalogoPage() {
     return result.sort((a, b) => a.name.localeCompare(b.name))
   }, [filteredProducts, search])
 
-  // Build grouped shirts for the selected team
-  const groupedShirts = useMemo(() => {
-    if (!activeTeam) return []
-
-    const teamProducts = filteredProducts.filter((p) => p.team === activeTeam)
-    const map = new Map<string, GroupedShirt>()
-
-    for (const p of teamProducts) {
-      const isKids = KIDS_SIZES.includes(p.size)
-      const key = (p as any).catalog_group ?? `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
-
-      const existing = map.get(key)
-      if (existing) {
-        const existingSize = existing.sizes.find((s) => s.size === p.size)
-        if (existingSize) {
-          existingSize.quantity += p.quantity
-        } else {
-          existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
-        }
-        if (!existing.photo_url && p.photo_url) existing.photo_url = p.photo_url
-      } else {
-        map.set(key, {
-          key,
-          team: p.team,
-          model: p.model,
-          season: p.season,
-          notes: p.notes,
-          photo_url: p.photo_url,
-          version: p.version,
-          sell_price: p.sell_price,
-          status: p.status,
-          sizes: [{ size: p.size, quantity: p.quantity, id: p.id }],
-        })
-      }
-    }
-
-    for (const g of map.values()) {
-      g.sizes.sort((a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size))
-    }
-
-    return Array.from(map.values())
-  }, [filteredProducts, activeTeam])
-
-  // When kids filter is active, show all shirts directly (no team step)
   const allKidsShirts = useMemo(() => {
     if (!kidsOnly) return []
     const map = new Map<string, GroupedShirt>()
+
     for (const p of filteredProducts) {
       const isKids = KIDS_SIZES.includes(p.size)
       const key = (p as any).catalog_group ?? `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+
       const existing = map.get(key)
       if (existing) {
         const existingSize = existing.sizes.find((s) => s.size === p.size)
@@ -218,7 +174,11 @@ export default function CatalogoPage() {
         } else {
           existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
         }
-        if (!existing.photo_url && p.photo_url) existing.photo_url = p.photo_url
+        if ((p as any).is_cover && p.photo_url) {
+          existing.photo_url = p.photo_url
+        } else if (!existing.photo_url && p.photo_url) {
+          existing.photo_url = p.photo_url
+        }
       } else {
         map.set(key, {
           key,
@@ -249,14 +209,14 @@ export default function CatalogoPage() {
     return `/catalogo/colecao/outros/${encodeURIComponent(team.name)}`
   }
 
-  function handleTeamTab(teamName: string) {
-    setActiveTeam(activeTeam === teamName ? null : teamName)
-    setSearch('')
+  function teamHrefByName(teamName: string) {
+    const team = teams.find((t) => t.name === teamName)
+    if (team) return teamHref(team)
+    return `/catalogo/colecao/outros/${encodeURIComponent(teamName)}`
   }
 
   function handleCollectionTab(col: string | null) {
     setActiveCollection(col)
-    setActiveTeam(null)
     setSearch('')
   }
 
@@ -277,7 +237,7 @@ export default function CatalogoPage() {
             <input
               type="text"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setActiveTeam(null); setActiveCollection(null); setKidsOnly(false) }}
+              onChange={(e) => { setSearch(e.target.value); setActiveCollection(null); setKidsOnly(false) }}
               placeholder="Buscar time..."
               className="w-full rounded-full bg-white pl-11 pr-4 py-3 text-sm text-black placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-[#C9A84C] transition"
             />
@@ -289,7 +249,6 @@ export default function CatalogoPage() {
       {!loading && (collections.length > 0 || hasKidsProducts) && (
         <section className="mx-auto max-w-6xl px-4 pb-3">
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            {/* Collection tabs — "Todas as Coleções" first */}
             {collections.length > 0 && (
               <>
                 <button
@@ -322,10 +281,9 @@ export default function CatalogoPage() {
               </>
             )}
 
-            {/* Kids toggle — after collections */}
             {hasKidsProducts && (
               <button
-                onClick={() => { setKidsOnly(!kidsOnly); setActiveTeam(null) }}
+                onClick={() => { setKidsOnly(!kidsOnly) }}
                 className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors flex items-center gap-1.5 ${
                   kidsOnly
                     ? 'bg-[#C9A84C] text-black'
@@ -340,20 +298,16 @@ export default function CatalogoPage() {
       )}
 
       {/* Quick badge bar — horizontal scroll with team crests */}
-      {!loading && teamNames.length > 0 && (
+      {!loading && teamNames.length > 0 && !kidsOnly && (
         <section className="mx-auto max-w-6xl px-4 pb-4">
           <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4">
             {teamNames.map((name) => (
               <button
                 key={name}
-                onClick={() => handleTeamTab(name)}
+                onClick={() => { window.location.href = teamHrefByName(name) }}
                 className="flex-shrink-0 flex flex-col items-center gap-1.5 w-20 group"
               >
-                <div className={`w-16 h-16 rounded-full bg-[#1A1A1A] border-2 transition-colors flex items-center justify-center overflow-hidden ${
-                  activeTeam === name
-                    ? 'border-[#C9A84C] shadow-[0_0_12px_rgba(201,168,76,0.4)]'
-                    : 'border-white/10 group-hover:border-[#C9A84C]'
-                }`}>
+                <div className="w-16 h-16 rounded-full bg-[#1A1A1A] border-2 transition-colors flex items-center justify-center overflow-hidden border-white/10 group-hover:border-[#C9A84C]">
                   {badges[name] ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -365,9 +319,7 @@ export default function CatalogoPage() {
                     <TeamBadge team={name} badgeUrl={undefined} size="md" />
                   )}
                 </div>
-                <span className={`text-[10px] text-center leading-tight line-clamp-2 transition-colors ${
-                  activeTeam === name ? 'text-[#C9A84C] font-bold' : 'text-gray-400 group-hover:text-white'
-                }`}>
+                <span className="text-[10px] text-center leading-tight line-clamp-2 transition-colors text-gray-400 group-hover:text-white">
                   {name}
                 </span>
               </button>
@@ -375,7 +327,6 @@ export default function CatalogoPage() {
           </div>
         </section>
       )}
-
 
       {/* Content */}
       <main className="mx-auto max-w-6xl px-4 py-4">
@@ -392,7 +343,7 @@ export default function CatalogoPage() {
             </svg>
             <span className="ml-3 text-sm text-gray-500">Carregando catálogo...</span>
           </div>
-        ) : kidsOnly && !activeTeam ? (
+        ) : kidsOnly ? (
           /* ===== KIDS VIEW: show all kids shirts directly ===== */
           allKidsShirts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -454,80 +405,6 @@ export default function CatalogoPage() {
                 )
               })}
             </div>
-          )
-        ) : activeTeam ? (
-          /* ===== TEAM VIEW: show grouped shirts ===== */
-          groupedShirts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <p className="mt-4 font-semibold text-white">Nenhuma camisa encontrada</p>
-            </div>
-          ) : (
-            <>
-              <div className="flex items-center gap-3 mb-5">
-                {badges[activeTeam] && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={badges[activeTeam]} alt={activeTeam} className="w-10 h-10 object-contain" />
-                )}
-                <div>
-                  <h2 className="text-lg font-extrabold uppercase text-white">{activeTeam}</h2>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                {groupedShirts.map((shirt) => {
-                  const isSobEncomenda = shirt.status === 'sob_encomenda'
-                  const href = isSobEncomenda ? '/catalogo/sob-encomenda' : `/catalogo/${shirt.sizes[0]?.id}`
-                  return (
-                  <div
-                    key={shirt.key}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => { window.location.href = href }}
-                    onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = href }}
-                    className="cursor-pointer"
-                  >
-                    <div className="bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5 hover:border-[#C9A84C]/40 transition-colors h-full flex flex-col">
-                      <div className="relative aspect-square bg-gradient-to-b from-[#0F1F12] to-[#1A1A1A] flex items-center justify-center">
-                        {shirt.photo_url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={shirt.photo_url} alt={shirt.team} className="h-full w-full object-cover" />
-                        ) : (
-                          <svg className="h-14 w-14 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 4l4 2 4-2 4 3-3 3v10H7V10L4 7l4-3z" />
-                          </svg>
-                        )}
-                      </div>
-                      <div className="p-3 flex flex-col gap-1.5 flex-1">
-                        <p className="font-semibold text-white text-sm leading-tight line-clamp-2">{shirt.team}</p>
-                        <p className="text-[11px] text-gray-500">
-                          {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}
-                        </p>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {shirt.sizes.map((s) => (
-                            <span
-                              key={s.size}
-                              className="px-1.5 py-0.5 rounded bg-white/10 text-[10px] font-semibold text-gray-300"
-                            >
-                              {CATALOG_SIZE_LABELS[s.size] ?? s.size}
-                            </span>
-                          ))}
-                        </div>
-                        <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{formatCurrency(shirt.sell_price)}</p>
-                        {isSobEncomenda ? (
-                          <span className="mt-1 w-full text-center rounded-lg bg-blue-600/20 text-blue-400 text-xs font-bold uppercase py-2 tracking-wide">
-                            Sob Encomenda
-                          </span>
-                        ) : (
-                          <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C] text-black text-xs font-bold uppercase py-2 tracking-wide">
-                            Comprar
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  )
-                })}
-              </div>
-            </>
           )
         ) : (
           /* ===== ALL TEAMS VIEW ===== */
