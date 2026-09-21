@@ -96,7 +96,7 @@ export default function CatalogoPage() {
     return products.some((p) => KIDS_SIZES.includes(p.size))
   }, [products])
 
-  const HIDDEN_COLLECTIONS = ['👶 Kids', 'Sob encomenda', 'sob encomenda']
+  const HIDDEN_COLLECTIONS = ['👶 Kids', 'Kids', 'kids', 'Sob encomenda', 'sob encomenda']
 
   const collections = useMemo(() => {
     const map = new Map<string, number>()
