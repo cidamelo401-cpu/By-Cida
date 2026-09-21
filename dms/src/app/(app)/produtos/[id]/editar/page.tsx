@@ -37,6 +37,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     notes: '',
     quantity: '0',
     sob_encomenda: false,
+    is_cover: false,
     nova_camisa: false,
   })
 
@@ -62,6 +63,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           notes: data.notes ?? '',
           quantity: String(data.quantity),
           sob_encomenda: data.status === 'sob_encomenda',
+          is_cover: !!(data as any).is_cover,
           nova_camisa: !!(data as any).catalog_group,
         })
       } catch {
@@ -123,6 +125,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           notes: form.notes.trim() || null,
           quantity: newQuantity,
           status: newStatus,
+          is_cover: form.is_cover,
           catalog_group: catalogGroup,
         })
         .eq('id', product.id)
@@ -295,6 +298,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             />
             <span className="text-sm text-gray-700">Sob Encomenda</span>
             <span className="text-xs text-gray-400">(não disponível a pronta entrega)</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.is_cover}
+              onChange={(e) => updateField('is_cover', e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+            />
+            <span className="text-sm text-gray-700">Capa do catálogo</span>
+            <span className="text-xs text-gray-400">(foto usada no card do catálogo)</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input

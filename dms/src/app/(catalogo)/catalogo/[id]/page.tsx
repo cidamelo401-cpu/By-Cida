@@ -64,28 +64,27 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         setProduct(data)
         setSelectedSize(data.size)
 
-        // Load siblings (same team + model + season)
+        // Load siblings: use catalog_group if available, else team+model+season
         let query = supabase
           .from('products')
           .select('*')
-          .eq('team', data.team)
-          .eq('model', data.model)
           .eq('archived', false)
-          .eq('status', 'disponivel')
-          .gt('quantity', 0)
+          .in('status', ['disponivel', 'sob_encomenda'])
 
-        if (data.season) {
-          query = query.eq('season', data.season)
+        if ((data as any).catalog_group) {
+          query = query.eq('catalog_group', (data as any).catalog_group)
+        } else {
+          query = query
+            .eq('team', data.team)
+            .eq('model', data.model)
+          if (data.season) {
+            query = query.eq('season', data.season)
+          }
         }
 
         const { data: sibs } = await query
         if (sibs) {
-          // Filter to same color/notes group
-          const colorNote = data.notes?.match(/Cor:\s*(\w+)/i)?.[1] ?? ''
-          const filtered = sibs.filter((s) => {
-            const sibColor = s.notes?.match(/Cor:\s*(\w+)/i)?.[1] ?? ''
-            return sibColor === colorNote
-          })
+          const filtered = sibs.filter((s) => s.status === 'sob_encomenda' || s.quantity > 0)
           filtered.sort((a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size))
           setSiblings(filtered)
         }
@@ -425,6 +424,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     Clique aqui para comprar pelo WhatsApp
                   </a>
                 </noscript>
+
+                {/* Sob encomenda — tamanho não disponível */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const msg = `Olá! Vi essa camisa no catálogo e gostaria de encomendar um tamanho que não está disponível.\n\n⚽ ${product.team}\n📋 ${modelLabel} · ${versionLabel}\n💰 ${formatCurrency(product.sell_price)}\n\n🔗 ${productUrl}\n\nPoderia verificar a disponibilidade para mim?`
+                    window.location.assign(getWhatsAppLink(WHATSAPP_NUMBER, msg))
+                  }}
+                  className="mt-2 flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-blue-800/40 bg-blue-950/20 text-blue-300 text-sm font-medium hover:bg-blue-950/40 hover:border-blue-700/50 transition-colors cursor-pointer"
+                >
+                  <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  Não encontrou seu tamanho? Peça sob encomenda
+                </button>
               </>
             )}
 

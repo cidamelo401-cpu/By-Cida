@@ -26,6 +26,7 @@ type FormState = {
   photos: string[]
   notes: string
   sob_encomenda: boolean
+  is_cover: boolean
   sizes: SizeEntry[]
 }
 
@@ -42,6 +43,7 @@ const initialState: FormState = {
   photos: [],
   notes: '',
   sob_encomenda: false,
+  is_cover: false,
   sizes: [{ size: 'M', quantity: '1' }],
 }
 
@@ -151,6 +153,7 @@ export default function NewProductPage() {
         status: (form.sob_encomenda ? 'sob_encomenda' : entry.quantity > 0 ? 'disponivel' : 'esgotado') as 'disponivel' | 'esgotado' | 'sob_encomenda',
         sku: generateSKU(form.team, form.season, form.model, form.version, entry.size),
         archived: false,
+        is_cover: form.is_cover,
         catalog_group: entries.length > 1 ? catalogGroup : null,
       }))
 
@@ -390,6 +393,16 @@ export default function NewProductPage() {
             />
             <span className="text-sm text-gray-700">Sob Encomenda</span>
             <span className="text-xs text-gray-400">(não disponível a pronta entrega)</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.is_cover}
+              onChange={(e) => updateField('is_cover', e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+            />
+            <span className="text-sm text-gray-700">Capa do catálogo</span>
+            <span className="text-xs text-gray-400">(foto usada no card do catálogo)</span>
           </label>
         </Card>
 
