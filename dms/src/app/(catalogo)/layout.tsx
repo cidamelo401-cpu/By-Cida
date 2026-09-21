@@ -7,6 +7,12 @@ export const metadata: Metadata = {
   },
   description:
     'Catálogo de camisas de futebol originais. Encontre a camisa do seu time favorito e compre pelo WhatsApp.',
+  manifest: '/manifest-catalogo.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'DMS Catálogo',
+  },
   openGraph: {
     title: 'DMS Sports — Catálogo de Camisas de Futebol',
     description:
