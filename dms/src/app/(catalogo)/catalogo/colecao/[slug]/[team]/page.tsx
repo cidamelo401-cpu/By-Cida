@@ -29,8 +29,8 @@ const KIDS_SIZES: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28']
 
 export default function TeamShirtsPage({ params }: { params: Promise<{ slug: string; team: string }> }) {
   const { slug, team: teamSlug } = usePromise(params)
-  const collectionName = slug === 'outros' ? 'Outros' : decodeURIComponent(slug)
-  const COLLECTION_LABELS: Record<string, string> = { 'Copa': 'Seleções' }
+  const collectionName = slug === 'outros' ? 'Outros' : slug === 'sob-encomenda' ? 'Sob encomenda' : decodeURIComponent(slug)
+  const COLLECTION_LABELS: Record<string, string> = { 'Copa': 'Seleções', 'Sob encomenda': 'Sob Encomenda' }
   const collectionLabel = COLLECTION_LABELS[collectionName] ?? collectionName
   const teamName = decodeURIComponent(teamSlug)
 
@@ -46,19 +46,13 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
       setError('')
       try {
         const supabase = createClient()
-        let query = supabase
+        const query = supabase
           .from('products')
           .select('*')
           .eq('archived', false)
           .in('status', ['disponivel', 'sob_encomenda'])
           .eq('team', teamName)
           .order('model')
-
-        if (collectionName === 'Outros') {
-          query = query.or('country_league.is.null,country_league.eq.')
-        } else {
-          query = query.eq('country_league', collectionName)
-        }
 
         const { data, error: queryError } = await query
 
