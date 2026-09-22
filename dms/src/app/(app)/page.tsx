@@ -231,8 +231,9 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6 pb-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
+      <div>
+        <h1 className="text-xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
+        <p className="text-sm text-gray-500 mt-0.5">Visão geral do seu negócio</p>
       </div>
 
       {/* Quick actions */}
@@ -252,48 +253,81 @@ export default function DashboardPage() {
         </Link>
       </div>
 
+      {/* Hero: lucro do mês */}
+      <Link href="/relatorios">
+        <Card className="p-5 bg-primary-900 text-white hover:shadow-lg transition-shadow cursor-pointer">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-primary-200">Lucro estimado do mês</p>
+              <p className="mt-1 text-3xl font-bold tabular-nums">{formatCurrency(data.profitThisMonth)}</p>
+              <p className="mt-1 text-sm text-primary-300">{data.salesThisMonth} {data.salesThisMonth === 1 ? 'venda' : 'vendas'} este mês</p>
+            </div>
+            <div className="h-12 w-12 shrink-0 rounded-full bg-accent-400/20 flex items-center justify-center">
+              <ChartIcon className="h-6 w-6 text-accent-400" />
+            </div>
+          </div>
+        </Card>
+      </Link>
+
       {/* Top stats row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard
-          label="Camisas disponíveis"
-          value={data.totalAvailable}
-          icon={<ShirtIcon />}
-        />
-        <StatCard
-          label="Camisas reservadas"
-          value={data.totalReserved}
-          icon={<ShirtIcon className="h-5 w-5 text-amber-600" />}
-        />
-        <StatCard
-          label="Valor investido"
-          value={formatCurrency(data.investedValue)}
-          icon={<MoneyIcon className="h-5 w-5 text-red-600" />}
-        />
-        <StatCard
-          label="Valor potencial de venda"
-          value={formatCurrency(data.potentialValue)}
-          icon={<MoneyIcon className="h-5 w-5 text-green-700" />}
-        />
+      <div>
+        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Estoque</h2>
+        <div className="grid grid-cols-2 gap-3">
+          <StatCard
+            label="Camisas disponíveis"
+            value={data.totalAvailable}
+            icon={<ShirtIcon className="h-4 w-4" />}
+            tone="accent"
+            href="/produtos"
+          />
+          <StatCard
+            label="Camisas reservadas"
+            value={data.totalReserved}
+            icon={<ShirtIcon className="h-4 w-4" />}
+            tone="amber"
+            href="/reservas"
+          />
+          <StatCard
+            label="Valor investido"
+            value={formatCurrency(data.investedValue)}
+            icon={<MoneyIcon className="h-4 w-4" />}
+            tone="red"
+            href="/relatorios"
+          />
+          <StatCard
+            label="Valor potencial de venda"
+            value={formatCurrency(data.potentialValue)}
+            icon={<MoneyIcon className="h-4 w-4" />}
+            tone="green"
+            href="/relatorios"
+          />
+        </div>
       </div>
 
       {/* Second stats row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <StatCard label="Vendas do mês" value={data.salesThisMonth} icon={<CartIcon />} />
-        <StatCard
-          label="Lucro estimado do mês"
-          value={formatCurrency(data.profitThisMonth)}
-          icon={<ChartIcon className="h-5 w-5 text-green-700" />}
-        />
-        <StatCard
-          label="Valores pendentes"
-          value={formatCurrency(data.pendingAmount)}
-          icon={<ClockIcon className="h-5 w-5 text-amber-600" />}
-        />
+      <div>
+        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Vendas</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <StatCard
+            label="Vendas do mês"
+            value={data.salesThisMonth}
+            icon={<CartIcon className="h-4 w-4" />}
+            tone="blue"
+            href="/vendas"
+          />
+          <StatCard
+            label="Valores pendentes"
+            value={formatCurrency(data.pendingAmount)}
+            icon={<ClockIcon className="h-4 w-4" />}
+            tone="amber"
+            href="/vendas"
+          />
+        </div>
       </div>
 
       {/* Estoque por tamanho */}
       <Card className="p-4">
-        <h2 className="text-base font-semibold text-gray-900 mb-4">Estoque por tamanho</h2>
+        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-4">Estoque por tamanho</h2>
         <div className="flex flex-col gap-2">
           {SIZE_OPTIONS.map((size) => {
             const qty = data.stockBySize[size] ?? 0
@@ -317,7 +351,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Produtos com estoque baixo */}
         <Card className="p-4">
-          <h2 className="text-base font-semibold text-gray-900 mb-4">Produtos com estoque baixo</h2>
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-4">Produtos com estoque baixo</h2>
           {data.lowStock.length === 0 ? (
             <p className="text-sm text-gray-500">Nenhum produto abaixo do estoque mínimo.</p>
           ) : (
@@ -343,7 +377,7 @@ export default function DashboardPage() {
         {/* Últimas vendas */}
         <Card className="p-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-gray-900">Últimas vendas</h2>
+            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Últimas vendas</h2>
             <Link href="/vendas" className="text-sm font-medium text-primary-700 hover:underline">
               Ver todas
             </Link>
