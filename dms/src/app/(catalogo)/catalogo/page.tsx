@@ -75,6 +75,7 @@ export default function CatalogoPage() {
 
   const filteredProducts = useMemo(() => {
     let result = products
+    const hasSearch = search.trim().length > 0
 
     if (activeCollection) {
       if (activeCollection === '__sob_encomenda__') {
@@ -84,12 +85,12 @@ export default function CatalogoPage() {
       } else {
         result = result.filter((p) => p.country_league?.trim() === activeCollection && p.status !== 'sob_encomenda')
       }
-    } else {
+    } else if (!hasSearch) {
       result = result.filter((p) => p.status !== 'sob_encomenda')
     }
 
     return result
-  }, [products, activeCollection])
+  }, [products, activeCollection, search])
 
   const FIXED_TABS = [
     { key: 'Seleções', label: 'Seleções' },
@@ -112,9 +113,10 @@ export default function CatalogoPage() {
     for (const p of filteredProducts) {
       const league = p.country_league?.trim() || ''
       const existing = map.get(p.team)
+      const priceForMin = p.status === 'sob_encomenda' && p.sell_price <= 0 ? Infinity : p.sell_price
       if (existing) {
         existing.shirtCount++
-        if (p.sell_price < existing.minPrice) existing.minPrice = p.sell_price
+        if (priceForMin < existing.minPrice) existing.minPrice = priceForMin
         if ((p as any).is_cover && p.photo_url) {
           existing.photo = p.photo_url
         } else if (!existing.photo && p.photo_url) {
@@ -127,7 +129,7 @@ export default function CatalogoPage() {
         map.set(p.team, {
           name: p.team,
           shirtCount: 1,
-          minPrice: p.sell_price,
+          minPrice: priceForMin,
           photo: p.photo_url,
           collections: cols,
         })
@@ -184,17 +186,20 @@ export default function CatalogoPage() {
 
   // Build the link for a team card
   function teamHref(team: TeamInfo) {
-    if (team.collections.size === 1) {
-      const col = Array.from(team.collections)[0]
-      return `/catalogo/colecao/${encodeURIComponent(col)}/${encodeURIComponent(team.name)}`
+    const realCols = Array.from(team.collections).filter((c) => c !== 'Sob encomenda')
+    if (realCols.length === 1) {
+      return `/catalogo/colecao/${encodeURIComponent(realCols[0])}/${encodeURIComponent(team.name)}`
     }
-    return `/catalogo/colecao/outros/${encodeURIComponent(team.name)}`
+    if (realCols.length > 1) {
+      return `/catalogo/colecao/${encodeURIComponent(realCols[0])}/${encodeURIComponent(team.name)}`
+    }
+    return `/catalogo/colecao/sob-encomenda/${encodeURIComponent(team.name)}`
   }
 
   function teamHrefByName(teamName: string) {
     const team = teams.find((t) => t.name === teamName)
     if (team) return teamHref(team)
-    return `/catalogo/colecao/outros/${encodeURIComponent(teamName)}`
+    return `/catalogo/colecao/Nacional/${encodeURIComponent(teamName)}`
   }
 
   function handleCollectionTab(col: string | null) {
@@ -412,7 +417,7 @@ export default function CatalogoPage() {
                           {team.name}
                         </p>
                         <p className="text-xs text-[#C9A84C] font-bold mt-auto pt-1">
-                          {activeCollection === '__sob_encomenda__' && team.minPrice <= 0 ? 'Sob consulta' : formatCurrency(team.minPrice)}
+                          {team.minPrice === Infinity || (activeCollection === '__sob_encomenda__' && team.minPrice <= 0) ? 'Sob consulta' : formatCurrency(team.minPrice)}
                         </p>
                         <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C]/10 text-[#C9A84C] text-xs font-bold uppercase py-2 tracking-wide">
                           Ver Camisas
