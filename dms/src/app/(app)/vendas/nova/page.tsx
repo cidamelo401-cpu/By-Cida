@@ -61,7 +61,7 @@ export default function NovaVendaPage() {
   const [notes, setNotes] = useState('')
 
   // Step 4
-  const [saleStatus, setSaleStatus] = useState<SaleStatus>('orcamento')
+  const [saleStatus, setSaleStatus] = useState<SaleStatus>('paga')
   const [reservationDate, setReservationDate] = useState('')
   const [reservationTime, setReservationTime] = useState('')
 
@@ -173,7 +173,11 @@ export default function NovaVendaPage() {
       if (step === 1) toast.error('Adicione ao menos um produto com quantidade válida.')
       return
     }
-    setStep((s) => Math.min(s + 1, STEPS.length - 1))
+    const next = Math.min(step + 1, STEPS.length - 1)
+    if (next === 2 && amountPaid === 0) {
+      setAmountPaid(total)
+    }
+    setStep(next)
   }
 
   function prevStep() {
@@ -474,7 +478,7 @@ export default function NovaVendaPage() {
             </div>
 
             <Select label="Status inicial" value={saleStatus} onChange={(e) => setSaleStatus(e.target.value as SaleStatus)}>
-              <option value="orcamento">Orçamento</option>
+              <option value="paga">Paga</option>
               <option value="reservada">Reservada</option>
               <option value="aguardando_pagamento">Aguardando Pagamento</option>
             </Select>
