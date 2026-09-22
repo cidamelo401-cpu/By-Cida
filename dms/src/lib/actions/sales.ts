@@ -66,7 +66,7 @@ export async function createSale(params: {
         .from('products')
         .update({
           quantity: newQty,
-          status: newQty > 0 ? 'disponivel' : 'esgotado',
+          status: newQty > 0 ? 'disponivel' : 'sob_encomenda',
         })
         .eq('id', item.product_id)
 
