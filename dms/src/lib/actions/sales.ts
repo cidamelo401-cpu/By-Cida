@@ -52,6 +52,36 @@ export async function createSale(params: {
   const { error: itemsError } = await supabase.from('sale_items').insert(itemsToInsert)
   if (itemsError) throw itemsError
 
+  // Deduct stock for each item and register stock movement
+  for (const item of params.items) {
+    const { data: product } = await supabase
+      .from('products')
+      .select('quantity')
+      .eq('id', item.product_id)
+      .single()
+
+    if (product) {
+      const newQty = Math.max(0, product.quantity - item.quantity)
+      await supabase
+        .from('products')
+        .update({
+          quantity: newQty,
+          status: newQty > 0 ? 'disponivel' : 'esgotado',
+        })
+        .eq('id', item.product_id)
+
+      await supabase.from('stock_movements').insert({
+        product_id: item.product_id,
+        type: 'venda',
+        quantity: -item.quantity,
+        previous_quantity: product.quantity,
+        new_quantity: newQty,
+        reason: `Venda ${sale.code}`,
+        created_by: params.created_by,
+      })
+    }
+  }
+
   // Create payment if amount > 0
   if (params.amount_paid > 0) {
     await supabase.from('payments').insert({
