@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Badge, Button, Card, ConfirmDialog, Input, LoadingSpinner, Modal, Select } from '@/components/ui'
+import { Badge, Button, Card, ConfirmDialog, CurrencyInput, Input, LoadingSpinner, Modal, Select } from '@/components/ui'
 import { formatCurrency, formatDate, formatDateTime, formatPhone, getWhatsAppLink, parseCurrency } from '@/lib/utils/format'
 import { registerPayment, updateSaleDetails, updateSaleStatus } from '@/lib/actions/sales'
 import {
@@ -384,10 +384,10 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
         }
       >
         <div className="flex flex-col gap-3">
-          <Input
+          <CurrencyInput
             label="Valor"
-            value={formatCurrency(paymentAmount)}
-            onChange={(e) => setPaymentAmount(parseCurrency(e.target.value))}
+            value={paymentAmount}
+            onValueChange={(v) => setPaymentAmount(v)}
           />
           <Select label="Forma de pagamento" value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}>
             {Object.entries(PAYMENT_METHOD_LABELS).map(([value, label]) => (
