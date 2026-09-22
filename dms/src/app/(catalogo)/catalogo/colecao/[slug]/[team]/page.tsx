@@ -179,7 +179,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {grouped.map((shirt) => {
                 const isSobEncomenda = shirt.status === 'sob_encomenda'
-                const href = isSobEncomenda ? '/catalogo/sob-encomenda' : `/catalogo/${shirt.sizes[0]?.id}`
+                const href = `/catalogo/${shirt.sizes[0]?.id}`
                 return (
                 <div
                   key={shirt.key}
@@ -218,16 +218,14 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
                         ))}
                       </div>
 
-                      <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{shirt.status === 'sob_encomenda' && shirt.sell_price <= 0 ? 'Sob consulta' : formatCurrency(shirt.sell_price)}</p>
-                      {isSobEncomenda ? (
-                        <span className="mt-1 w-full text-center rounded-lg bg-blue-600/20 text-blue-400 text-xs font-bold uppercase py-2 tracking-wide">
-                          Sob Encomenda
-                        </span>
-                      ) : (
-                        <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C] text-black text-xs font-bold uppercase py-2 tracking-wide">
-                          Comprar
-                        </span>
-                      )}
+                      <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{isSobEncomenda && shirt.sell_price <= 0 ? 'Sob consulta' : formatCurrency(shirt.sell_price)}</p>
+                      <span className={`mt-1 w-full text-center rounded-lg text-xs font-bold uppercase py-2 tracking-wide ${
+                        isSobEncomenda
+                          ? 'bg-blue-600/20 text-blue-400'
+                          : 'bg-[#C9A84C] text-black'
+                      }`}>
+                        {isSobEncomenda ? 'Consultar' : 'Comprar'}
+                      </span>
                     </div>
                   </div>
                 </div>
