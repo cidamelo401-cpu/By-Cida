@@ -3,12 +3,13 @@
 import { useEffect, useState, use as usePromise } from 'react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { Badge, Button, Card, ConfirmDialog, CurrencyInput, Input, LoadingSpinner, Modal, Select } from '@/components/ui'
 import { formatCurrency, formatDate, formatDateTime, formatPhone, getWhatsAppLink, parseCurrency } from '@/lib/utils/format'
-import { registerPayment, updateSaleDetails, updateSaleStatus } from '@/lib/actions/sales'
+import { deleteSale, registerPayment, updateSaleDetails, updateSaleStatus } from '@/lib/actions/sales'
 import {
   PAYMENT_METHOD_LABELS,
   PAYMENT_STATUS_BADGE,
@@ -35,6 +36,7 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
   const { id } = usePromise(params)
   const supabase = createClient()
   const { user } = useAuth()
+  const router = useRouter()
 
   const [sale, setSale] = useState<Sale | null>(null)
   const [payments, setPayments] = useState<Payment[]>([])
@@ -53,6 +55,9 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
   const [showTrackingModal, setShowTrackingModal] = useState(false)
   const [trackingCode, setTrackingCode] = useState('')
   const [trackingLoading, setTrackingLoading] = useState(false)
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   async function loadAll() {
     setLoading(true)
@@ -141,6 +146,20 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
       toast.error('Erro ao salvar rastreio.')
     } finally {
       setTrackingLoading(false)
+    }
+  }
+
+  async function handleDeleteSale() {
+    if (!sale) return
+    setDeleteLoading(true)
+    try {
+      await deleteSale(sale.id)
+      toast.success('Venda excluída e estoque restaurado!')
+      router.push('/vendas')
+    } catch {
+      toast.error('Erro ao excluir a venda.')
+    } finally {
+      setDeleteLoading(false)
     }
   }
 
@@ -286,6 +305,11 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
               <Button size="sm" variant="ghost">Editar Venda</Button>
             </Link>
           </div>
+          <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
+            <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700" onClick={() => setShowDeleteConfirm(true)}>
+              Excluir Venda
+            </Button>
+          </div>
         </Card>
 
         {/* Payment history */}
@@ -369,6 +393,17 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
         loading={statusLoading}
         onConfirm={handleStatusChange}
         onCancel={() => setConfirmStatus(null)}
+      />
+
+      {/* Delete confirm */}
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        title="Excluir venda"
+        description="Essa ação vai excluir a venda permanentemente e devolver os itens ao estoque. Não pode ser desfeita."
+        danger
+        loading={deleteLoading}
+        onConfirm={handleDeleteSale}
+        onCancel={() => setShowDeleteConfirm(false)}
       />
 
       {/* Payment modal */}
