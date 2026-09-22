@@ -80,10 +80,12 @@ export default function CatalogoPage() {
       if (activeCollection === '__sob_encomenda__') {
         result = result.filter((p) => p.status === 'sob_encomenda')
       } else if (activeCollection === '__kids__') {
-        result = result.filter((p) => KIDS_SIZES.includes(p.size))
+        result = result.filter((p) => KIDS_SIZES.includes(p.size) && p.status !== 'sob_encomenda')
       } else {
-        result = result.filter((p) => p.country_league?.trim() === activeCollection)
+        result = result.filter((p) => p.country_league?.trim() === activeCollection && p.status !== 'sob_encomenda')
       }
+    } else {
+      result = result.filter((p) => p.status !== 'sob_encomenda')
     }
 
     return result
