@@ -19,8 +19,8 @@ type TeamInfo = {
 
 export default function CollectionTeamsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = usePromise(params)
-  const collectionName = slug === 'outros' ? 'Outros' : decodeURIComponent(slug)
-  const COLLECTION_LABELS: Record<string, string> = { 'Copa': 'Seleções' }
+  const collectionName = slug === 'outros' ? 'Outros' : slug === 'sob-encomenda' ? 'Sob encomenda' : decodeURIComponent(slug)
+  const COLLECTION_LABELS: Record<string, string> = { 'Copa': 'Seleções', 'Sob encomenda': 'Sob Encomenda' }
   const collectionLabel = COLLECTION_LABELS[collectionName] ?? collectionName
 
   const [products, setProducts] = useState<Product[]>([])
@@ -76,9 +76,10 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
     const map = new Map<string, TeamInfo>()
     for (const p of products) {
       const existing = map.get(p.team)
+      const priceForMin = p.status === 'sob_encomenda' && p.sell_price <= 0 ? Infinity : p.sell_price
       if (existing) {
         existing.shirtCount++
-        if (p.sell_price < existing.minPrice) existing.minPrice = p.sell_price
+        if (priceForMin < existing.minPrice) existing.minPrice = priceForMin
         if ((p as any).is_cover && p.photo_url) {
           existing.photo = p.photo_url
         } else if (!existing.photo && p.photo_url) {
@@ -88,7 +89,7 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
         map.set(p.team, {
           name: p.team,
           shirtCount: 1,
-          minPrice: p.sell_price,
+          minPrice: priceForMin,
           photo: p.photo_url,
         })
       }
@@ -201,7 +202,7 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
                         {team.name}
                       </p>
                       <p className="text-xs text-[#C9A84C] font-bold mt-auto pt-1">
-                        {team.minPrice <= 0 ? 'Sob consulta' : formatCurrency(team.minPrice)}
+                        {team.minPrice === Infinity || team.minPrice <= 0 ? 'Sob consulta' : formatCurrency(team.minPrice)}
                       </p>
                       <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C]/10 text-[#C9A84C] text-xs font-bold uppercase py-2 tracking-wide">
                         Ver Camisas
