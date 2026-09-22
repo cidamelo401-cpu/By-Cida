@@ -88,16 +88,24 @@ export default function ProductsPage() {
   }, [showArchived])
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && products.length > 0) {
       try {
         const scrollY = Number(sessionStorage.getItem('produtos_scroll') ?? '0')
         if (scrollY > 0) {
-          requestAnimationFrame(() => window.scrollTo(0, scrollY))
           sessionStorage.removeItem('produtos_scroll')
+          let attempts = 0
+          const tryScroll = () => {
+            window.scrollTo(0, scrollY)
+            attempts++
+            if (Math.abs(window.scrollY - scrollY) > 10 && attempts < 5) {
+              setTimeout(tryScroll, 100)
+            }
+          }
+          requestAnimationFrame(tryScroll)
         }
       } catch {}
     }
-  }, [loading])
+  }, [loading, products.length])
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase()
