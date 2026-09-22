@@ -12,6 +12,7 @@ import {
   PAYMENT_STATUS_LABELS,
   SALE_STATUS_BADGE,
   SALE_STATUS_LABELS,
+  SALE_STATUS_STRIPE,
 } from '@/lib/constants/sales'
 import type { Database, SaleStatus } from '@/types/database'
 
@@ -145,9 +146,10 @@ export default function VendasPage() {
               return (
                 <Link key={sale.id} href={`/vendas/${sale.id}`}>
                   <Card
-                    className={`p-4 flex flex-col gap-2 ${overdue ? 'border-red-300 bg-red-50/50' : ''}`}
+                    className={`p-4 flex flex-col gap-2 relative overflow-hidden ${overdue ? 'border-red-300 bg-red-50/50' : ''}`}
                   >
-                    <div className="flex items-start justify-between gap-2">
+                    <div className={`absolute top-0 left-0 bottom-0 w-1 ${SALE_STATUS_STRIPE[sale.sale_status]}`} />
+                    <div className="flex items-start justify-between gap-2 pl-2">
                       <div>
                         <p className="font-semibold text-gray-900">{sale.code}</p>
                         <p className="text-sm text-gray-600">{sale.customers?.name ?? 'Cliente não informado'}</p>
@@ -159,16 +161,18 @@ export default function VendasPage() {
                     </div>
 
                     {itemsSummary && (
-                      <p className="text-xs text-gray-500 line-clamp-2">{itemsSummary}</p>
+                      <p className="text-xs text-gray-500 line-clamp-2 pl-2">{itemsSummary}</p>
                     )}
 
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 pl-2">
                       <Badge status={SALE_STATUS_BADGE[sale.sale_status]}>
                         {SALE_STATUS_LABELS[sale.sale_status]}
                       </Badge>
-                      <Badge status={PAYMENT_STATUS_BADGE[sale.payment_status]}>
-                        {PAYMENT_STATUS_LABELS[sale.payment_status]}
-                      </Badge>
+                      {sale.payment_status !== 'pago' && (
+                        <Badge status={PAYMENT_STATUS_BADGE[sale.payment_status]}>
+                          {PAYMENT_STATUS_LABELS[sale.payment_status]}
+                        </Badge>
+                      )}
                       {overdue && (
                         <span className="text-xs font-semibold text-red-700 flex items-center gap-1">
                           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

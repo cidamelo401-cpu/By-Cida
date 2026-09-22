@@ -30,6 +30,16 @@ export const SALE_STATUS_BADGE: Record<SaleStatus, 'success' | 'warning' | 'dang
   cancelada: 'danger',
 }
 
+export const SALE_STATUS_STRIPE: Record<SaleStatus, string> = {
+  orcamento: 'bg-gray-300',
+  reservada: 'bg-yellow-400',
+  aguardando_pagamento: 'bg-orange-400',
+  paga: 'bg-green-500',
+  enviada: 'bg-blue-500',
+  entregue: 'bg-accent-500',
+  cancelada: 'bg-red-500',
+}
+
 export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   pendente: 'Pendente',
   parcial: 'Parcial',
