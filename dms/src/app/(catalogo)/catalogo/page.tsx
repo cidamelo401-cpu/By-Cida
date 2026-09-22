@@ -184,14 +184,11 @@ export default function CatalogoPage() {
 
   // Build the link for a team card
   function teamHref(team: TeamInfo) {
-    const realCols = Array.from(team.collections).filter((c) => c !== 'Sob encomenda')
-    if (realCols.length === 1) {
-      return `/catalogo/colecao/${encodeURIComponent(realCols[0])}/${encodeURIComponent(team.name)}`
+    const cols = Array.from(team.collections)
+    if (cols.length >= 1) {
+      return `/catalogo/colecao/${encodeURIComponent(cols[0])}/${encodeURIComponent(team.name)}`
     }
-    if (realCols.length > 1) {
-      return `/catalogo/colecao/${encodeURIComponent(realCols[0])}/${encodeURIComponent(team.name)}`
-    }
-    return `/catalogo/colecao/sob-encomenda/${encodeURIComponent(team.name)}`
+    return `/catalogo/colecao/Nacional/${encodeURIComponent(team.name)}`
   }
 
   function teamHrefByName(teamName: string) {
