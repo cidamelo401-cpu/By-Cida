@@ -23,7 +23,6 @@ type Sale = Database['public']['Tables']['sales']['Row'] & {
 
 const TABS: { value: SaleStatus | 'todas'; label: string }[] = [
   { value: 'todas', label: 'Todas' },
-  { value: 'orcamento', label: 'Orçamento' },
   { value: 'reservada', label: 'Reservada' },
   { value: 'aguardando_pagamento', label: 'Aguardando' },
   { value: 'paga', label: 'Paga' },
@@ -88,10 +87,20 @@ export default function VendasPage() {
     sale.reservation_deadline &&
     new Date(sale.reservation_deadline).getTime() < Date.now()
 
+  const filteredTotal = filtered.reduce((sum, s) => sum + s.total, 0)
+
   return (
     <AppLayout>
       <div className="flex flex-col gap-5">
-        <h1 className="text-xl font-bold text-gray-900">Vendas</h1>
+        <div>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Vendas</h1>
+          {!loading && (
+            <p className="text-sm text-gray-500 mt-0.5">
+              {filtered.length} {filtered.length === 1 ? 'venda' : 'vendas'}
+              {filtered.length > 0 && <> · {formatCurrency(filteredTotal)}</>}
+            </p>
+          )}
+        </div>
 
         <SearchInput
           value={search}
@@ -105,10 +114,10 @@ export default function VendasPage() {
             <button
               key={t.value}
               onClick={() => setTab(t.value)}
-              className={`shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+              className={`shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 tab === t.value
-                  ? 'bg-primary-900 text-white border-primary-900'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-primary-300'
+                  ? 'bg-primary-900 text-white shadow-sm'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:border-primary-300'
               }`}
             >
               {t.label}
