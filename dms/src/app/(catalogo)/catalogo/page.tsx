@@ -140,8 +140,10 @@ export default function CatalogoPage() {
     return result.sort((a, b) => a.name.localeCompare(b.name))
   }, [filteredProducts, search])
 
-  const allKidsShirts = useMemo(() => {
-    if (activeCollection !== '__kids__') return []
+  const showShirtCards = activeCollection === null || activeCollection === '__kids__'
+
+  const allShirts = useMemo(() => {
+    if (!showShirtCards) return []
     const map = new Map<string, GroupedShirt>()
 
     for (const p of filteredProducts) {
@@ -180,7 +182,7 @@ export default function CatalogoPage() {
       g.sizes.sort((a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size))
     }
     return Array.from(map.values()).sort((a, b) => a.team.localeCompare(b.team))
-  }, [filteredProducts, activeCollection])
+  }, [filteredProducts, showShirtCards])
 
   // Build the link for a team card
   function teamHref(team: TeamInfo) {
@@ -263,7 +265,7 @@ export default function CatalogoPage() {
       )}
 
       {/* Quick badge bar — horizontal scroll with team crests */}
-      {!loading && teamNames.length > 0 && activeCollection !== '__kids__' && (
+      {!loading && teamNames.length > 0 && !showShirtCards && (
         <section className="mx-auto max-w-6xl px-4 pb-4">
           <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4">
             {teamNames.map((name) => (
@@ -308,15 +310,15 @@ export default function CatalogoPage() {
             </svg>
             <span className="ml-3 text-sm text-gray-500">Carregando catálogo...</span>
           </div>
-        ) : activeCollection === '__kids__' ? (
-          /* ===== KIDS VIEW: show all kids shirts directly ===== */
-          allKidsShirts.length === 0 ? (
+        ) : showShirtCards ? (
+          /* ===== SHIRT CARDS VIEW: Todas as Coleções + Kids ===== */
+          allShirts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <p className="mt-4 font-semibold text-white">Nenhuma camisa infantil encontrada</p>
+              <p className="mt-4 font-semibold text-white">Nenhuma camisa encontrada</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {allKidsShirts.map((shirt) => {
+              {allShirts.map((shirt) => {
                 const isSobEncomenda = shirt.status === 'sob_encomenda'
                 const href = `/catalogo/${shirt.sizes[0]?.id}`
                 return (
