@@ -179,7 +179,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {grouped.map((shirt) => {
                 const isSobEncomenda = shirt.status === 'sob_encomenda'
-                const href = isSobEncomenda ? '/catalogo/sob-encomenda' : `/catalogo/${shirt.sizes[0]?.id}`
+                const href = `/catalogo/${shirt.sizes[0]?.id}`
                 return (
                 <div
                   key={shirt.key}
