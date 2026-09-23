@@ -29,6 +29,11 @@
   --color-surface-card: #FFFFFF;
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body {
   background-color: var(--color-surface);
   color: #1a1a1a;
