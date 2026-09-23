@@ -3,21 +3,29 @@
 import { useEffect, useMemo, useState, use as usePromise } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils/format'
-import type { Database } from '@/types/database'
+import { MODEL_LABELS, CATALOG_SIZE_LABELS } from '@/lib/constants/products'
+import type { Database, ProductSize } from '@/types/database'
 import CatalogShell from '../../_components/CatalogShell'
-import TeamBadge from '../../_components/TeamBadge'
-import { useTeamBadges } from '../../_components/useTeamBadges'
 
 type Product = Database['public']['Tables']['products']['Row']
 
-type TeamInfo = {
-  name: string
-  shirtCount: number
-  minPrice: number
-  photo: string | null
+type GroupedShirt = {
+  key: string
+  team: string
+  model: Product['model']
+  season: string | null
+  notes: string | null
+  photo_url: string | null
+  version: Product['version']
+  sell_price: number
+  status: Product['status']
+  sizes: { size: ProductSize; quantity: number; id: string }[]
 }
 
-export default function CollectionTeamsPage({ params }: { params: Promise<{ slug: string }> }) {
+const SIZE_ORDER: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
+const KIDS_SIZES: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28']
+
+export default function CollectionShirtsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = usePromise(params)
   const collectionName = slug === 'outros' ? 'Outros' : slug === 'sob-encomenda' ? 'Sob encomenda' : decodeURIComponent(slug)
   const COLLECTION_LABELS: Record<string, string> = { 'Copa': 'Seleções', 'Sob encomenda': 'Sob Encomenda' }
@@ -65,40 +73,54 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
     load()
   }, [collectionName])
 
-  const teamNames = useMemo(() => {
-    const set = new Set(products.map((p) => p.team))
-    return Array.from(set).sort()
-  }, [products])
+  const filteredProducts = useMemo(() => {
+    const term = search.trim().toLowerCase()
+    if (!term) return products
+    return products.filter((p) => p.team.toLowerCase().includes(term))
+  }, [products, search])
 
-  const badges = useTeamBadges(teamNames)
+  const shirts = useMemo(() => {
+    const map = new Map<string, GroupedShirt>()
 
-  const teams = useMemo(() => {
-    const map = new Map<string, TeamInfo>()
-    for (const p of products) {
-      const existing = map.get(p.team)
-      const priceForMin = p.status === 'sob_encomenda' && p.sell_price <= 0 ? Infinity : p.sell_price
+    for (const p of filteredProducts) {
+      const isKids = KIDS_SIZES.includes(p.size)
+      const key = (p as any).catalog_group ?? `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+
+      const existing = map.get(key)
       if (existing) {
-        existing.shirtCount++
-        if (priceForMin < existing.minPrice) existing.minPrice = priceForMin
+        const existingSize = existing.sizes.find((s) => s.size === p.size)
+        if (existingSize) {
+          existingSize.quantity += p.quantity
+        } else {
+          existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
+        }
         if ((p as any).is_cover && p.photo_url) {
-          existing.photo = p.photo_url
-        } else if (!existing.photo && p.photo_url) {
-          existing.photo = p.photo_url
+          existing.photo_url = p.photo_url
+        } else if (!existing.photo_url && p.photo_url) {
+          existing.photo_url = p.photo_url
         }
       } else {
-        map.set(p.team, {
-          name: p.team,
-          shirtCount: 1,
-          minPrice: priceForMin,
-          photo: p.photo_url,
+        map.set(key, {
+          key,
+          team: p.team,
+          model: p.model,
+          season: p.season,
+          notes: p.notes,
+          photo_url: p.photo_url,
+          version: p.version,
+          sell_price: p.sell_price,
+          status: p.status,
+          sizes: [{ size: p.size, quantity: p.quantity, id: p.id }],
         })
       }
     }
-    const term = search.trim().toLowerCase()
-    const result = Array.from(map.values())
-    if (term) return result.filter((t) => t.name.toLowerCase().includes(term))
-    return result.sort((a, b) => a.name.localeCompare(b.name))
-  }, [products, search])
+
+    for (const g of map.values()) {
+      g.sizes.sort((a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size))
+    }
+
+    return Array.from(map.values()).sort((a, b) => a.team.localeCompare(b.team))
+  }, [filteredProducts])
 
   return (
     <CatalogShell>
@@ -152,7 +174,7 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
       <main className="mx-auto max-w-6xl px-4 py-4">
         {error ? (
           <div className="rounded-xl bg-red-950/40 border border-red-900 p-4 text-center">
-            <p className="text-sm font-medium text-red-400">Erro ao carregar times</p>
+            <p className="text-sm font-medium text-red-400">Erro ao carregar camisas</p>
             <p className="mt-1 text-xs text-red-500 break-all">{error}</p>
           </div>
         ) : loading ? (
@@ -161,58 +183,70 @@ export default function CollectionTeamsPage({ params }: { params: Promise<{ slug
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
             </svg>
-            <span className="ml-3 text-sm text-gray-500">Carregando times...</span>
+            <span className="ml-3 text-sm text-gray-500">Carregando camisas...</span>
           </div>
-        ) : teams.length === 0 ? (
+        ) : shirts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <svg className="h-14 w-14 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 4l4 2 4-2 4 3-3 3v10H7V10L4 7l4-3z" />
             </svg>
-            <p className="mt-4 font-semibold text-white">Nenhum time encontrado</p>
+            <p className="mt-4 font-semibold text-white">Nenhuma camisa encontrada</p>
             <p className="mt-1 text-sm text-gray-500">Tente ajustar a busca.</p>
           </div>
         ) : (
-          <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {teams.map((team) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {shirts.map((shirt) => {
+              const isSobEncomenda = shirt.status === 'sob_encomenda'
+              const href = `/catalogo/${shirt.sizes[0]?.id}`
+              return (
                 <div
-                  key={team.name}
+                  key={shirt.key}
                   role="button"
                   tabIndex={0}
-                  onClick={() => { window.location.href = `/catalogo/colecao/${slug}/${encodeURIComponent(team.name)}` }}
-                  onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = `/catalogo/colecao/${slug}/${encodeURIComponent(team.name)}` }}
+                  onClick={() => { window.location.href = href }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = href }}
                   className="cursor-pointer"
                 >
                   <div className="bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5 hover:border-[#C9A84C]/40 transition-colors h-full flex flex-col">
                     <div className="relative aspect-square bg-gradient-to-b from-[#0F1F12] to-[#1A1A1A] flex items-center justify-center">
-                      {team.photo ? (
+                      {shirt.photo_url ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={team.photo} alt={team.name} className="h-full w-full object-cover" />
+                        <img src={shirt.photo_url} alt={shirt.team} className="h-full w-full object-cover" />
                       ) : (
-                        <TeamBadge
-                          team={team.name}
-                          badgeUrl={badges[team.name]}
-                          size="lg"
-                        />
+                        <svg className="h-14 w-14 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 4l4 2 4-2 4 3-3 3v10H7V10L4 7l4-3z" />
+                        </svg>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent" />
                     </div>
-                    <div className="p-3 flex flex-col gap-1 flex-1">
-                      <p className="font-extrabold text-white text-sm uppercase leading-tight line-clamp-2">
-                        {team.name}
+                    <div className="p-3 flex flex-col gap-1.5 flex-1">
+                      <p className="font-semibold text-white text-sm leading-tight line-clamp-2">{shirt.team}</p>
+                      <p className="text-[11px] text-gray-500">
+                        {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}
                       </p>
-                      <p className="text-xs text-[#C9A84C] font-bold mt-auto pt-1">
-                        {team.minPrice === Infinity || team.minPrice <= 0 ? 'Sob consulta' : formatCurrency(team.minPrice)}
-                      </p>
-                      <span className="mt-1 w-full text-center rounded-lg bg-[#C9A84C]/10 text-[#C9A84C] text-xs font-bold uppercase py-2 tracking-wide">
-                        Ver Camisas
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {shirt.sizes.map((s) => (
+                          <span
+                            key={s.size}
+                            className="px-1.5 py-0.5 rounded bg-white/10 text-[10px] font-semibold text-gray-300"
+                          >
+                            {CATALOG_SIZE_LABELS[s.size] ?? s.size}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{isSobEncomenda && shirt.sell_price <= 0 ? 'Sob consulta' : formatCurrency(shirt.sell_price)}</p>
+                      <span className={`mt-1 w-full text-center rounded-lg text-xs font-bold uppercase py-2 tracking-wide ${
+                        isSobEncomenda
+                          ? 'bg-blue-600/20 text-blue-400'
+                          : 'bg-[#C9A84C] text-black'
+                      }`}>
+                        {isSobEncomenda ? 'Consultar' : 'Comprar'}
                       </span>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </>
+              )
+            })}
+          </div>
         )}
       </main>
     </CatalogShell>
