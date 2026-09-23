@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
@@ -231,24 +232,28 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6 pb-6">
-      <div>
-        <h1 className="text-xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Visão geral do seu negócio</p>
+      <div className="flex items-center gap-3">
+        <Image
+          src="/logo-dms-sports.jpg"
+          alt="DMS Sports"
+          width={40}
+          height={40}
+          className="rounded-xl lg:hidden shrink-0"
+        />
+        <div>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
+          <p className="text-sm text-gray-500 mt-0.5">Visão geral do seu negócio</p>
+        </div>
       </div>
 
       {/* Quick actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <Link href="/vendas/nova">
           <Button fullWidth>+ Nova Venda</Button>
         </Link>
         <Link href="/produtos/novo">
           <Button fullWidth variant="secondary">
             + Nova Camisa
-          </Button>
-        </Link>
-        <Link href="/leads">
-          <Button fullWidth variant="secondary">
-            🔔 Ver Leads
           </Button>
         </Link>
       </div>
