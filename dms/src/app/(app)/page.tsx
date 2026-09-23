@@ -89,6 +89,7 @@ type DashboardData = {
   investedValue: number
   potentialValue: number
   salesThisMonth: number
+  grossThisMonth: number
   profitThisMonth: number
   pendingAmount: number
   stockBySize: Record<ProductSize, number>
@@ -164,9 +165,14 @@ export default function DashboardPage() {
 
       const salesThisMonth = monthSalesRes.count ?? 0
 
-      const profitThisMonth = (
-        (monthItemsRes.data as { quantity: number; unit_price: number; cost_price: number }[] | null) ?? []
-      ).reduce((sum, item) => sum + (item.unit_price - item.cost_price) * item.quantity, 0)
+      const monthItems = (monthItemsRes.data as { quantity: number; unit_price: number; cost_price: number }[] | null) ?? []
+
+      const grossThisMonth = monthItems.reduce((sum, item) => sum + item.unit_price * item.quantity, 0)
+
+      const profitThisMonth = monthItems.reduce(
+        (sum, item) => sum + (item.unit_price - item.cost_price) * item.quantity,
+        0
+      )
 
       const pendingAmount = (pendingSalesRes.data ?? []).reduce(
         (sum, s) => sum + (s.amount_pending ?? 0),
@@ -198,6 +204,7 @@ export default function DashboardPage() {
         investedValue,
         potentialValue,
         salesThisMonth,
+        grossThisMonth,
         profitThisMonth,
         pendingAmount,
         stockBySize,
@@ -258,17 +265,23 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* Hero: lucro do mês */}
+      {/* Hero: resultado do mês */}
       <Link href="/relatorios">
         <Card className="p-5 bg-primary-900 text-white hover:shadow-lg transition-shadow cursor-pointer">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-primary-200">Lucro estimado do mês</p>
-              <p className="mt-1 text-3xl font-bold tabular-nums">{formatCurrency(data.profitThisMonth)}</p>
-              <p className="mt-1 text-sm text-primary-300">{data.salesThisMonth} {data.salesThisMonth === 1 ? 'venda' : 'vendas'} este mês</p>
+          <div className="flex items-start justify-between">
+            <p className="text-sm text-primary-300">{data.salesThisMonth} {data.salesThisMonth === 1 ? 'venda' : 'vendas'} este mês</p>
+            <div className="h-10 w-10 shrink-0 rounded-full bg-accent-400/20 flex items-center justify-center">
+              <ChartIcon className="h-5 w-5 text-accent-400" />
             </div>
-            <div className="h-12 w-12 shrink-0 rounded-full bg-accent-400/20 flex items-center justify-center">
-              <ChartIcon className="h-6 w-6 text-accent-400" />
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-primary-200">Valor bruto</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums">{formatCurrency(data.grossThisMonth)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-primary-200">Valor líquido</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums text-accent-400">{formatCurrency(data.profitThisMonth)}</p>
             </div>
           </div>
         </Card>
