@@ -122,7 +122,7 @@ export default function ReportsPage() {
   const [endDate, setEndDate] = useState(todayISO())
 
   // Section 1: Vendas por período
-  const [salesInRange, setSalesInRange] = useState<(Sale & { customer_name: string | null })[]>([])
+  const [salesInRange, setSalesInRange] = useState<(Sale & { customer_name: string | null; suppliers: string })[]>([])
 
   // Section 2: Lucro estimado
   const [profitData, setProfitData] = useState<{
@@ -166,16 +166,30 @@ export default function ReportsPage() {
     const { startTs, endTs } = rangeToTimestamps(startDate, endDate)
     const { data, error } = await supabase
       .from('sales')
-      .select('*, customers(name)')
+      .select('*, customers(name), sale_items(products(supplier))')
       .gte('created_at', startTs)
       .lte('created_at', endTs)
       .order('created_at', { ascending: false })
     if (error) throw error
+    type SaleWithJoins = Sale & {
+      customers: { name: string } | null
+      sale_items: { products: { supplier: string | null } | null }[]
+    }
     setSalesInRange(
-      ((data as (Sale & { customers: { name: string } | null })[] | null) ?? []).map((s) => ({
-        ...s,
-        customer_name: s.customers?.name ?? null,
-      }))
+      ((data as SaleWithJoins[] | null) ?? []).map((s) => {
+        const suppliers = Array.from(
+          new Set(
+            s.sale_items
+              .map((item) => item.products?.supplier?.trim())
+              .filter((v): v is string => Boolean(v))
+          )
+        )
+        return {
+          ...s,
+          customer_name: s.customers?.name ?? null,
+          suppliers: suppliers.join(', '),
+        }
+      })
     )
   }
 
@@ -383,6 +397,7 @@ export default function ReportsPage() {
         Cliente: s.customer_name ?? '-',
         Total: s.total,
         Status: SALE_STATUS_LABELS[s.sale_status],
+        Fornecedor: s.suppliers || '-',
       })),
       'vendas-por-periodo'
     )
