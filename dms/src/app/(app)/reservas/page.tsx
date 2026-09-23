@@ -95,7 +95,14 @@ export default function ReservasPage() {
   return (
     <AppLayout>
       <div className="flex flex-col gap-5">
-        <h1 className="text-xl font-bold text-gray-900">Reservas</h1>
+        <div>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Reservas</h1>
+          {!loading && (
+            <p className="text-sm text-gray-500 mt-0.5">
+              {reservations.length} {reservations.length === 1 ? 'reserva ativa' : 'reservas ativas'}
+            </p>
+          )}
+        </div>
 
         {!bannerDismissed && overdue.length > 0 && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex flex-col gap-3">

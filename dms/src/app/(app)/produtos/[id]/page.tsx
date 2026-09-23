@@ -291,7 +291,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         </div>
 
         <Card className="p-5">
-          <h2 className="font-semibold text-gray-900 mb-3">Histórico de movimentações</h2>
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Histórico de movimentações</h2>
           {movements.length === 0 ? (
             <p className="text-sm text-gray-500">Nenhuma movimentação registrada ainda.</p>
           ) : (

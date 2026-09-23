@@ -63,6 +63,11 @@ export default function CustomersPage() {
   return (
     <AppLayout title="Clientes">
       <div className="flex flex-col gap-5">
+        <div className="hidden lg:block">
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Clientes</h1>
+          {!loading && <p className="text-sm text-gray-500 mt-0.5">{filtered.length} {filtered.length === 1 ? 'cliente' : 'clientes'}</p>}
+        </div>
+
         <SearchInput
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -116,7 +121,7 @@ function CustomerCard({ customer }: { customer: Customer }) {
   const location = [customer.city, customer.state].filter(Boolean).join(' - ')
   return (
     <Link href={`/clientes/${customer.id}`}>
-      <Card className="p-4 h-full flex gap-3 items-start">
+      <Card className="p-4 h-full flex gap-3 items-start hover:shadow-md hover:-translate-y-0.5 transition-all">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary-800">
           <CustomerPlaceholder />
         </div>
