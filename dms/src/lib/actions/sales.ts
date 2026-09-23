@@ -95,6 +95,47 @@ export async function createSale(params: {
   return sale
 }
 
+export async function deleteSale(saleId: string) {
+  const supabase = createClient()
+
+  // Restore stock for each item before deleting
+  const { data: items } = await supabase
+    .from('sale_items')
+    .select('product_id, quantity')
+    .eq('sale_id', saleId)
+
+  if (items) {
+    for (const item of items) {
+      if (!item.product_id) continue
+      const { data: product } = await supabase
+        .from('products')
+        .select('quantity')
+        .eq('id', item.product_id)
+        .single()
+
+      if (product) {
+        const newQty = product.quantity + item.quantity
+        await supabase
+          .from('products')
+          .update({ quantity: newQty, status: 'disponivel' })
+          .eq('id', item.product_id)
+
+        await supabase.from('stock_movements').insert({
+          product_id: item.product_id,
+          type: 'ajuste',
+          quantity: item.quantity,
+          previous_quantity: product.quantity,
+          new_quantity: newQty,
+          reason: 'Venda excluída',
+        })
+      }
+    }
+  }
+
+  const { error } = await supabase.from('sales').delete().eq('id', saleId)
+  if (error) throw error
+}
+
 export async function updateSaleStatus(saleId: string, newStatus: SaleStatus) {
   const supabase = createClient()
   const { error } = await supabase

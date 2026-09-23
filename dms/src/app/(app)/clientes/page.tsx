@@ -63,6 +63,11 @@ export default function CustomersPage() {
   return (
     <AppLayout title="Clientes">
       <div className="flex flex-col gap-5">
+        <div className="hidden lg:block">
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Clientes</h1>
+          {!loading && <p className="text-sm text-gray-500 mt-0.5">{filtered.length} {filtered.length === 1 ? 'cliente' : 'clientes'}</p>}
+        </div>
+
         <SearchInput
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -99,15 +104,17 @@ export default function CustomersPage() {
         )}
       </div>
 
-      <Link
-        href="/clientes/novo"
-        className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-20 inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-primary-900 text-white text-sm font-semibold shadow-lg hover:bg-primary-800 transition-colors"
-      >
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
-        Novo Cliente
-      </Link>
+      {!loading && filtered.length > 0 && (
+        <Link
+          href="/clientes/novo"
+          className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-20 inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-primary-900 text-white text-sm font-semibold shadow-lg hover:bg-primary-800 transition-colors"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Novo Cliente
+        </Link>
+      )}
     </AppLayout>
   )
 }
@@ -116,7 +123,7 @@ function CustomerCard({ customer }: { customer: Customer }) {
   const location = [customer.city, customer.state].filter(Boolean).join(' - ')
   return (
     <Link href={`/clientes/${customer.id}`}>
-      <Card className="p-4 h-full flex gap-3 items-start">
+      <Card className="p-4 h-full flex gap-3 items-start hover:shadow-md hover:-translate-y-0.5 transition-all">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary-800">
           <CustomerPlaceholder />
         </div>

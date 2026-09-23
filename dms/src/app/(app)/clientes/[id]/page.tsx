@@ -234,11 +234,11 @@ export default function CustomerDetailPage() {
         <div className="grid grid-cols-2 gap-3">
           <Card className="p-4">
             <p className="text-xs text-gray-500">Total gasto</p>
-            <p className="mt-1 text-xl font-bold text-gray-900">{formatCurrency(stats.totalSpent)}</p>
+            <p className="mt-1 text-xl font-bold text-accent-600 tabular-nums">{formatCurrency(stats.totalSpent)}</p>
           </Card>
-          <Card className="p-4">
-            <p className="text-xs text-gray-500">Pendente</p>
-            <p className={`mt-1 text-xl font-bold ${stats.totalPending > 0 ? 'text-amber-600' : 'text-gray-900'}`}>
+          <Card className={`p-4 ${stats.totalPending > 0 ? 'bg-amber-50 border-amber-100' : ''}`}>
+            <p className={`text-xs ${stats.totalPending > 0 ? 'text-amber-700 font-medium' : 'text-gray-500'}`}>Pendente</p>
+            <p className={`mt-1 text-xl font-bold tabular-nums ${stats.totalPending > 0 ? 'text-amber-700' : 'text-gray-900'}`}>
               {formatCurrency(stats.totalPending)}
             </p>
           </Card>
@@ -250,7 +250,7 @@ export default function CustomerDetailPage() {
           </Card>
           <Card className="p-4">
             <p className="text-xs text-gray-500">Total de compras</p>
-            <p className="mt-1 text-base font-semibold text-gray-900">{sales.length}</p>
+            <p className="mt-1 text-base font-semibold text-gray-900 tabular-nums">{sales.length}</p>
           </Card>
         </div>
 
@@ -284,7 +284,7 @@ export default function CustomerDetailPage() {
         )}
 
         <div>
-          <h3 className="text-base font-semibold text-gray-900 mb-3">Histórico de compras</h3>
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Histórico de compras</h3>
           {sales.length === 0 ? (
             <EmptyState title="Nenhuma compra registrada" description="Este cliente ainda não fez compras." />
           ) : (

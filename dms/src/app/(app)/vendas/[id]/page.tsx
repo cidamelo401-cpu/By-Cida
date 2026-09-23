@@ -3,18 +3,20 @@
 import { useEffect, useState, use as usePromise } from 'react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { Badge, Button, Card, ConfirmDialog, CurrencyInput, Input, LoadingSpinner, Modal, Select } from '@/components/ui'
 import { formatCurrency, formatDate, formatDateTime, formatPhone, getWhatsAppLink, parseCurrency } from '@/lib/utils/format'
-import { registerPayment, updateSaleDetails, updateSaleStatus } from '@/lib/actions/sales'
+import { deleteSale, registerPayment, updateSaleDetails, updateSaleStatus } from '@/lib/actions/sales'
 import {
   PAYMENT_METHOD_LABELS,
   PAYMENT_STATUS_BADGE,
   PAYMENT_STATUS_LABELS,
   SALE_STATUS_BADGE,
   SALE_STATUS_LABELS,
+  SALE_STATUS_STRIPE,
   SALE_STATUS_TRANSITIONS,
   SALE_STATUS_TRANSITION_MESSAGES,
 } from '@/lib/constants/sales'
@@ -35,6 +37,7 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
   const { id } = usePromise(params)
   const supabase = createClient()
   const { user } = useAuth()
+  const router = useRouter()
 
   const [sale, setSale] = useState<Sale | null>(null)
   const [payments, setPayments] = useState<Payment[]>([])
@@ -53,6 +56,9 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
   const [showTrackingModal, setShowTrackingModal] = useState(false)
   const [trackingCode, setTrackingCode] = useState('')
   const [trackingLoading, setTrackingLoading] = useState(false)
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   async function loadAll() {
     setLoading(true)
@@ -144,6 +150,20 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
     }
   }
 
+  async function handleDeleteSale() {
+    if (!sale) return
+    setDeleteLoading(true)
+    try {
+      await deleteSale(sale.id)
+      toast.success('Venda excluída e estoque restaurado!')
+      router.push('/vendas')
+    } catch {
+      toast.error('Erro ao excluir a venda.')
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
+
   async function copyMessage(text: string) {
     try {
       await navigator.clipboard.writeText(text)
@@ -195,20 +215,27 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
     <AppLayout title={sale.code} showBack>
       <div className="flex flex-col gap-5 pb-10">
         {/* Header */}
-        <Card className="p-4 flex flex-col gap-3">
+        <Card className="p-5 flex flex-col gap-4 relative overflow-hidden">
+          <div className={`absolute top-0 left-0 right-0 h-1 ${SALE_STATUS_STRIPE[sale.sale_status]}`} />
           <div className="flex items-start justify-between gap-2">
             <div>
-              <p className="text-lg font-bold text-gray-900">{sale.code}</p>
+              <p className="text-xl font-bold text-gray-900 tracking-tight">{sale.code}</p>
               <p className="text-sm text-gray-500">{formatDateTime(sale.created_at)}</p>
             </div>
-            <div className="flex flex-wrap gap-2 justify-end">
-              <Badge status={SALE_STATUS_BADGE[sale.sale_status]}>{SALE_STATUS_LABELS[sale.sale_status]}</Badge>
-              <Badge status={PAYMENT_STATUS_BADGE[sale.payment_status]}>{PAYMENT_STATUS_LABELS[sale.payment_status]}</Badge>
+            <div className="flex flex-col items-end gap-1.5">
+              <Badge status={SALE_STATUS_BADGE[sale.sale_status]} className="text-[13px] px-3 py-1.5">
+                {SALE_STATUS_LABELS[sale.sale_status]}
+              </Badge>
+              {sale.payment_status !== 'pago' && (
+                <Badge status={PAYMENT_STATUS_BADGE[sale.payment_status]}>
+                  {PAYMENT_STATUS_LABELS[sale.payment_status]}
+                </Badge>
+              )}
             </div>
           </div>
 
           {customer && (
-            <div className="flex items-center justify-between border-t border-gray-100 pt-3">
+            <div className="flex items-center justify-between border-t border-gray-100 pt-4">
               <div>
                 <p className="font-medium text-gray-900">{customer.name}</p>
                 {customer.whatsapp && <p className="text-sm text-gray-500">{formatPhone(customer.whatsapp)}</p>}
@@ -218,10 +245,10 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
                   href={getWhatsAppLink(customer.whatsapp, '')}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-green-600 hover:text-green-700"
+                  className="h-10 w-10 flex items-center justify-center rounded-full bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
                   aria-label="Abrir WhatsApp"
                 >
-                  <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.44 1.32 4.94L2 22l5.29-1.39a9.9 9.9 0 004.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.14h-.01a8.2 8.2 0 01-4.18-1.14l-.3-.18-3.14.83.84-3.06-.2-.31a8.19 8.19 0 01-1.25-4.37c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.23-8.25 8.23z" />
                   </svg>
                 </a>
@@ -231,51 +258,61 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
 
           {sale.tracking_code && (
             <p className="text-sm text-gray-600 border-t border-gray-100 pt-3">
-              Rastreio: <strong>{sale.tracking_code}</strong>
+              Rastreio: <strong className="text-gray-900">{sale.tracking_code}</strong>
             </p>
           )}
         </Card>
 
         {/* Items */}
-        <Card className="p-4 flex flex-col gap-3">
-          <h2 className="font-semibold text-gray-900">Itens</h2>
-          {sale.sale_items.map((item) => (
-            <div key={item.id} className="flex justify-between text-sm border-b last:border-b-0 border-gray-100 pb-2 last:pb-0">
-              <div>
-                <p className="font-medium text-gray-900">{item.products?.team ?? 'Produto removido'}</p>
-                <p className="text-xs text-gray-500">
-                  Tam. {item.products?.size ?? '-'} · {item.products?.sku ?? 'sem SKU'} · x{item.quantity}
-                </p>
+        <Card className="p-5 flex flex-col gap-3">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Itens</h2>
+          <div className="flex flex-col gap-3">
+            {sale.sale_items.map((item) => (
+              <div key={item.id} className="flex items-center gap-3">
+                <div className="h-10 w-10 shrink-0 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-sm font-bold">
+                  {(item.products?.team ?? '?').slice(0, 2).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 truncate">{item.products?.team ?? 'Produto removido'}</p>
+                  <p className="text-xs text-gray-500">
+                    Tam. {item.products?.size ?? '-'} · {item.products?.sku ?? 'sem SKU'} · x{item.quantity}
+                  </p>
+                </div>
+                <span className="font-semibold text-gray-900 shrink-0">{formatCurrency(item.unit_price * item.quantity)}</span>
               </div>
-              <span className="font-semibold text-gray-900">{formatCurrency(item.unit_price * item.quantity)}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </Card>
 
         {/* Financial summary */}
-        <Card className="p-4 flex flex-col gap-2">
-          <h2 className="font-semibold text-gray-900 mb-1">Resumo Financeiro</h2>
+        <Card className="p-5 flex flex-col gap-1.5">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Resumo Financeiro</h2>
           <Row label="Subtotal" value={formatCurrency(sale.sale_items.reduce((s, i) => s + i.unit_price * i.quantity, 0))} />
           <Row label="Desconto" value={`- ${formatCurrency(sale.discount)}`} />
           <Row label="Frete" value={`+ ${formatCurrency(sale.shipping)}`} />
-          <Row label="Total" value={formatCurrency(sale.total)} bold />
+
+          <div className="flex items-baseline justify-between pt-3 mt-1 border-t border-gray-100">
+            <span className="text-sm font-medium text-gray-600">Total</span>
+            <span className="text-2xl font-bold text-accent-600">{formatCurrency(sale.total)}</span>
+          </div>
+
           <Row label="Pago" value={formatCurrency(sale.amount_paid)} />
-          <Row label="Pendente" value={formatCurrency(sale.amount_pending)} highlight={sale.amount_pending > 0} />
+          {sale.amount_pending > 0 ? (
+            <div className="flex items-center justify-between bg-red-50 -mx-1 px-3 py-2 rounded-xl mt-1">
+              <span className="text-sm font-semibold text-red-700">Pendente</span>
+              <span className="text-base font-bold text-red-700">{formatCurrency(sale.amount_pending)}</span>
+            </div>
+          ) : (
+            <Row label="Pendente" value={formatCurrency(0)} />
+          )}
           {sale.due_date && <Row label="Vencimento" value={formatDate(sale.due_date)} />}
         </Card>
 
         {/* Actions */}
-        <Card className="p-4 flex flex-col gap-3">
-          <h2 className="font-semibold text-gray-900">Ações</h2>
+        <Card className="p-5 flex flex-col gap-3">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Ações</h2>
+
           <div className="flex flex-wrap gap-2">
-            {nextStatuses.map((status) => (
-              <Button key={status} size="sm" variant="secondary" onClick={() => setConfirmStatus(status)}>
-                Marcar como {SALE_STATUS_LABELS[status]}
-              </Button>
-            ))}
-            {nextStatuses.length === 0 && <p className="text-sm text-gray-500">Não há mais transições de status disponíveis.</p>}
-          </div>
-          <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
             <Button size="sm" onClick={() => setShowPaymentModal(true)}>
               Registrar Pagamento
             </Button>
@@ -283,14 +320,36 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
               {sale.tracking_code ? 'Editar Rastreio' : 'Adicionar Rastreio'}
             </Button>
             <Link href={`/vendas/${sale.id}/editar`}>
-              <Button size="sm" variant="ghost">Editar Venda</Button>
+              <Button size="sm" variant="secondary">Editar Venda</Button>
             </Link>
+          </div>
+
+          {nextStatuses.length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+              {nextStatuses.map((status) => (
+                <Button key={status} size="sm" variant="ghost" onClick={() => setConfirmStatus(status)}>
+                  Marcar como {SALE_STATUS_LABELS[status]}
+                </Button>
+              ))}
+            </div>
+          )}
+
+          <div className="pt-3 border-t border-gray-100">
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="text-sm font-medium text-red-600 hover:text-red-700 flex items-center gap-1.5"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Excluir venda
+            </button>
           </div>
         </Card>
 
         {/* Payment history */}
-        <Card className="p-4 flex flex-col gap-2">
-          <h2 className="font-semibold text-gray-900 mb-1">Histórico de Pagamentos</h2>
+        <Card className="p-5 flex flex-col gap-2">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Histórico de Pagamentos</h2>
           {payments.length === 0 ? (
             <p className="text-sm text-gray-500">Nenhum pagamento registrado.</p>
           ) : (
@@ -308,8 +367,8 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
         </Card>
 
         {/* Status history */}
-        <Card className="p-4 flex flex-col gap-2">
-          <h2 className="font-semibold text-gray-900 mb-1">Histórico de Status</h2>
+        <Card className="p-5 flex flex-col gap-2">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Histórico de Status</h2>
           {history.length === 0 ? (
             <p className="text-sm text-gray-500">Sem histórico registrado.</p>
           ) : (
@@ -327,8 +386,8 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
 
         {/* WhatsApp messages */}
         {customer && (
-          <Card className="p-4 flex flex-col gap-4">
-            <h2 className="font-semibold text-gray-900">Mensagens de WhatsApp</h2>
+          <Card className="p-5 flex flex-col gap-4">
+            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Mensagens de WhatsApp</h2>
 
             {sale.sale_status === 'reservada' && (
               <MessageBlock
@@ -369,6 +428,17 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
         loading={statusLoading}
         onConfirm={handleStatusChange}
         onCancel={() => setConfirmStatus(null)}
+      />
+
+      {/* Delete confirm */}
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        title="Excluir venda"
+        description="Essa ação vai excluir a venda permanentemente e devolver os itens ao estoque. Não pode ser desfeita."
+        danger
+        loading={deleteLoading}
+        onConfirm={handleDeleteSale}
+        onCancel={() => setShowDeleteConfirm(false)}
       />
 
       {/* Payment modal */}

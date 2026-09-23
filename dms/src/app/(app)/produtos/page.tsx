@@ -129,7 +129,10 @@ export default function ProductsPage() {
     <AppLayout title="Produtos">
       <div className="flex flex-col gap-5">
         <div className="hidden lg:flex items-center justify-between gap-3">
-          <h1 className="text-xl font-bold text-gray-900">Produtos</h1>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900 tracking-tight">Produtos</h1>
+            {!loading && <p className="text-sm text-gray-500 mt-0.5">{filtered.length} {filtered.length === 1 ? 'camisa' : 'camisas'}</p>}
+          </div>
           <div className="flex items-center gap-2">
             <Link
               href="/produtos/fotos"
@@ -232,15 +235,17 @@ export default function ProductsPage() {
         )}
       </div>
 
-      <Link
-        href="/produtos/novo"
-        className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-20 inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-primary-900 text-white text-sm font-semibold shadow-lg hover:bg-primary-800 transition-colors"
-      >
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
-        Nova Camisa
-      </Link>
+      {!loading && filtered.length > 0 && (
+        <Link
+          href="/produtos/novo"
+          className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-20 inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-primary-900 text-white text-sm font-semibold shadow-lg hover:bg-primary-800 transition-colors"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Nova Camisa
+        </Link>
+      )}
     </AppLayout>
   )
 }
@@ -249,7 +254,7 @@ function ProductCard({ product }: { product: Product }) {
   const lowStock = product.quantity <= product.min_stock
   return (
     <Link href={`/produtos/${product.id}`}>
-      <Card className="overflow-hidden h-full flex flex-col">
+      <Card className="overflow-hidden h-full flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all">
         <div className="aspect-square bg-primary-50 flex items-center justify-center relative">
           {product.photo_url ? (
             // eslint-disable-next-line @next/next/no-img-element

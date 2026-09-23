@@ -12,6 +12,7 @@ import {
   PAYMENT_STATUS_LABELS,
   SALE_STATUS_BADGE,
   SALE_STATUS_LABELS,
+  SALE_STATUS_STRIPE,
 } from '@/lib/constants/sales'
 import type { Database, SaleStatus } from '@/types/database'
 
@@ -22,7 +23,6 @@ type Sale = Database['public']['Tables']['sales']['Row'] & {
 
 const TABS: { value: SaleStatus | 'todas'; label: string }[] = [
   { value: 'todas', label: 'Todas' },
-  { value: 'orcamento', label: 'Orçamento' },
   { value: 'reservada', label: 'Reservada' },
   { value: 'aguardando_pagamento', label: 'Aguardando' },
   { value: 'paga', label: 'Paga' },
@@ -87,10 +87,20 @@ export default function VendasPage() {
     sale.reservation_deadline &&
     new Date(sale.reservation_deadline).getTime() < Date.now()
 
+  const filteredTotal = filtered.reduce((sum, s) => sum + s.total, 0)
+
   return (
     <AppLayout>
       <div className="flex flex-col gap-5">
-        <h1 className="text-xl font-bold text-gray-900">Vendas</h1>
+        <div>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Vendas</h1>
+          {!loading && (
+            <p className="text-sm text-gray-500 mt-0.5">
+              {filtered.length} {filtered.length === 1 ? 'venda' : 'vendas'}
+              {filtered.length > 0 && <> · {formatCurrency(filteredTotal)}</>}
+            </p>
+          )}
+        </div>
 
         <SearchInput
           value={search}
@@ -104,10 +114,10 @@ export default function VendasPage() {
             <button
               key={t.value}
               onClick={() => setTab(t.value)}
-              className={`shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+              className={`shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 tab === t.value
-                  ? 'bg-primary-900 text-white border-primary-900'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-primary-300'
+                  ? 'bg-primary-900 text-white shadow-sm'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:border-primary-300'
               }`}
             >
               {t.label}
@@ -145,9 +155,10 @@ export default function VendasPage() {
               return (
                 <Link key={sale.id} href={`/vendas/${sale.id}`}>
                   <Card
-                    className={`p-4 flex flex-col gap-2 ${overdue ? 'border-red-300 bg-red-50/50' : ''}`}
+                    className={`p-4 flex flex-col gap-2 relative overflow-hidden ${overdue ? 'border-red-300 bg-red-50/50' : ''}`}
                   >
-                    <div className="flex items-start justify-between gap-2">
+                    <div className={`absolute top-0 left-0 bottom-0 w-1 ${SALE_STATUS_STRIPE[sale.sale_status]}`} />
+                    <div className="flex items-start justify-between gap-2 pl-2">
                       <div>
                         <p className="font-semibold text-gray-900">{sale.code}</p>
                         <p className="text-sm text-gray-600">{sale.customers?.name ?? 'Cliente não informado'}</p>
@@ -159,16 +170,18 @@ export default function VendasPage() {
                     </div>
 
                     {itemsSummary && (
-                      <p className="text-xs text-gray-500 line-clamp-2">{itemsSummary}</p>
+                      <p className="text-xs text-gray-500 line-clamp-2 pl-2">{itemsSummary}</p>
                     )}
 
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 pl-2">
                       <Badge status={SALE_STATUS_BADGE[sale.sale_status]}>
                         {SALE_STATUS_LABELS[sale.sale_status]}
                       </Badge>
-                      <Badge status={PAYMENT_STATUS_BADGE[sale.payment_status]}>
-                        {PAYMENT_STATUS_LABELS[sale.payment_status]}
-                      </Badge>
+                      {sale.payment_status !== 'pago' && (
+                        <Badge status={PAYMENT_STATUS_BADGE[sale.payment_status]}>
+                          {PAYMENT_STATUS_LABELS[sale.payment_status]}
+                        </Badge>
+                      )}
                       {overdue && (
                         <span className="text-xs font-semibold text-red-700 flex items-center gap-1">
                           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -186,15 +199,17 @@ export default function VendasPage() {
         )}
       </div>
 
-      <Link
-        href="/vendas/nova"
-        className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-20 inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-primary-900 text-white text-sm font-semibold shadow-lg hover:bg-primary-800 transition-colors"
-      >
+      {!loading && filtered.length > 0 && (
+        <Link
+          href="/vendas/nova"
+          className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-20 inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-primary-900 text-white text-sm font-semibold shadow-lg hover:bg-primary-800 transition-colors"
+        >
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
         Nova Venda
-      </Link>
+        </Link>
+      )}
     </AppLayout>
   )
 }
