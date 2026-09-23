@@ -199,15 +199,17 @@ export default function VendasPage() {
         )}
       </div>
 
-      <Link
-        href="/vendas/nova"
-        className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-20 inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-primary-900 text-white text-sm font-semibold shadow-lg hover:bg-primary-800 transition-colors"
-      >
+      {!loading && filtered.length > 0 && (
+        <Link
+          href="/vendas/nova"
+          className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-20 inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-primary-900 text-white text-sm font-semibold shadow-lg hover:bg-primary-800 transition-colors"
+        >
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
         Nova Venda
-      </Link>
+        </Link>
+      )}
     </AppLayout>
   )
 }
