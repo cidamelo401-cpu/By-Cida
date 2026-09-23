@@ -265,7 +265,7 @@ export default function CatalogoPage() {
       )}
 
       {/* Quick badge bar — horizontal scroll with team crests */}
-      {!loading && teamNames.length > 0 && !showShirtCards && (
+      {!loading && teamNames.length > 0 && (
         <section className="mx-auto max-w-6xl px-4 pb-4">
           <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4">
             {teamNames.map((name) => (
