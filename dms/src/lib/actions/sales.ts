@@ -14,6 +14,7 @@ export async function createSale(params: {
   sale_status: SaleStatus
   reservation_deadline?: string
   created_by: string
+  sale_date?: string
 }) {
   const supabase = createClient()
   const subtotal = params.items.reduce((sum, item) => sum + item.unit_price * item.quantity, 0)
@@ -35,6 +36,7 @@ export async function createSale(params: {
       notes: params.notes || null,
       reservation_deadline: params.reservation_deadline || null,
       created_by: params.created_by,
+      ...(params.sale_date ? { created_at: new Date(`${params.sale_date}T12:00:00`).toISOString() } : {}),
     })
     .select()
     .single()
@@ -131,6 +133,10 @@ export async function deleteSale(saleId: string) {
       }
     }
   }
+
+  await supabase.from('payments').delete().eq('sale_id', saleId)
+  await supabase.from('sale_status_history').delete().eq('sale_id', saleId)
+  await supabase.from('sale_items').delete().eq('sale_id', saleId)
 
   const { error } = await supabase.from('sales').delete().eq('id', saleId)
   if (error) throw error

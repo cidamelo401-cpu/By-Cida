@@ -58,6 +58,7 @@ export default function NovaVendaPage() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('pix')
   const [amountPaid, setAmountPaid] = useState(0)
   const [dueDate, setDueDate] = useState('')
+  const [saleDate, setSaleDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [notes, setNotes] = useState('')
 
   // Step 4
@@ -216,6 +217,7 @@ export default function NovaVendaPage() {
         sale_status: saleStatus,
         reservation_deadline,
         created_by: user.id,
+        sale_date: saleDate || undefined,
       })
       toast.success('Venda registrada com sucesso!')
       router.push(`/vendas/${sale.id}`)
@@ -411,6 +413,14 @@ export default function NovaVendaPage() {
               <span>Total</span>
               <span>{formatCurrency(total)}</span>
             </div>
+
+            <Input
+              label="Data da venda"
+              type="date"
+              value={saleDate}
+              onChange={(e) => setSaleDate(e.target.value)}
+              helper="Ajuste se estiver lançando uma venda retroativa."
+            />
 
             <Select
               label="Forma de pagamento"
