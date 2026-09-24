@@ -95,6 +95,7 @@ type DashboardData = {
   stockBySize: Record<ProductSize, number>
   lowStock: Product[]
   recentSales: (Sale & { customer_name: string | null })[]
+  monthlySales: { label: string; total: number }[]
 }
 
 export default function DashboardPage() {
@@ -112,6 +113,7 @@ export default function DashboardPage() {
     try {
       const now = new Date()
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+      const sixMonthsStart = new Date(now.getFullYear(), now.getMonth() - 5, 1).toISOString()
 
       const [
         productsRes,
@@ -120,6 +122,7 @@ export default function DashboardPage() {
         monthItemsRes,
         pendingSalesRes,
         recentSalesRes,
+        sixMonthSalesRes,
       ] = await Promise.all([
         supabase.from('products').select('*').eq('archived', false),
         supabase
@@ -146,6 +149,11 @@ export default function DashboardPage() {
           .select('*, customers(name)')
           .order('created_at', { ascending: false })
           .limit(5),
+        supabase
+          .from('sales')
+          .select('total, created_at')
+          .gte('created_at', sixMonthsStart)
+          .in('sale_status', ['paga', 'enviada', 'entregue']),
       ])
 
       if (productsRes.error) throw productsRes.error
@@ -198,6 +206,22 @@ export default function DashboardPage() {
         customer_name: s.customers?.name ?? null,
       }))
 
+      const monthBuckets: { key: string; label: string; total: number }[] = []
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+        const key = `${d.getFullYear()}-${d.getMonth()}`
+        const label = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')
+        monthBuckets.push({ key, label: label.charAt(0).toUpperCase() + label.slice(1), total: 0 })
+      }
+      const bucketByKey = new Map(monthBuckets.map((b) => [b.key, b]))
+      ;((sixMonthSalesRes.data as { total: number; created_at: string }[] | null) ?? []).forEach((s) => {
+        const d = new Date(s.created_at)
+        const key = `${d.getFullYear()}-${d.getMonth()}`
+        const bucket = bucketByKey.get(key)
+        if (bucket) bucket.total += s.total
+      })
+      const monthlySales = monthBuckets.map((b) => ({ label: b.label, total: b.total }))
+
       setData({
         totalAvailable,
         totalReserved,
@@ -210,6 +234,7 @@ export default function DashboardPage() {
         stockBySize,
         lowStock,
         recentSales,
+        monthlySales,
       })
     } catch (err) {
       console.error(err)
@@ -342,6 +367,35 @@ export default function DashboardPage() {
           />
         </div>
       </div>
+
+      {/* Vendas por mês */}
+      <Card className="p-4">
+        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-4">Vendas por mês</h2>
+        {data.monthlySales.every((m) => m.total === 0) ? (
+          <p className="text-sm text-gray-500 py-4 text-center">Nenhuma venda paga nos últimos 6 meses.</p>
+        ) : (
+          <div className="flex items-end justify-between gap-2 h-36">
+            {data.monthlySales.map((m) => {
+              const maxMonth = Math.max(1, ...data.monthlySales.map((x) => x.total))
+              const pct = Math.max(4, Math.round((m.total / maxMonth) * 100))
+              return (
+                <div key={m.label} className="flex-1 flex flex-col items-center justify-end h-full gap-1.5">
+                  {m.total > 0 && (
+                    <span className="text-[10px] font-semibold text-gray-500 tabular-nums leading-none">
+                      {m.total >= 1000 ? `${(m.total / 1000).toFixed(1)}k` : m.total.toFixed(0)}
+                    </span>
+                  )}
+                  <div
+                    className="w-full max-w-8 rounded-t-md bg-accent-400"
+                    style={{ height: `${pct}%` }}
+                  />
+                  <span className="text-[11px] font-medium text-gray-500">{m.label}</span>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </Card>
 
       {/* Estoque por tamanho */}
       <Card className="p-4">

@@ -41,6 +41,19 @@ function rangeToTimestamps(start: string, end: string) {
   return { startTs, endTs }
 }
 
+function lastMonths(count: number) {
+  const now = new Date()
+  const months: { value: string; label: string; start: string; end: string }[] = []
+  for (let i = 0; i < count; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const start = d.toISOString().slice(0, 10)
+    const end = new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().slice(0, 10)
+    const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+    months.push({ value: `${d.getFullYear()}-${d.getMonth()}`, label: label.charAt(0).toUpperCase() + label.slice(1), start, end })
+  }
+  return months
+}
+
 /* ---------------------------------------------------------------- */
 /* Collapsible section shell with lazy loading                       */
 /* ---------------------------------------------------------------- */
@@ -122,7 +135,10 @@ export default function ReportsPage() {
   const [endDate, setEndDate] = useState(todayISO())
 
   // Section 1: Vendas por período
-  const [salesInRange, setSalesInRange] = useState<(Sale & { customer_name: string | null; suppliers: string })[]>([])
+  const [salesInRange, setSalesInRange] = useState<
+    (Sale & { customer_name: string | null; suppliers: string; netTotal: number })[]
+  >([])
+  const monthOptions = lastMonths(12)
 
   // Section 2: Lucro estimado
   const [profitData, setProfitData] = useState<{
@@ -166,14 +182,19 @@ export default function ReportsPage() {
     const { startTs, endTs } = rangeToTimestamps(startDate, endDate)
     const { data, error } = await supabase
       .from('sales')
-      .select('*, customers(name), sale_items(products(supplier))')
+      .select('*, customers(name), sale_items(quantity, unit_price, cost_price, products(supplier))')
       .gte('created_at', startTs)
       .lte('created_at', endTs)
       .order('created_at', { ascending: false })
     if (error) throw error
     type SaleWithJoins = Sale & {
       customers: { name: string } | null
-      sale_items: { products: { supplier: string | null } | null }[]
+      sale_items: {
+        quantity: number
+        unit_price: number
+        cost_price: number
+        products: { supplier: string | null } | null
+      }[]
     }
     setSalesInRange(
       ((data as SaleWithJoins[] | null) ?? []).map((s) => {
@@ -184,10 +205,15 @@ export default function ReportsPage() {
               .filter((v): v is string => Boolean(v))
           )
         )
+        const netTotal = s.sale_items.reduce(
+          (sum, item) => sum + (item.unit_price - item.cost_price) * item.quantity,
+          0
+        )
         return {
           ...s,
           customer_name: s.customers?.name ?? null,
           suppliers: suppliers.join(', '),
+          netTotal,
         }
       })
     )
@@ -395,7 +421,8 @@ export default function ReportsPage() {
         Data: formatDate(s.created_at),
         Código: s.code,
         Cliente: s.customer_name ?? '-',
-        Total: s.total,
+        'Valor Bruto': s.total,
+        'Valor Líquido': s.netTotal,
         Status: SALE_STATUS_LABELS[s.sale_status],
         Fornecedor: s.suppliers || '-',
       })),
@@ -441,6 +468,7 @@ export default function ReportsPage() {
   }
 
   const totalRangeValue = salesInRange.reduce((sum, s) => sum + s.total, 0)
+  const totalRangeNetValue = salesInRange.reduce((sum, s) => sum + s.netTotal, 0)
   const maxStockAvailable = Math.max(1, ...Object.values(stockBySize).map((v) => v.available))
   const totalChannelValue = byChannel.reduce((sum, c) => sum + c.total, 0)
 
@@ -448,7 +476,26 @@ export default function ReportsPage() {
     <div className="flex flex-col gap-5 pb-6">
       <h1 className="text-xl font-bold text-gray-900">Relatórios</h1>
 
-      <Card className="p-4">
+      <Card className="p-4 flex flex-col gap-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Baixar relatório de um mês</label>
+          <select
+            defaultValue=""
+            onChange={(e) => {
+              const month = monthOptions.find((m) => m.value === e.target.value)
+              if (month) {
+                setStartDate(month.start)
+                setEndDate(month.end)
+              }
+            }}
+            className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 focus:border-primary-900 focus:outline-none focus:ring-1 focus:ring-primary-900"
+          >
+            <option value="" disabled>Selecione um mês...</option>
+            {monthOptions.map((m) => (
+              <option key={m.value} value={m.value}>{m.label}</option>
+            ))}
+          </select>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input
             type="date"
@@ -478,7 +525,8 @@ export default function ReportsPage() {
                   <th className="py-2 pr-3">Data</th>
                   <th className="py-2 pr-3">Código</th>
                   <th className="py-2 pr-3">Cliente</th>
-                  <th className="py-2 pr-3">Total</th>
+                  <th className="py-2 pr-3">Bruto</th>
+                  <th className="py-2 pr-3">Líquido</th>
                   <th className="py-2 pr-3">Status</th>
                 </tr>
               </thead>
@@ -489,6 +537,7 @@ export default function ReportsPage() {
                     <td className="py-2 pr-3 whitespace-nowrap">{s.code}</td>
                     <td className="py-2 pr-3">{s.customer_name ?? '-'}</td>
                     <td className="py-2 pr-3 whitespace-nowrap">{formatCurrency(s.total)}</td>
+                    <td className="py-2 pr-3 whitespace-nowrap text-green-700">{formatCurrency(s.netTotal)}</td>
                     <td className="py-2 pr-3">
                       <Badge status="neutral">{SALE_STATUS_LABELS[s.sale_status]}</Badge>
                     </td>
@@ -501,6 +550,7 @@ export default function ReportsPage() {
                     Total
                   </td>
                   <td className="py-2 pr-3">{formatCurrency(totalRangeValue)}</td>
+                  <td className="py-2 pr-3 text-green-700">{formatCurrency(totalRangeNetValue)}</td>
                   <td />
                 </tr>
               </tfoot>
