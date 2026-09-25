@@ -312,6 +312,9 @@ export default function DashboardPage() {
             <div>
               <p className="text-sm text-primary-200">Valor bruto</p>
               <p className="mt-1 text-2xl font-bold tabular-nums text-white">{formatCurrency(data.grossThisMonth ?? 0)}</p>
+              <p className="mt-1 text-[10px] text-red-300 break-all">
+                DEBUG tipo={typeof data.grossThisMonth} valor=&quot;{String(data.grossThisMonth)}&quot;
+              </p>
             </div>
             <div>
               <p className="text-sm text-primary-200">Valor líquido</p>
