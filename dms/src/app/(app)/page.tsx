@@ -311,7 +311,11 @@ export default function DashboardPage() {
           <div className="mt-3 grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-primary-200">Valor bruto</p>
-              <p className="mt-1 text-2xl font-bold tabular-nums" style={{ color: '#ffffff' }}>{formatCurrency(data.grossThisMonth ?? 0)}</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums">
+                <span style={{ color: 'red' }}>[A]</span>
+                <span style={{ color: '#ffffff' }}>{formatCurrency(data.grossThisMonth ?? 0)}</span>
+                <span style={{ color: 'red' }}>[B]</span>
+              </p>
             </div>
             <div>
               <p className="text-sm text-primary-200">Valor líquido</p>
