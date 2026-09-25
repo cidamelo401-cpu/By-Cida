@@ -113,7 +113,6 @@ export default function DashboardPage() {
     try {
       const now = new Date()
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-      const sixMonthsStart = new Date(now.getFullYear(), now.getMonth() - 5, 1).toISOString()
 
       const [
         productsRes,
@@ -152,8 +151,8 @@ export default function DashboardPage() {
         supabase
           .from('sales')
           .select('total, created_at')
-          .gte('created_at', sixMonthsStart)
-          .in('sale_status', ['paga', 'enviada', 'entregue']),
+          .in('sale_status', ['paga', 'enviada', 'entregue'])
+          .order('created_at', { ascending: true }),
       ])
 
       if (productsRes.error) throw productsRes.error
@@ -206,15 +205,22 @@ export default function DashboardPage() {
         customer_name: s.customers?.name ?? null,
       }))
 
+      const allSales = (sixMonthSalesRes.data as { total: number; created_at: string }[] | null) ?? []
+
+      const firstSaleDate = allSales.length > 0 ? new Date(allSales[0].created_at) : now
+      const monthsSinceFirstSale =
+        (now.getFullYear() - firstSaleDate.getFullYear()) * 12 + (now.getMonth() - firstSaleDate.getMonth())
+      const monthsToShow = Math.min(12, Math.max(0, monthsSinceFirstSale))
+
       const monthBuckets: { key: string; label: string; total: number }[] = []
-      for (let i = 5; i >= 0; i--) {
+      for (let i = monthsToShow; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
         const key = `${d.getFullYear()}-${d.getMonth()}`
         const label = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')
         monthBuckets.push({ key, label: label.charAt(0).toUpperCase() + label.slice(1), total: 0 })
       }
       const bucketByKey = new Map(monthBuckets.map((b) => [b.key, b]))
-      ;((sixMonthSalesRes.data as { total: number; created_at: string }[] | null) ?? []).forEach((s) => {
+      allSales.forEach((s) => {
         const d = new Date(s.created_at)
         const key = `${d.getFullYear()}-${d.getMonth()}`
         const bucket = bucketByKey.get(key)
