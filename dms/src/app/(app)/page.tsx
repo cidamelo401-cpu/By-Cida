@@ -374,26 +374,29 @@ export default function DashboardPage() {
         {data.monthlySales.every((m) => m.total === 0) ? (
           <p className="text-sm text-gray-500 py-4 text-center">Nenhuma venda paga nos últimos 6 meses.</p>
         ) : (
-          <div className="flex items-end justify-between gap-2 h-36">
-            {data.monthlySales.map((m) => {
-              const maxMonth = Math.max(1, ...data.monthlySales.map((x) => x.total))
-              const pct = Math.max(4, Math.round((m.total / maxMonth) * 100))
-              return (
-                <div key={m.label} className="flex-1 flex flex-col items-center justify-end h-full gap-1.5">
-                  {m.total > 0 && (
-                    <span className="text-[10px] font-semibold text-gray-500 tabular-nums leading-none">
-                      {m.total >= 1000 ? `${(m.total / 1000).toFixed(1)}k` : m.total.toFixed(0)}
-                    </span>
-                  )}
-                  <div
-                    className="w-full max-w-8 rounded-t-md bg-accent-400"
-                    style={{ height: `${pct}%` }}
-                  />
-                  <span className="text-[11px] font-medium text-gray-500">{m.label}</span>
-                </div>
-              )
-            })}
-          </div>
+          (() => {
+            const BAR_AREA_PX = 112
+            const maxMonth = Math.max(1, ...data.monthlySales.map((x) => x.total))
+            return (
+              <div className="flex items-end justify-between gap-2">
+                {data.monthlySales.map((m) => {
+                  const heightPx = Math.max(4, Math.round((m.total / maxMonth) * BAR_AREA_PX))
+                  return (
+                    <div key={m.label} className="flex-1 flex flex-col items-center gap-1.5">
+                      <span className="text-[10px] font-semibold text-gray-500 tabular-nums leading-none h-3">
+                        {m.total > 0 ? (m.total >= 1000 ? `${(m.total / 1000).toFixed(1)}k` : m.total.toFixed(0)) : ''}
+                      </span>
+                      <div
+                        className="w-full max-w-8 rounded-t-md bg-accent-400"
+                        style={{ height: `${heightPx}px` }}
+                      />
+                      <span className="text-[11px] font-medium text-gray-500">{m.label}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })()
         )}
       </Card>
 
