@@ -174,10 +174,13 @@ export default function DashboardPage() {
 
       const monthItems = (monthItemsRes.data as { quantity: number; unit_price: number; cost_price: number }[] | null) ?? []
 
-      const grossThisMonth = monthItems.reduce((sum, item) => sum + item.unit_price * item.quantity, 0)
+      const grossThisMonth = monthItems.reduce(
+        (sum, item) => sum + Number(item.unit_price) * Number(item.quantity),
+        0
+      )
 
       const profitThisMonth = monthItems.reduce(
-        (sum, item) => sum + (item.unit_price - item.cost_price) * item.quantity,
+        (sum, item) => sum + (Number(item.unit_price) - Number(item.cost_price)) * Number(item.quantity),
         0
       )
 

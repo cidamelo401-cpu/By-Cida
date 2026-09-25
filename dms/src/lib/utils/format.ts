@@ -4,10 +4,23 @@
 
 /** Format a number as Brazilian currency: "R$ 1.234,56" */
 export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(value)
+  try {
+    const formatted = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value)
+    if (formatted) return formatted
+  } catch {
+    // fall through to manual formatting below
+  }
+
+  // Manual fallback in case Intl.NumberFormat misbehaves (seen on some iOS/WebKit versions)
+  const n = Number.isFinite(value) ? value : 0
+  const negative = n < 0
+  const rounded = Math.round(Math.abs(n) * 100) / 100
+  const [intPart, decPart = '00'] = rounded.toFixed(2).split('.')
+  const withThousands = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  return `${negative ? '-' : ''}R$ ${withThousands},${decPart}`
 }
 
 /** Format a phone number string as "(11) 99999-9999" or "(11) 9999-9999" */
