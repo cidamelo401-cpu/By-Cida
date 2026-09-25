@@ -311,10 +311,7 @@ export default function DashboardPage() {
           <div className="mt-3 grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-primary-200">Valor bruto</p>
-              <p className="mt-1 text-2xl font-bold tabular-nums text-white">{formatCurrency(data.grossThisMonth ?? 0)}</p>
-              <p className="mt-1 text-[10px] text-red-300 break-all">
-                DEBUG tipo={typeof data.grossThisMonth} valor=&quot;{String(data.grossThisMonth)}&quot; formatado=&quot;{formatCurrency(data.grossThisMonth ?? 0)}&quot; (len={formatCurrency(data.grossThisMonth ?? 0).length})
-              </p>
+              <p className="mt-1 text-2xl font-bold tabular-nums" style={{ color: '#ffffff' }}>{formatCurrency(data.grossThisMonth ?? 0)}</p>
             </div>
             <div>
               <p className="text-sm text-primary-200">Valor líquido</p>
