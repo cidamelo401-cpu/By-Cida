@@ -315,7 +315,7 @@ export default function DashboardPage() {
             </div>
             <div className="min-w-0">
               <p className="text-sm text-primary-200">Valor bruto</p>
-              <p className="mt-1 text-2xl font-bold tabular-nums truncate" style={{ color: '#ffffff' }}>TESTE 123</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums text-accent-400 truncate">TESTE 123</p>
             </div>
           </div>
         </Card>
