@@ -75,7 +75,6 @@ export default function CatalogoPage() {
 
   const filteredProducts = useMemo(() => {
     let result = products
-    const hasSearch = search.trim().length > 0
 
     if (activeCollection) {
       if (activeCollection === '__sob_encomenda__') {
@@ -85,6 +84,11 @@ export default function CatalogoPage() {
       } else {
         result = result.filter((p) => p.country_league?.trim() === activeCollection)
       }
+    }
+
+    const term = search.trim().toLowerCase()
+    if (term) {
+      result = result.filter((p) => p.team.toLowerCase().includes(term))
     }
 
     return result
