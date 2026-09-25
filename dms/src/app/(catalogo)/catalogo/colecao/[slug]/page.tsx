@@ -22,6 +22,7 @@ type GroupedShirt = {
   sell_price: number
   status: Product['status']
   sizes: { size: ProductSize; quantity: number; id: string }[]
+  fallbackId: string
 }
 
 const SIZE_ORDER: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
@@ -87,14 +88,21 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
     for (const p of filteredProducts) {
       const isKids = KIDS_SIZES.includes(p.size)
       const key = (p as any).catalog_group ?? `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+      const isAvailable = p.status !== 'sob_encomenda' && p.quantity > 0
 
       const existing = map.get(key)
       if (existing) {
-        const existingSize = existing.sizes.find((s) => s.size === p.size)
-        if (existingSize) {
-          existingSize.quantity += p.quantity
-        } else {
-          existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
+        if (isAvailable) {
+          const existingSize = existing.sizes.find((s) => s.size === p.size)
+          if (existingSize) {
+            existingSize.quantity += p.quantity
+          } else {
+            existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
+          }
+          if (existing.status === 'sob_encomenda') {
+            existing.status = 'disponivel'
+            existing.sell_price = p.sell_price
+          }
         }
         if ((p as any).is_cover && p.photo_url) {
           existing.photo_url = p.photo_url
@@ -110,9 +118,10 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
           notes: p.notes,
           photo_url: p.photo_url,
           version: p.version,
-          sell_price: p.sell_price,
-          status: p.status,
-          sizes: [{ size: p.size, quantity: p.quantity, id: p.id }],
+          sell_price: isAvailable ? p.sell_price : 0,
+          status: isAvailable ? 'disponivel' : 'sob_encomenda',
+          sizes: isAvailable ? [{ size: p.size, quantity: p.quantity, id: p.id }] : [],
+          fallbackId: p.id,
         })
       }
     }
@@ -199,7 +208,7 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {shirts.map((shirt) => {
               const isSobEncomenda = shirt.status === 'sob_encomenda'
-              const href = `/catalogo/${shirt.sizes[0]?.id}`
+              const href = `/catalogo/${shirt.sizes[0]?.id ?? shirt.fallbackId}`
               return (
                 <div
                   key={shirt.key}
