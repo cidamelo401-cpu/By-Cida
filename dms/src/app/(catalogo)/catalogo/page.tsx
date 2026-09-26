@@ -359,7 +359,7 @@ export default function CatalogoPage() {
                       )}
                     </div>
                     <div className="p-3 flex flex-col gap-1.5 flex-1">
-                      <p className="font-semibold text-white text-sm leading-tight line-clamp-2">{shirt.team}</p>
+                      <p className="font-display text-white text-lg leading-tight line-clamp-2 uppercase">{shirt.team}</p>
                       <p className="text-[11px] text-gray-500">
                         {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}
                       </p>
@@ -480,7 +480,7 @@ export default function CatalogoPage() {
                         <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent" />
                       </div>
                       <div className="p-3 flex flex-col gap-1 flex-1">
-                        <p className="font-extrabold text-white text-sm uppercase leading-tight line-clamp-2">
+                        <p className="font-display text-white text-lg uppercase leading-tight line-clamp-2">
                           {team.name}
                         </p>
                         <p className="text-xs text-[#C9A84C] font-bold mt-auto pt-1">

@@ -156,7 +156,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
           </button>
           <TeamBadge team={teamName} badgeUrl={badges[teamName]} size="lg" />
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold uppercase text-white tracking-tight">
+            <h1 className="font-display text-3xl sm:text-4xl uppercase text-white tracking-tight">
               {teamName}
             </h1>
             <p className="text-sm text-gray-500 mt-1">{collectionLabel}</p>
@@ -214,7 +214,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
                       )}
                     </div>
                     <div className="p-3 flex flex-col gap-1.5 flex-1">
-                      <p className="font-semibold text-white text-sm leading-tight line-clamp-2">{shirt.team}</p>
+                      <p className="font-display text-white text-lg leading-tight line-clamp-2 uppercase">{shirt.team}</p>
                       <p className="text-[11px] text-gray-500">
                         {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}
                       </p>
