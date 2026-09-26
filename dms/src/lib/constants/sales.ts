@@ -70,7 +70,7 @@ export const SALE_CHANNEL_LABELS: Record<string, string> = {
 export const SALE_STATUS_TRANSITIONS: Record<SaleStatus, SaleStatus[]> = {
   orcamento: ['reservada', 'aguardando_pagamento', 'cancelada'],
   reservada: ['aguardando_pagamento', 'paga', 'cancelada'],
-  aguardando_pagamento: ['paga', 'cancelada'],
+  aguardando_pagamento: ['reservada', 'paga', 'cancelada'],
   paga: ['enviada', 'cancelada'],
   enviada: ['entregue'],
   entregue: [],
