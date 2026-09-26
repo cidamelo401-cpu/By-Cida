@@ -21,7 +21,7 @@ type GroupedShirt = {
   version: Product['version']
   sell_price: number
   status: Product['status']
-  sizes: { size: ProductSize; quantity: number; id: string }[]
+  sizes: { size: ProductSize; quantity: number; id: string; soldOut: boolean }[]
   fallbackId: string
 }
 
@@ -92,13 +92,14 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
 
       const existing = map.get(key)
       if (existing) {
+        const existingSize = existing.sizes.find((s) => s.size === p.size)
+        if (existingSize) {
+          existingSize.quantity += p.quantity
+          if (isAvailable) existingSize.soldOut = false
+        } else {
+          existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id, soldOut: !isAvailable })
+        }
         if (isAvailable) {
-          const existingSize = existing.sizes.find((s) => s.size === p.size)
-          if (existingSize) {
-            existingSize.quantity += p.quantity
-          } else {
-            existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id })
-          }
           if (existing.status === 'sob_encomenda') {
             existing.status = 'disponivel'
             existing.sell_price = p.sell_price
@@ -120,7 +121,7 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
           version: p.version,
           sell_price: isAvailable ? p.sell_price : 0,
           status: isAvailable ? 'disponivel' : 'sob_encomenda',
-          sizes: isAvailable ? [{ size: p.size, quantity: p.quantity, id: p.id }] : [],
+          sizes: [{ size: p.size, quantity: p.quantity, id: p.id, soldOut: !isAvailable }],
           fallbackId: p.id,
         })
       }
@@ -208,7 +209,8 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {shirts.map((shirt) => {
               const isSobEncomenda = shirt.status === 'sob_encomenda'
-              const href = `/catalogo/${shirt.sizes[0]?.id ?? shirt.fallbackId}`
+              const linkSize = shirt.sizes.find((s) => !s.soldOut) ?? shirt.sizes[0]
+              const href = `/catalogo/${linkSize?.id ?? shirt.fallbackId}`
               return (
                 <div
                   key={shirt.key}
@@ -239,7 +241,11 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
                           {shirt.sizes.map((s) => (
                             <span
                               key={s.size}
-                              className="px-1.5 py-0.5 rounded bg-white/10 text-[10px] font-semibold text-gray-300"
+                              className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                                s.soldOut
+                                  ? 'bg-white/5 text-gray-600 line-through'
+                                  : 'bg-white/10 text-gray-300'
+                              }`}
                             >
                               {CATALOG_SIZE_LABELS[s.size] ?? s.size}
                             </span>
