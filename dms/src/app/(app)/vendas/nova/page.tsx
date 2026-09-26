@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
@@ -31,7 +31,10 @@ const STEPS = ['Cliente', 'Produtos', 'Valores', 'Revisão']
 export default function NovaVendaPage() {
   const supabase = createClient()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user } = useAuth()
+  const preselectProductId = searchParams?.get('product_id') ?? ''
+  const preselectStatus = searchParams?.get('status') ?? ''
 
   const [step, setStep] = useState(0)
   const [submitting, setSubmitting] = useState(false)
@@ -62,7 +65,9 @@ export default function NovaVendaPage() {
   const [notes, setNotes] = useState('')
 
   // Step 4
-  const [saleStatus, setSaleStatus] = useState<SaleStatus>('paga')
+  const [saleStatus, setSaleStatus] = useState<SaleStatus>(
+    preselectStatus === 'reservada' ? 'reservada' : 'paga'
+  )
   const [reservationDate, setReservationDate] = useState('')
   const [reservationTime, setReservationTime] = useState('')
 
@@ -86,6 +91,30 @@ export default function NovaVendaPage() {
     loadProducts()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Veio de "Reservar" na tela do produto: adiciona o produto automaticamente
+  useEffect(() => {
+    if (!preselectProductId || products.length === 0) return
+    setItems((prev) => {
+      if (prev.some((i) => i.product_id === preselectProductId)) return prev
+      const product = products.find((p) => p.id === preselectProductId)
+      if (!product) return prev
+      return [
+        ...prev,
+        {
+          product_id: product.id,
+          team: product.team,
+          size: product.size,
+          sku: product.sku,
+          available: product.quantity,
+          quantity: 1,
+          unit_price: product.sell_price,
+          cost_price: product.cost_price,
+        },
+      ]
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preselectProductId, products])
 
   const selectedCustomer = customers.find((c) => c.id === customerId)
 
