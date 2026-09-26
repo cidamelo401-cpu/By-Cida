@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Button, Card, CurrencyInput, EmptyState, Input, LoadingSpinner, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
+import { Button, Card, ConfirmDialog, CurrencyInput, EmptyState, Input, LoadingSpinner, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
 import { CATALOG_SIZE_LABELS, MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
 import type { Database, ProductModel, ProductSize, ProductVersion } from '@/types/database'
 
@@ -21,6 +21,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [showPriceReminder, setShowPriceReminder] = useState(false)
 
   const [form, setForm] = useState({
     team: '',
@@ -80,6 +81,20 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 
+  // Camisa está saindo de "sob encomenda" (sem estoque) para "com estoque",
+  // mas ainda com o preço zerado — precisa lembrar de preencher antes de salvar.
+  function isRestockingWithoutPrice() {
+    if (!product) return false
+    const newQuantity = Number(form.quantity) || 0
+    return (
+      product.status === 'sob_encomenda' &&
+      product.quantity <= 0 &&
+      newQuantity > 0 &&
+      form.sob_encomenda &&
+      form.sell_price <= 0
+    )
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!product) return
@@ -91,7 +106,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       toast.error('Informe o preço de venda.')
       return
     }
+    if (isRestockingWithoutPrice()) {
+      setShowPriceReminder(true)
+      return
+    }
 
+    await doSave()
+  }
+
+  async function doSave() {
+    if (!product) return
     setSaving(true)
     try {
       const newQuantity = Number(form.quantity) || 0
@@ -299,6 +323,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             <span className="text-sm text-gray-700">Sob Encomenda</span>
             <span className="text-xs text-gray-400">(não disponível a pronta entrega)</span>
           </label>
+
+          {form.sob_encomenda && Number(form.quantity) > 0 && form.sell_price <= 0 && (
+            <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2.5 flex gap-2">
+              <span className="text-amber-600">⚠️</span>
+              <p className="text-xs text-amber-800">
+                Essa camisa já tem estoque, mas continua <strong>Sob Encomenda</strong> porque o preço de venda está em R$ 0,00.
+                Preencha o preço e desmarque "Sob Encomenda" para ela aparecer disponível no catálogo.
+              </p>
+            </div>
+          )}
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -330,6 +364,20 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           </Button>
         </div>
       </form>
+
+      <ConfirmDialog
+        open={showPriceReminder}
+        title="Falta o preço de venda"
+        description={`Essa camisa estava "Sob Encomenda" e agora tem estoque, mas o preço de venda ainda está em R$ 0,00. Se salvar assim, ela vai continuar Sob Encomenda até alguém preencher o preço. Quer voltar e preencher o preço agora?`}
+        confirmLabel="Salvar sob encomenda mesmo assim"
+        cancelLabel="Voltar e preencher o preço"
+        loading={saving}
+        onConfirm={async () => {
+          setShowPriceReminder(false)
+          await doSave()
+        }}
+        onCancel={() => setShowPriceReminder(false)}
+      />
     </AppLayout>
   )
 }
