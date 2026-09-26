@@ -275,8 +275,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           <Button variant="secondary" onClick={handleDuplicate}>
             Duplicar
           </Button>
+          {!product.archived && product.quantity > 0 && (
+            <Link href={`/vendas/nova?product_id=${product.id}&status=reservada`}>
+              <Button variant="primary">Reservar</Button>
+            </Link>
+          )}
           {!product.archived && (
-            <Button variant="primary" onClick={() => setMovementOpen(true)}>
+            <Button variant="secondary" onClick={() => setMovementOpen(true)}>
               Registrar Movimentação
             </Button>
           )}
