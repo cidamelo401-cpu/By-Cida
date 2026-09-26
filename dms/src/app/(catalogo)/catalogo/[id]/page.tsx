@@ -311,19 +311,26 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   Tamanho
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {siblings.map((sib) => (
-                    <button
-                      key={sib.id}
-                      onClick={() => setSelectedSize(sib.size)}
-                      className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-                        selectedSize === sib.size
-                          ? 'bg-[#C9A84C] text-black shadow-[0_0_12px_rgba(201,168,76,0.3)]'
-                          : 'bg-[#1A1A1A] border border-white/10 text-gray-300 hover:border-[#C9A84C]/50'
-                      }`}
-                    >
-                      {CATALOG_SIZE_LABELS[sib.size] ?? sib.size}
-                    </button>
-                  ))}
+                  {siblings.map((sib) => {
+                    const soldOut = sib.status === 'sob_encomenda'
+                    return (
+                      <button
+                        key={sib.id}
+                        type="button"
+                        onClick={() => !soldOut && setSelectedSize(sib.size)}
+                        title={soldOut ? 'Esgotado neste tamanho' : undefined}
+                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                          soldOut
+                            ? 'bg-[#141414] border border-white/5 text-gray-600 line-through cursor-not-allowed'
+                            : selectedSize === sib.size
+                              ? 'bg-[#C9A84C] text-black shadow-[0_0_12px_rgba(201,168,76,0.3)]'
+                              : 'bg-[#1A1A1A] border border-white/10 text-gray-300 hover:border-[#C9A84C]/50'
+                        }`}
+                      >
+                        {CATALOG_SIZE_LABELS[sib.size] ?? sib.size}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             )}
