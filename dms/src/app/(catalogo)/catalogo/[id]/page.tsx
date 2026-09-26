@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, getWhatsAppLink } from '@/lib/utils/format'
-import { MODEL_LABELS, VERSION_LABELS, CATALOG_SIZE_LABELS } from '@/lib/constants/products'
+import { MODEL_LABELS, VERSION_LABELS, CATALOG_SIZE_LABELS, CATALOG_ADULT_SIZES, CATALOG_KIDS_SIZES } from '@/lib/constants/products'
 import { useCart } from '../_components/useCart'
 import CartFloat from '../_components/CartFloat'
 import type { Database, ProductSize } from '@/types/database'
@@ -228,7 +228,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   }
 
   const totalQuantity = siblings.reduce((sum, s) => sum + s.quantity, 0)
-  const isKids = SIZE_ORDER.indexOf(product.size) < 5 || siblings.some((s) => SIZE_ORDER.indexOf(s.size) < 5)
+  const isKids = CATALOG_KIDS_SIZES.includes(product.size) || siblings.some((s) => CATALOG_KIDS_SIZES.includes(s.size))
+
+  // Mostra sempre a faixa completa de tamanhos (mesmo os que ainda não têm registro),
+  // riscando automaticamente quem não tem estoque. "AD" (a definir) nunca aparece como opção.
+  const fullSizeRange = isKids ? CATALOG_KIDS_SIZES : CATALOG_ADULT_SIZES
+  const sizeSlots = fullSizeRange.map((size) => {
+    const sib = siblings.find((s) => s.size === size)
+    return {
+      size,
+      product: sib ?? null,
+      soldOut: !sib || sib.status === 'sob_encomenda',
+    }
+  })
 
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
@@ -304,42 +316,31 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <InfoChip>{VERSION_LABELS[product.version]}</InfoChip>
             </div>
 
-            {/* Size selector */}
-            {siblings.length > 1 && (
-              <div className="mt-5">
-                <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-2">
-                  Tamanho
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {siblings.map((sib) => {
-                    const soldOut = sib.status === 'sob_encomenda'
-                    return (
-                      <button
-                        key={sib.id}
-                        type="button"
-                        onClick={() => !soldOut && setSelectedSize(sib.size)}
-                        title={soldOut ? 'Esgotado neste tamanho' : undefined}
-                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-                          soldOut
-                            ? 'bg-[#141414] border border-white/5 text-gray-600 line-through cursor-not-allowed'
-                            : selectedSize === sib.size
-                              ? 'bg-[#C9A84C] text-black shadow-[0_0_12px_rgba(201,168,76,0.3)]'
-                              : 'bg-[#1A1A1A] border border-white/10 text-gray-300 hover:border-[#C9A84C]/50'
-                        }`}
-                      >
-                        {CATALOG_SIZE_LABELS[sib.size] ?? sib.size}
-                      </button>
-                    )
-                  })}
-                </div>
+            {/* Size selector — sempre mostra a faixa completa de tamanhos, riscando o que não tem estoque */}
+            <div className="mt-5">
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-2">
+                Tamanho
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {sizeSlots.map((slot) => (
+                  <button
+                    key={slot.size}
+                    type="button"
+                    onClick={() => !slot.soldOut && setSelectedSize(slot.size)}
+                    title={slot.soldOut ? 'Indisponível neste tamanho — consulte-nos' : undefined}
+                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                      slot.soldOut
+                        ? 'bg-[#141414] border border-white/5 text-gray-600 line-through cursor-not-allowed'
+                        : selectedSize === slot.size
+                          ? 'bg-[#C9A84C] text-black shadow-[0_0_12px_rgba(201,168,76,0.3)]'
+                          : 'bg-[#1A1A1A] border border-white/10 text-gray-300 hover:border-[#C9A84C]/50'
+                    }`}
+                  >
+                    {CATALOG_SIZE_LABELS[slot.size] ?? slot.size}
+                  </button>
+                ))}
               </div>
-            )}
-
-            {siblings.length <= 1 && (
-              <div className="mt-4">
-                <InfoChip>Tamanho {CATALOG_SIZE_LABELS[product.size] ?? product.size}</InfoChip>
-              </div>
-            )}
+            </div>
 
             <button
               onClick={() => setShowSizeChart(true)}

@@ -15,6 +15,12 @@ export const VERSION_LABELS: Record<ProductVersion, string> = {
 
 export const SIZE_OPTIONS: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'P', 'M', 'G', 'GG', '2XG', '3XG']
 
+/** Faixa completa de tamanhos exibida no catálogo (adulto), mesmo sem estoque cadastrado ainda */
+export const CATALOG_ADULT_SIZES: ProductSize[] = ['P', 'M', 'G', 'GG', '2XG', '3XG']
+
+/** Faixa completa de tamanhos exibida no catálogo (infantil), mesmo sem estoque cadastrado ainda */
+export const CATALOG_KIDS_SIZES: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28']
+
 export const STATUS_LABELS: Record<ProductStatus, string> = {
   disponivel: 'Disponível',
   reservado: 'Reservado',
