@@ -35,7 +35,7 @@ type GroupedShirt = {
   fallbackId: string
 }
 
-const SIZE_ORDER: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
+const SIZE_ORDER: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'P', 'M', 'G', 'GG', '2XG', '3XG']
 const KIDS_SIZES: ProductSize[] = ['T20', 'T22', 'T24', 'T26', 'T28']
 
 export default function CatalogoPage() {
