@@ -44,3 +44,9 @@ body {
 input[type="text"].currency {
   text-align: right;
 }
+
+/* Fonte de destaque para o catálogo (nomes de time, títulos) */
+.font-display {
+  font-family: var(--font-display), sans-serif;
+  letter-spacing: 0.01em;
+}

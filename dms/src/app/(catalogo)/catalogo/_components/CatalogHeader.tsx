@@ -22,7 +22,7 @@ export default function CatalogHeader() {
             className="rounded-xl"
           />
           <div>
-            <p className="text-xl sm:text-2xl font-extrabold leading-tight text-white tracking-tight">
+            <p className="font-display text-2xl sm:text-3xl leading-tight text-white tracking-tight">
               DMS <span className="text-[#C9A84C]">Sports</span>
             </p>
             <p className="text-xs text-gray-400 font-medium">Camisas de Futebol</p>

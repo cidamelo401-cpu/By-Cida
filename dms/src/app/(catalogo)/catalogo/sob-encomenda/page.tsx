@@ -38,7 +38,7 @@ export default function SobEncomendaPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="text-2xl sm:text-3xl font-extrabold uppercase text-white tracking-tight">
+          <h1 className="font-display text-3xl sm:text-4xl uppercase text-white tracking-tight">
             Sob Encomenda
           </h1>
         </div>

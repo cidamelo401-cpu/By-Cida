@@ -153,7 +153,7 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="text-2xl sm:text-3xl font-extrabold uppercase text-white tracking-tight">
+          <h1 className="font-display text-3xl sm:text-4xl uppercase text-white tracking-tight">
             {collectionLabel}
           </h1>
         </div>
@@ -232,7 +232,7 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
                       )}
                     </div>
                     <div className="p-3 flex flex-col gap-1.5 flex-1">
-                      <p className="font-semibold text-white text-sm leading-tight line-clamp-2">{shirt.team}</p>
+                      <p className="font-display text-white text-lg leading-tight line-clamp-2 uppercase">{shirt.team}</p>
                       <p className="text-[11px] text-gray-500">
                         {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}
                       </p>
