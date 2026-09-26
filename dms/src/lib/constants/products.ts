@@ -13,7 +13,7 @@ export const VERSION_LABELS: Record<ProductVersion, string> = {
   jogador: 'Player',
 }
 
-export const SIZE_OPTIONS: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
+export const SIZE_OPTIONS: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'P', 'M', 'G', 'GG', '2XG', '3XG']
 
 export const STATUS_LABELS: Record<ProductStatus, string> = {
   disponivel: 'Disponível',

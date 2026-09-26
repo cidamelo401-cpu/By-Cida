@@ -14,7 +14,7 @@ type Product = Database['public']['Tables']['products']['Row']
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '5511992963041'
 
-const SIZE_ORDER: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'PP', 'P', 'M', 'G', 'GG', '2XG', '3XG']
+const SIZE_ORDER: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'P', 'M', 'G', 'GG', '2XG', '3XG']
 
 function ShirtPlaceholder() {
   return (
@@ -537,7 +537,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   </thead>
                   <tbody className="text-gray-300">
                     {[
-                      { size: 'PP', label: 'XS', length: '67-69', width: '51-53', height: '155-162', weight: '45-50' },
                       { size: 'P', label: 'S', length: '69-71', width: '53-55', height: '162-170', weight: '50-62' },
                       { size: 'M', label: 'M', length: '71-73', width: '55-57', height: '170-176', weight: '62-78' },
                       { size: 'G', label: 'L', length: '73-75', width: '57-58', height: '176-182', weight: '78-83' },
