@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, getWhatsAppLink } from '@/lib/utils/format'
-import { MODEL_LABELS, CATALOG_SIZE_LABELS } from '@/lib/constants/products'
+import { MODEL_LABELS, CATALOG_SIZE_LABELS, CATALOG_ADULT_SIZES, CATALOG_KIDS_SIZES } from '@/lib/constants/products'
 import type { Database, ProductSize } from '@/types/database'
 import CatalogShell from './_components/CatalogShell'
 import TeamBadge from './_components/TeamBadge'
@@ -33,6 +33,7 @@ type GroupedShirt = {
   status: Product['status']
   sizes: { size: ProductSize; quantity: number; id: string; soldOut: boolean }[]
   fallbackId: string
+  isKids: boolean
 }
 
 const SIZE_ORDER: ProductSize[] = ['AD', 'T20', 'T22', 'T24', 'T26', 'T28', 'P', 'M', 'G', 'GG', '2XG', '3XG']
@@ -190,10 +191,20 @@ export default function CatalogoPage() {
           status: isAvailable ? 'disponivel' : 'sob_encomenda',
           sizes: [{ size: p.size, quantity: p.quantity, id: p.id, soldOut: !isAvailable }],
           fallbackId: p.id,
+          isKids,
         })
       }
     }
     for (const g of map.values()) {
+      // "AD" (a definir) nunca é um tamanho de verdade — não mostrar como chip
+      g.sizes = g.sizes.filter((s) => s.size !== 'AD')
+      // Completa a faixa de tamanhos: o que não tem registro aparece riscado automaticamente
+      const fullRange = g.isKids ? CATALOG_KIDS_SIZES : CATALOG_ADULT_SIZES
+      for (const size of fullRange) {
+        if (!g.sizes.some((s) => s.size === size)) {
+          g.sizes.push({ size, quantity: 0, id: '', soldOut: true })
+        }
+      }
       g.sizes.sort((a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size))
     }
     return Array.from(map.values()).sort((a, b) => a.team.localeCompare(b.team))
@@ -336,8 +347,8 @@ export default function CatalogoPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {allShirts.map((shirt) => {
                 const isSobEncomenda = shirt.status === 'sob_encomenda'
-                const linkSize = shirt.sizes.find((s) => !s.soldOut) ?? shirt.sizes[0]
-                const href = `/catalogo/${linkSize?.id ?? shirt.fallbackId}`
+                const linkSize = shirt.sizes.find((s) => !s.soldOut && s.id)
+                const href = `/catalogo/${linkSize?.id || shirt.fallbackId}`
                 return (
                 <div
                   key={shirt.key}
@@ -363,22 +374,20 @@ export default function CatalogoPage() {
                       <p className="text-[11px] text-gray-500">
                         {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}
                       </p>
-                      {!isSobEncomenda && (
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {shirt.sizes.map((s) => (
-                            <span
-                              key={s.size}
-                              className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
-                                s.soldOut
-                                  ? 'bg-white/5 text-gray-600 line-through'
-                                  : 'bg-white/10 text-gray-300'
-                              }`}
-                            >
-                              {CATALOG_SIZE_LABELS[s.size] ?? s.size}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {shirt.sizes.map((s) => (
+                          <span
+                            key={s.size}
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                              s.soldOut
+                                ? 'bg-white/5 text-gray-600 line-through'
+                                : 'bg-white/10 text-gray-300'
+                            }`}
+                          >
+                            {CATALOG_SIZE_LABELS[s.size] ?? s.size}
+                          </span>
+                        ))}
+                      </div>
                       <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{isSobEncomenda && shirt.sell_price <= 0 ? 'Sob consulta' : formatCurrency(shirt.sell_price)}</p>
                       {isSobEncomenda ? (
                         <button
