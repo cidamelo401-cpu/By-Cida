@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/*
+ * Tokens do design system "Alvorada v1.0" (skill bruna-makdissi-design).
+ * Fonte de verdade em texto/JS: src/styles/tokens.ts — mantenha os dois em sincronia.
+ * Tailwind v4 lê @theme diretamente; por isso os valores estão aqui também, não só no .ts.
+ */
+@theme {
+  --color-noite-900: #231B38;
+  --color-noite-800: #2F2549;
+  --color-noite-700: #3D3160;
+  --color-noite-600: #4E3F78;
+  --color-noite-500: #63538F;
+  --color-noite-400: #8579A8;
+  --color-noite-300: #ADA3C4;
+  --color-noite-200: #D0CADE;
+  --color-noite-100: #E9E5F0;
+  --color-noite-50: #F4F1F8;
+
+  --color-nevoa-0: #FFFFFF;
+  --color-nevoa-100: #FDFAF8;
+  --color-nevoa-200: #F9F2F1;
+  --color-nevoa-300: #EFE4E2;
+  --color-nevoa-400: #DFCFCC;
+
+  --color-horizonte-700: #9A4632;
+  --color-horizonte-600: #B4553F;
+  --color-horizonte-500: #CE6B4A;
+  --color-horizonte-400: #E08B63;
+  --color-horizonte-300: #EFB18C;
+  --color-horizonte-200: #F7D6C2;
+  --color-horizonte-100: #FCEDE4;
+
+  --color-ouro-700: #7E5A1E;
+  --color-ouro-600: #A57B33;
+  --color-ouro-500: #C89A4E;
+  --color-ouro-300: #E4C48D;
+  --color-ouro-100: #F7EDD8;
+
+  --color-tinta-900: #231B38;
+  --color-tinta-700: #403353;
+  --color-tinta-500: #6B5F7F;
+  --color-tinta-400: #94899F;
+  --color-tinta-300: #B7AEC0;
+
+  --font-display: var(--font-newsreader), serif;
+  --font-body: var(--font-inter), sans-serif;
+
+  --radius-pill: 999px;
+  --radius-button: 6px;
+  --radius-field: 10px;
+  --radius-card: 16px;
+
+  --shadow-sm: 0 1px 2px rgba(35, 27, 56, .06);
+  --shadow-md: 0 3px 14px rgba(35, 27, 56, .07);
+  --shadow-lg: 0 16px 44px rgba(35, 27, 56, .13);
+  --shadow-cover: 0 24px 64px rgba(35, 27, 56, .3);
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+body {
+  background-color: var(--color-nevoa-200);
+  color: var(--color-tinta-900);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 14px;
+}
+
+::selection {
+  background-color: var(--color-horizonte-200);
+  color: var(--color-noite-900);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(206, 107, 74, .42);
+}
+
+/* Rótulo de margem — eyebrow em caixa-alta, único lugar onde tracking largo entra fora do lockup. */
+.label-margin {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 9.5px;
+  letter-spacing: .19em;
+  text-transform: uppercase;
+}
+
+/* Voz reflexiva / citação — Newsreader itálico, papel específico do sistema. */
+.quote-reflective {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
