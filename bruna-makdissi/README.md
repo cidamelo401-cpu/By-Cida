@@ -105,21 +105,34 @@ avança sozinho ao selecionar uma opção, depois pede nome/WhatsApp/e-mail com
 checkbox de autorização (desmarcado por padrão, LGPD). Ao enviar, calcula a
 recomendação e manda pra `/resultado`.
 
-## Resultado (Fase 4)
+## Resultado (Fase 4 — revisado após feedback da Cida)
 
-`/resultado` monta, nessa ordem: headline atribuída à resposta (nunca
-declarativa sobre a pessoa) · "o que apareceu nas suas respostas" (3–4
-bullets gerados só a partir das opções escolhidas, via `lib/insights.ts`) ·
-o(s) produto(s) recomendado(s) com preço (só quando `preco.mode ===
-'publico'` — sob consulta nunca mostra valor, só o CTA) · disclaimer público
-curado quando o tema toca saúde/corpo/pet (`lib/disclaimers.ts`, com
-destaque visual mais forte para ansiedade) · "e depois?" quando há
-continuidade natural · CTA de WhatsApp com mensagem dinâmica (produto +
-até 2 insights) · link para refazer.
+`/resultado` monta, nessa ordem: headline de identificação (tema apareceu
+com mais força) · **um parágrafo de justificativa em prosa** (`lib/insights.ts
+→ getResultJustification`) explicando por que esse resultado saiu, sempre
+atribuído à resposta ("nas suas respostas... você contou que..."), nunca a
+lista crua de respostas marcadas (isso foi removido — feedback: parecia
+"responder o diagnóstico com as respostas da pessoa" em vez de vender o
+produto) · o(s) produto(s) recomendado(s) com preço (só quando `preco.mode
+=== 'publico'`) · disclaimer público curado quando o tema toca saúde/corpo/pet
+(`lib/disclaimers.ts`) · "e depois?" · **CTA de WhatsApp sempre nomeando o
+produto** ("Falar com a Bruna sobre [Produto]", usando `nomeCurto` quando o
+nome oficial é longo demais pro botão) · link para refazer.
 
-Testado com Playwright injetando sessão pra cobrir 9 cenários (dinheiro,
-corpo, ansiedade, espiritual com 3 mesas, difuso, sustentação, pet, pacote
-de 4 Prosperidades) — todos renderizando preço/disclaimer/CTA corretos.
+**Página é de alta conversão — ninguém sai sem produto nomeado.** O
+"resultado difuso" antigo (tema espiritual + acompanhamento, sinais muito
+misturados) foi removido: agora sempre oferece os 3 Diagnósticos como
+opções concretas, com a Bruna ajudando a decidir por qual começar pelo
+WhatsApp, em vez de terminar sem nada pra levar adiante.
+
+Os bullets crus de resposta (`getAnswerInsights`) continuam existindo, mas
+só alimentam a mensagem privada de WhatsApp (contexto pra Bruna) — nunca
+aparecem na tela.
+
+Testado com Playwright injetando sessão pra cobrir os cenários principais
+(dinheiro, corpo, ansiedade, espiritual com 3 mesas, difuso→diagnósticos,
+sustentação, pet, pacote de 4 Prosperidades, jornada com nome longo) —
+preço/disclaimer/CTA conferidos visualmente em cada um.
 
 Sem backend ainda: o lead fica só em `sessionStorage`. Persistência real
 (Supabase) fica para uma fase futura, quando for pedida.

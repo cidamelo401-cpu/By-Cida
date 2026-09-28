@@ -263,9 +263,16 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
   return diffuseFallback('espiritual-acompanhamento-diagnostico-indefinido');
 }
 
+/**
+ * Antes retornava sem produto nenhum ("resultado difuso"). A página é de alta
+ * conversão — ninguém deveria sair sem um produto nomeado pra levar pro
+ * WhatsApp. Quando os sinais realmente não apontam pra uma área só, o passo
+ * mais seguro (baixo risco, mesmo preço, 1h) é oferecer os 3 diagnósticos e
+ * deixar a Bruna ajudar a decidir por qual começar — nunca ficar sem nada.
+ */
 function diffuseFallback(ruleId = 'resultado-difuso'): RecommendationResult {
   return {
-    primaryProductIds: [],
+    primaryProductIds: ['D01', 'D02', 'D03'],
     nextStepProductIds: [],
     requiresWhatsappToChoose: true,
     isDiffuse: true,

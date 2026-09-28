@@ -35,6 +35,12 @@ export interface PriceInfo {
 export interface Product {
   id: string;
   nome: string;
+  /**
+   * Versão curta do nome, só pra caber em botão/CTA sem quebrar em 3 linhas.
+   * Nunca usar no lugar de `nome` em título de card ou descrição — lá o nome
+   * completo (oficial do catálogo) é o que aparece. undefined = usar `nome`.
+   */
+  nomeCurto?: string;
   categoria: ProductCategory;
   temaPrincipal: string[];
   paraQueServe: string;

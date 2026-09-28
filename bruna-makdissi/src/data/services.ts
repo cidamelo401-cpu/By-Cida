@@ -317,6 +317,7 @@ export const products: Product[] = [
   {
     id: 'J01',
     nome: 'Jornada de 7 Dias — Desidentificação dos Problemas + Liberação do Endividado Crônico',
+    nomeCurto: 'Jornada de 7 Dias',
     categoria: 'jornada',
     temaPrincipal: ['Dinheiro'],
     paraQueServe:
@@ -346,6 +347,7 @@ export const products: Product[] = [
   {
     id: 'J02',
     nome: 'Jornada de 21 Dias — Desprogramando a Escassez Financeira Estrutural',
+    nomeCurto: 'Jornada da Escassez Financeira',
     categoria: 'jornada',
     temaPrincipal: ['Dinheiro'],
     paraQueServe:
@@ -373,6 +375,7 @@ export const products: Product[] = [
   {
     id: 'J03',
     nome: 'Jornada de 21 Dias — Riqueza e Manifestação',
+    nomeCurto: 'Jornada da Riqueza e Manifestação',
     categoria: 'jornada',
     temaPrincipal: ['Dinheiro', 'Espiritual'],
     paraQueServe: 'Vinte e um dias de prática diária para ativar mentalidade de prosperidade, clareza de desejos e sensação de merecimento.',
@@ -399,6 +402,7 @@ export const products: Product[] = [
   {
     id: 'J04',
     nome: '40 Dias — Exorcismo (limpeza energética)',
+    nomeCurto: '40 Dias — Exorcismo',
     categoria: 'jornada',
     temaPrincipal: ['Espiritual', 'Dinheiro'],
     paraQueServe:
@@ -428,6 +432,7 @@ export const products: Product[] = [
   {
     id: 'J05',
     nome: 'Portal do Mês — Atendimento Coletivo 4 Prosperidades',
+    nomeCurto: 'Portal do Mês',
     categoria: 'evento_coletivo',
     temaPrincipal: ['Espiritual', 'Dinheiro'],
     paraQueServe:
@@ -545,6 +550,7 @@ export const products: Product[] = [
   {
     id: 'T03',
     nome: 'Mesa das 4 Prosperidades (individual)',
+    nomeCurto: 'Mesa das 4 Prosperidades',
     categoria: 'mesa',
     temaPrincipal: ['Dinheiro', 'Saúde', 'Relacionamentos', 'Espiritual'],
     paraQueServe:
