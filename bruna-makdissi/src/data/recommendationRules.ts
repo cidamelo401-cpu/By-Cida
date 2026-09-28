@@ -135,6 +135,19 @@ function recomendarDinheiro(momento: QuizAnswers['momento'], disposicao: QuizAns
     };
   }
 
+  if (disposicao === 'intensivo') {
+    return {
+      primaryProductIds: ['D01'],
+      nextStepProductIds: ['C01'],
+      requiresWhatsappToChoose: false,
+      isDiffuse: false,
+      professionalSupportNotice: false,
+      disclaimerKind: null,
+      nextStepNote: 'O Caminho da Transformação é a opção mais concentrada depois do diagnóstico — um formato curto e intenso, para quem quer ir rápido.',
+      ruleId: 'dinheiro-intensivo-caminho',
+    };
+  }
+
   // acompanhamento
   return {
     primaryProductIds: ['D01'],
@@ -158,6 +171,19 @@ function recomendarCorpo(disposicao: QuizAnswers['disposicao']): RecommendationR
       professionalSupportNotice: false,
       disclaimerKind: 'saude',
       ruleId: 'corpo-pontual-leitura-orgaos',
+    };
+  }
+
+  if (disposicao === 'intensivo') {
+    return {
+      primaryProductIds: ['D02'],
+      nextStepProductIds: ['C01'],
+      requiresWhatsappToChoose: false,
+      isDiffuse: false,
+      professionalSupportNotice: false,
+      disclaimerKind: 'saude',
+      nextStepNote: 'O Caminho da Transformação é a opção mais concentrada depois do diagnóstico — um formato curto e intenso, para quem quer ir rápido.',
+      ruleId: 'corpo-intensivo-caminho',
     };
   }
 
@@ -187,6 +213,19 @@ function recomendarRelacoes(disposicao: QuizAnswers['disposicao']): Recommendati
       professionalSupportNotice: false,
       disclaimerKind: null,
       ruleId: 'relacoes-pontual-divorcio-energetico',
+    };
+  }
+
+  if (disposicao === 'intensivo') {
+    return {
+      primaryProductIds: ['D03'],
+      nextStepProductIds: ['C01'],
+      requiresWhatsappToChoose: false,
+      isDiffuse: false,
+      professionalSupportNotice: false,
+      disclaimerKind: null,
+      nextStepNote: 'O Caminho da Transformação é a opção mais concentrada depois do diagnóstico — um formato curto e intenso, para quem quer ir rápido.',
+      ruleId: 'relacoes-intensivo-caminho',
     };
   }
 
@@ -259,6 +298,14 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
     };
   }
 
+  if (disposicao === 'intensivo') {
+    return diffuseFallback('espiritual-intensivo-caminho', {
+      nextStepProductIds: ['C01'],
+      nextStepNote:
+        'Um diagnóstico pode ajudar a mapear isso — financeiro, corporal ou de relações, dependendo de onde o sinal aparece mais forte. Depois dele, o Caminho da Transformação é a opção mais concentrada, para quem quer ir rápido.',
+    });
+  }
+
   // acompanhamento — a regra fonte não especifica qual diagnóstico usar.
   return diffuseFallback('espiritual-acompanhamento-diagnostico-indefinido');
 }
@@ -270,15 +317,20 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
  * mais seguro (baixo risco, mesmo preço, 1h) é oferecer os 3 diagnósticos e
  * deixar a Bruna ajudar a decidir por qual começar — nunca ficar sem nada.
  */
-function diffuseFallback(ruleId = 'resultado-difuso'): RecommendationResult {
+function diffuseFallback(
+  ruleId = 'resultado-difuso',
+  overrides?: { nextStepProductIds?: string[]; nextStepNote?: string },
+): RecommendationResult {
   return {
     primaryProductIds: ['D01', 'D02', 'D03'],
-    nextStepProductIds: [],
+    nextStepProductIds: overrides?.nextStepProductIds ?? [],
     requiresWhatsappToChoose: true,
     isDiffuse: true,
     professionalSupportNotice: false,
     disclaimerKind: null,
-    nextStepNote: 'Um diagnóstico pode ajudar a mapear isso — financeiro, corporal ou de relações, dependendo de onde o sinal aparece mais forte.',
+    nextStepNote:
+      overrides?.nextStepNote ??
+      'Um diagnóstico pode ajudar a mapear isso — financeiro, corporal ou de relações, dependendo de onde o sinal aparece mais forte.',
     ruleId,
   };
 }

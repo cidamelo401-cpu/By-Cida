@@ -102,7 +102,7 @@ export type MomentoId = 'comecando' | 'repete_tempo' | 'pesado';
 
 export type HistoricoId = 'nenhum' | 'grupo_mesa' | 'diagnostico' | 'mentoria_caminho';
 
-export type DisposicaoId = 'acessivel' | 'pontual' | 'acompanhamento';
+export type DisposicaoId = 'acessivel' | 'pontual' | 'acompanhamento' | 'intensivo';
 
 export interface QuizAnswers {
   tema: TemaId;

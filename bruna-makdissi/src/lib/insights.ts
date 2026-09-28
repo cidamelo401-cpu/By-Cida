@@ -36,6 +36,7 @@ const DISPOSICAO_LABEL: Record<DisposicaoId, string> = {
   acessivel: 'Começar com algo acessível',
   pontual: 'Tratar um tema pontual',
   acompanhamento: 'Um acompanhamento individual',
+  intensivo: 'Um processo intensivo e concentrado',
 };
 
 /** Continuação gramatical natural para o parágrafo de justificativa — não é o rótulo do quiz. */
@@ -49,6 +50,7 @@ const DISPOSICAO_PHRASE: Record<DisposicaoId, string> = {
   acessivel: 'começar com algo mais leve, sem grande compromisso',
   pontual: 'tratar isso em um atendimento pontual',
   acompanhamento: 'ter um acompanhamento mais próximo',
+  intensivo: 'ter um processo mais intensivo e concentrado',
 };
 
 const HISTORICO_PHRASE: Partial<Record<QuizAnswers['historico'], string>> = {

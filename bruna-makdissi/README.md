@@ -27,7 +27,7 @@ src/components/
   Hero, PainPoints, HowItWorks, AboutBruna, CTASection, Footer, Disclaimer,
   RuledEntry (elemento de assinatura), Logo, ui/CtaButton
   quiz/ — QuizFlow, QuizProgress, QuestionCard, OptionCard, LeadCapture
-  resultado/ — ResultadoView, AnswerInsights, RecommendationCard, PublicDisclaimer
+  resultado/ — ResultadoView, RecommendationCard, PublicDisclaimer
 src/app/
   layout.tsx, page.tsx (landing), quiz/page.tsx, resultado/page.tsx (noindex)
 ```
@@ -104,6 +104,20 @@ sem exceção) — sempre usar fotos reais da biblioteca dela.
 avança sozinho ao selecionar uma opção, depois pede nome/WhatsApp/e-mail com
 checkbox de autorização (desmarcado por padrão, LGPD). Ao enviar, calcula a
 recomendação e manda pra `/resultado`.
+
+**Pergunta 4 (disposição) ganhou uma 4ª opção: "Um processo intensivo e
+concentrado".** Achado ao reler a aba Direcionamento célula por célula: a
+regra 11 da planilha ("quer transformação intensa e rápida, vários temas ao
+mesmo tempo" → Diagnóstico → Caminho da Transformação) não tinha nenhuma
+porta de entrada nas 4 perguntas — o Caminho da Transformação (C01), um
+produto real do catálogo, nunca aparecia em nenhum resultado possível.
+Agora, pra dinheiro/corpo/relações, essa opção leva ao diagnóstico do tema
+com o Caminho como próximo passo nomeado; pra espiritual, entra no mesmo
+fluxo de "3 diagnósticos" do caso difuso, mas com o Caminho citado no "e
+depois?". Pet/casa-empresa/ansiedade ignoram essa opção (a planilha não
+descreve esse caminho pra esses temas) — comportamento inalterado.
+**Isso mexe numa pergunta que já tinha sido aprovada pela Bruna e pelo
+Jean com 3 opções — avisar eles que agora são 4.**
 
 ## Resultado (Fase 4 — revisado após feedback da Cida)
 

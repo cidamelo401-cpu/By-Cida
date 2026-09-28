@@ -50,6 +50,7 @@ export const disposicaoQuestion: QuizQuestion<DisposicaoId> = {
     { id: 'acessivel', label: 'Começar com algo acessível' },
     { id: 'pontual', label: 'Tratar um tema pontual' },
     { id: 'acompanhamento', label: 'Um acompanhamento individual' },
+    { id: 'intensivo', label: 'Um processo intensivo e concentrado' },
   ],
 };
 
