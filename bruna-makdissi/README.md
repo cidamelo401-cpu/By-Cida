@@ -85,9 +85,15 @@ Regras que mais importam para quem for montar UI daqui pra frente:
 sempre atribuídos à resposta da pessoa), mas nenhuma frase foi validada
 especificamente pela Bruna ainda — isso é aprovação dela, não substituível.
 
-Sem foto real da Bruna neste projeto ainda. Não gerar uma pessoa por IA para
-representá-la (proibido pela skill, sem exceção) — a seção "Quem sou eu" está
-só em texto até termos uma foto real da biblioteca dela.
+Fotos reais da Bruna em `public/bruna/` (nomeadas pela categoria da
+biblioteca, quando dá pra identificar):
+- `bruna-sozinha-look-bege-01.jpg` — em uso na seção "Quem sou eu" (categoria 07, "primeiro contato, acolhimento")
+- `bruna-com-dinheiro-prosperidade-{01,02}.jpg` — guardadas para uso futuro em contexto de dinheiro (ex.: card do tema "Dinheiro", resultado do quiz)
+- `bruna-lifestyle-flor-01.jpg` — guardada para textura/respiro editorial
+- `bruna-atendimento-mesa-radionica-01.jpg` — bastidor/método; **nunca perto de pontuação, resultado ou classificação** (regra da skill — o mapa físico dela se chama "Mapeamento" e teria a mesma leitura visual do resultado do quiz)
+
+Nunca gerar uma pessoa por IA para representar a Bruna (proibido pela skill,
+sem exceção) — sempre usar fotos reais da biblioteca dela.
 
 ## Quiz e resultado (Fase 3)
 
