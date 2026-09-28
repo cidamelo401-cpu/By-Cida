@@ -11,6 +11,10 @@
  * `services.ts` (ver comentário "Entrada N" acima de cada bloco). Produtos
  * ainda não alcançáveis pelo quiz (T04, J03, J04, J06) têm o conteúdo pronto
  * aqui, esperando serem ligados no motor de recomendação no futuro.
+ *
+ * `insights` / `getInsightsFor`: pedido da Cida pra tirar o bloco "O que
+ * suas respostas mostraram" da tela (ver `ResultadoView.tsx`) — os dados
+ * continuam aqui, prontos, só não são chamados em lugar nenhum no momento.
  */
 
 import type { DisposicaoId, QuizAnswers } from './types';

@@ -16,12 +16,14 @@
  * do catálogo. Revisar com a Bruna antes de considerar definitivo):
  *
  * - dinheiro + pontual: não existe mesa exclusiva de "dinheiro" no catálogo.
- *   Assumido: Mesa das 4 Prosperidades (T03), por ser a mais próxima (inclui
- *   finanças entre as 4 áreas). Marcado com `assumption: true`.
+ *   Assumido: Mesa das 4 Prosperidades (T03) + Mesa DNB (T05), como duas
+ *   opções pontuais — a Bruna ajuda a decidir qual pelo WhatsApp. Decisão da
+ *   Cida (pedido direto): antes só oferecia T03; T05 entrou porque já é
+ *   usada nesse mesmo padrão pro tema espiritual (mesa "mais completa",
+ *   flexível o bastante pra qualquer área da vida).
  * - corpo + acessível / relações + acessível: não existe jornada específica
  *   para esses temas (só existem jornadas de dinheiro/espiritual/ansiedade).
- *   Assumido: oferecer o diagnóstico do próprio tema mesmo assim, com CTA mais
- *   leve ("sessão única, sem compromisso de continuidade").
+ *   Assumido: oferecer o diagnóstico do próprio tema mesmo assim.
  * - relações + pontual: a regra 5 lista Divórcio Energético (T01) "conforme
  *   disposição", mas o quiz de 4 perguntas não tem um sinal de "rompimento de
  *   vínculo" isolado. Assumido: default para T01.
@@ -46,8 +48,8 @@
  *   o Portal ficam como sugestão dentro do tema "espiritual".
  * - dinheiro + acompanhamento: a regra 2 (empresária) e a regra 3 (pessoa
  *   física) levam ambas a D01 — o quiz não pergunta PF/PJ. Assumido: resultado
- *   sempre D01, com nextStepNote genérico citando as 3 versões da mentoria; a
- *   Bruna decide qual delas na conversa do diagnóstico.
+ *   sempre D01; a Bruna decide qual versão da mentoria (pessoal, empresário
+ *   ou empresa) faz sentido na conversa do diagnóstico.
  * - espiritual + intensivo: a matriz de conteúdo da Cida ("Matriz de conteúdo
  *   dos resultados — Direcionamento Bruna Makdissi") cobre exatamente esse
  *   caso com um bloco próprio do Caminho da Transformação ("mais de uma área
@@ -67,6 +69,12 @@
  *   ou Mesa da Cura Ascensional (T04)"), o resultado atual aponta para T05,
  *   citando J06 como opção a caminho. Quando J06 abrir vendas, mudar o default
  *   de volta para J06 (ver `ANSIEDADE_JORNADA_DISPONIVEL` abaixo).
+ *
+ * `nextStepNote` só existe (e só é usada na tela) quando há mais de um
+ * produto principal — é o texto de apoio tipo "a Bruna ajuda a escolher pelo
+ * WhatsApp". Nunca vai pra mensagem de WhatsApp que a cliente manda (ver
+ * `whatsappTemplates.ts`) — seria expor um raciocínio interno do site pra
+ * própria Bruna, o que não faz sentido.
  * ============================================================================
  */
 
@@ -82,11 +90,9 @@ export function getRecommendation(answers: QuizAnswers): RecommendationResult {
   if (historico === 'mentoria_caminho') {
     return {
       primaryProductIds: ['M06'],
-      nextStepProductIds: [],
       requiresWhatsappToChoose: true,
       isDiffuse: false,
       professionalSupportNotice: false,
-      nextStepNote: undefined,
       ruleId: 'sustentacao-por-historico',
     };
   }
@@ -101,17 +107,14 @@ export function getRecommendation(answers: QuizAnswers): RecommendationResult {
     case 'casa_empresa':
       return {
         primaryProductIds: ['T02'],
-        nextStepProductIds: ['M03'],
         requiresWhatsappToChoose: false,
         isDiffuse: false,
         professionalSupportNotice: false,
-        nextStepNote: 'Se o ambiente for de uma empresa, a Mentoria Financeira Energética — Empresa pode ser o passo seguinte.',
         ruleId: 'casa-empresa-limpeza',
       };
     case 'pet':
       return {
         primaryProductIds: ['T07'],
-        nextStepProductIds: [],
         requiresWhatsappToChoose: false,
         isDiffuse: false,
         professionalSupportNotice: false,
@@ -124,7 +127,6 @@ export function getRecommendation(answers: QuizAnswers): RecommendationResult {
     case 'luto':
       return {
         primaryProductIds: ['T09'],
-        nextStepProductIds: [],
         requiresWhatsappToChoose: false,
         isDiffuse: false,
         professionalSupportNotice: false,
@@ -140,35 +142,30 @@ function recomendarDinheiro(momento: QuizAnswers['momento'], disposicao: QuizAns
     const primary = momento === 'pesado' ? 'J01' : 'J02';
     return {
       primaryProductIds: [primary],
-      nextStepProductIds: ['D01'],
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      nextStepNote: 'O Diagnóstico Financeiro é o passo natural depois da jornada, para quem quiser continuar.',
       ruleId: `dinheiro-acessivel-${primary.toLowerCase()}`,
     };
   }
 
   if (disposicao === 'pontual') {
     return {
-      primaryProductIds: ['T03'],
-      nextStepProductIds: ['D01'],
-      requiresWhatsappToChoose: false,
+      primaryProductIds: ['T03', 'T05'],
+      requiresWhatsappToChoose: true,
       isDiffuse: false,
       professionalSupportNotice: false,
-      nextStepNote: 'Não existe uma mesa exclusiva de dinheiro — a das 4 Prosperidades inclui as finanças entre as áreas trabalhadas.',
-      ruleId: 'dinheiro-pontual-4prosperidades',
+      nextStepNote: 'São duas mesas diferentes para o tema dinheiro — a Bruna ajuda a escolher a certa pelo WhatsApp.',
+      ruleId: 'dinheiro-pontual-mesas',
     };
   }
 
   if (disposicao === 'intensivo') {
     return {
       primaryProductIds: ['D01'],
-      nextStepProductIds: ['C01'],
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      nextStepNote: 'O Caminho da Transformação é a opção mais concentrada depois do diagnóstico — um formato curto e intenso, para quem quer ir rápido.',
       ruleId: 'dinheiro-intensivo-caminho',
     };
   }
@@ -176,11 +173,9 @@ function recomendarDinheiro(momento: QuizAnswers['momento'], disposicao: QuizAns
   // acompanhamento
   return {
     primaryProductIds: ['D01'],
-    nextStepProductIds: ['M01', 'M02', 'M03'],
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: false,
-    nextStepNote: 'Depois do diagnóstico, a Bruna indica a versão da mentoria que faz mais sentido: pessoal, empresário ou empresa.',
     ruleId: 'dinheiro-acompanhamento-diagnostico',
   };
 }
@@ -189,7 +184,6 @@ function recomendarCorpo(disposicao: QuizAnswers['disposicao']): RecommendationR
   if (disposicao === 'pontual') {
     return {
       primaryProductIds: ['T11'],
-      nextStepProductIds: ['D02'],
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
@@ -200,11 +194,9 @@ function recomendarCorpo(disposicao: QuizAnswers['disposicao']): RecommendationR
   if (disposicao === 'intensivo') {
     return {
       primaryProductIds: ['D02'],
-      nextStepProductIds: ['C01'],
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      nextStepNote: 'O Caminho da Transformação é a opção mais concentrada depois do diagnóstico — um formato curto e intenso, para quem quer ir rápido.',
       ruleId: 'corpo-intensivo-caminho',
     };
   }
@@ -212,14 +204,9 @@ function recomendarCorpo(disposicao: QuizAnswers['disposicao']): RecommendationR
   // acessível e acompanhamento convergem para o diagnóstico — não há jornada de corpo.
   return {
     primaryProductIds: ['D02'],
-    nextStepProductIds: ['M04'],
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: false,
-    nextStepNote:
-      disposicao === 'acessivel'
-        ? 'É uma sessão única, sem compromisso de continuidade — ainda não temos um conteúdo de entrada específico para esse tema.'
-        : 'Depois do diagnóstico, a Mentoria do Corpo Consciente pode ser a continuidade, se fizer sentido pra você.',
     ruleId: disposicao === 'acessivel' ? 'corpo-acessivel-diagnostico' : 'corpo-acompanhamento-diagnostico',
   };
 }
@@ -228,7 +215,6 @@ function recomendarRelacoes(disposicao: QuizAnswers['disposicao']): Recommendati
   if (disposicao === 'pontual') {
     return {
       primaryProductIds: ['T01'],
-      nextStepProductIds: ['D03'],
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
@@ -239,25 +225,18 @@ function recomendarRelacoes(disposicao: QuizAnswers['disposicao']): Recommendati
   if (disposicao === 'intensivo') {
     return {
       primaryProductIds: ['D03'],
-      nextStepProductIds: ['C01'],
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      nextStepNote: 'O Caminho da Transformação é a opção mais concentrada depois do diagnóstico — um formato curto e intenso, para quem quer ir rápido.',
       ruleId: 'relacoes-intensivo-caminho',
     };
   }
 
   return {
     primaryProductIds: ['D03'],
-    nextStepProductIds: ['M05'],
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: false,
-    nextStepNote:
-      disposicao === 'acessivel'
-        ? 'É uma sessão única, sem compromisso de continuidade — ainda não temos um conteúdo de entrada específico para esse tema.'
-        : 'Depois do diagnóstico, a Mentoria das Relações pode ser a continuidade, se fizer sentido pra você.',
     ruleId: disposicao === 'acessivel' ? 'relacoes-acessivel-diagnostico' : 'relacoes-acompanhamento-diagnostico',
   };
 }
@@ -266,7 +245,6 @@ function recomendarAnsiedade(): RecommendationResult {
   if (ANSIEDADE_JORNADA_DISPONIVEL) {
     return {
       primaryProductIds: ['J06'],
-      nextStepProductIds: [],
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: true,
@@ -276,12 +254,9 @@ function recomendarAnsiedade(): RecommendationResult {
 
   return {
     primaryProductIds: ['T05'],
-    nextStepProductIds: [],
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: true,
-    nextStepNote:
-      'A Jornada Desprogramando a Ansiedade está com a versão gravada em preparação — enquanto isso, a Mesa DNB (ou, se preferir, a Mesa da Cura Ascensional) é a opção disponível agora.',
     ruleId: 'ansiedade-mesa-dnb-fallback',
   };
 }
@@ -290,7 +265,6 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
   if (disposicao === 'acessivel') {
     return {
       primaryProductIds: ['J05'],
-      nextStepProductIds: [],
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
@@ -301,12 +275,9 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
   if (disposicao === 'pontual') {
     return {
       primaryProductIds: ['T06', 'T08', 'T10'],
-      nextStepProductIds: [],
       requiresWhatsappToChoose: true,
       isDiffuse: false,
       professionalSupportNotice: false,
-      // T08 (Cirurgia Espiritual) pede esse disclaimer no catálogo — como as
-      // três mesas aparecem juntas, mostrar por segurança para o trio.
       nextStepNote: 'São três mesas diferentes para temas espirituais — a Bruna ajuda a escolher a certa pelo WhatsApp.',
       ruleId: 'espiritual-pontual-mesas',
     };
@@ -315,7 +286,6 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
   if (disposicao === 'intensivo') {
     return {
       primaryProductIds: ['C01'],
-      nextStepProductIds: [],
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
@@ -330,7 +300,6 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
   // matriz que fala de "mais de uma área" sem cravar um tema único.
   return {
     primaryProductIds: ['C01'],
-    nextStepProductIds: [],
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: false,
@@ -348,7 +317,6 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
 function diffuseFallback(): RecommendationResult {
   return {
     primaryProductIds: ['D01', 'D02', 'D03'],
-    nextStepProductIds: [],
     requiresWhatsappToChoose: true,
     isDiffuse: true,
     professionalSupportNotice: false,

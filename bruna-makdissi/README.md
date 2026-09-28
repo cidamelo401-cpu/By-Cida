@@ -158,31 +158,29 @@ próprio por produto, transcrito literal em `src/data/resultContent.ts`
 (28 entradas, uma por produto do catálogo). Nenhum texto foi alterado,
 resumido ou parafraseado.
 
-Toda tela de um produto só (a grande maioria dos resultados) segue as 8
+Toda tela de um produto só (a grande maioria dos resultados) segue estas
 seções da matriz, nessa ordem:
 
 1. **Seu direcionamento** — headline própria do produto (`direcionamento`)
 2. **Entendendo esse momento** — explicação do tema, sem diagnosticar nem prometer (`entendendoEsseMomento`)
-3. **O que suas respostas mostraram** — 2 a 4 insights, filtrados pelas respostas reais (`getInsightsFor`)
-4. **[Caminho label]** + nome do produto + explicação (`caminhoLabel`, `productHeading`, `productExplanation` — o rótulo varia por produto: "um caminho possível", "um caminho possível de continuidade", "um primeiro passo possível")
-5. **Como funciona** — formato, duração, entregáveis (`comoFunciona`)
-6. **Investimento** — valor literal do catálogo, ou "Sob consulta." pras mentorias/Caminho/Sustentação (nunca omitido — a matriz pede pra mostrar o texto, só não o número)
-7. **Cuidado** — quando o produto tem (nem todos têm; ex.: Sustentação e Ebook não)
-8. **CTA** — texto do botão específico por produto (ex.: "Agendar meu diagnóstico", "Quero conversar com a Bruna")
+3. **[Caminho label]** + nome do produto + explicação (`caminhoLabel`, `productHeading`, `productExplanation` — o rótulo varia por produto: "um caminho possível", "um caminho possível de continuidade", "um primeiro passo possível")
+4. **Como funciona** — formato, duração, entregáveis (`comoFunciona`)
+5. **Investimento** — valor literal do catálogo, ou "Sob consulta." pras mentorias/Caminho/Sustentação (nunca omitido — a matriz pede pra mostrar o texto, só não o número)
+6. **Cuidado** — quando o produto tem (nem todos têm; ex.: Sustentação e Ebook não)
+7. **CTA** — texto do botão específico por produto (ex.: "Agendar meu diagnóstico", "Quero conversar com a Bruna")
+
+**O bloco "O que suas respostas mostraram" da matriz não é exibido na
+tela** (pedido da Cida). O sistema de insights condicionados à resposta real
+(`InsightBullet`, `getInsightsFor` em `resultContent.ts` — cada bullet pode
+ter uma condição `when`, ex.: só aparece pra quem respondeu "acompanhamento"
+e não "intensivo") continua no código, pronto, só não é chamado em lugar
+nenhum — reativar é só voltar a chamar `getInsightsFor` na tela.
 
 **O antigo sistema de `disclaimerKind` (4 categorias genéricas em
 `lib/disclaimers.ts`) foi removido** — cada produto já tem seu próprio texto
 de "Cuidado" na matriz, mais preciso que qualquer categoria genérica.
 `professionalSupportNotice` continua existindo só pra dar destaque visual
 maior ao cuidado da ansiedade (`PublicDisclaimer` com `destaque`).
-
-**Insight por resposta, não por produto**: cada bullet de "O que suas
-respostas mostraram" tem uma condição (`when`) opcional em
-`resultContent.ts` — quando um produto é alcançado por mais de uma
-disposição (ex.: Diagnóstico Financeiro serve tanto pra quem quer
-"acompanhamento" quanto pra quem quer "processo intensivo"), o bullet que
-menciona "acompanhamento individual" só aparece pra quem realmente
-respondeu isso. Testado nos dois casos com Playwright.
 
 **Dois resultados que a matriz não cobria com um bloco próprio, decisões da
 Cida** (documentadas também no topo de `recommendationRules.ts`):
@@ -197,29 +195,35 @@ Cida** (documentadas também no topo de `recommendationRules.ts`):
   o encaixe não sendo perfeito (essa pessoa quer acompanhamento, não
   processo intensivo).
 
-**Resultado com mais de um produto ao mesmo tempo** — hoje só acontece em
-espiritual + pontual (3 mesas: DNA Sistêmica, Cirurgia Espiritual, Mesa do
-Milagre). Decisão da Cida: mostrar as 3 fichas completas de produto (nome,
-explicação, como funciona, investimento, cuidado) uma embaixo da outra, sem
-repetir headline/explicação de tema 3 vezes — só o "Direcionamento pronto"
-uma vez e o texto (já existente antes desta matriz) "São três mesas
-diferentes... a Bruna ajuda a escolher pelo WhatsApp".
+**Resultado com mais de um produto ao mesmo tempo** — acontece em duas
+regras hoje: espiritual + pontual (3 mesas: DNA Sistêmica, Cirurgia
+Espiritual, Mesa do Milagre) e dinheiro + pontual (Mesa das 4 Prosperidades
++ Mesa DNB — Desprogramação Neurobiológica; pedido da Cida, não estava na
+matriz original nem no catálogo como "mesa exclusiva de dinheiro"). Nos dois
+casos, mostra as fichas completas de produto (nome, explicação, como
+funciona, investimento, cuidado) uma embaixo da outra, sem repetir
+headline/explicação de tema — só o "Direcionamento pronto" uma vez e uma
+linha de apoio tipo "são [duas/três] [mesas] diferentes... a Bruna ajuda a
+escolher pelo WhatsApp" (`nextStepNote`, ver abaixo).
 
-**"E depois?" (nextStepNote) saiu da tela.** Antes existia uma seção
-solta linkando o próximo produto (texto que eu tinha escrito, fora da
-matriz oficial). Removida da tela — a matriz não tem essa seção, e muitos
-produtos (D01, D02, D03, C01) já citam o próprio próximo passo dentro do
-parágrafo de explicação do produto. `nextStepNote` continua existindo só
-como contexto privado na mensagem de WhatsApp pra Bruna, nunca visível na
-tela.
+**"E depois?" saiu da tela, e a mensagem de WhatsApp ficou só com o
+essencial.** Antes existia uma seção solta linkando o próximo produto e a
+mensagem de WhatsApp citava "alguns pontos que apareceram" (insights) e um
+texto de raciocínio interno (ex.: "não existe uma mesa exclusiva de
+dinheiro..."). Os dois saíram — pedido direto da Cida: a mensagem de
+WhatsApp é composta pela própria cliente antes de mandar, não faz sentido
+ela levar pra Bruna um raciocínio de como o site decidiu o resultado dela.
+`nextStepNote` (`types.ts`) mudou de escopo: hoje só existe pras duas regras
+de múltiplos produtos, e só aparece na tela — nunca mais entra na mensagem
+de WhatsApp (`buildWhatsappMessage` não recebe mais esse parâmetro).
 
 **Ponto pra validar com a Bruna** (achei ao implementar, não corrigi
 sozinha): o bloco da Mesa das 4 Prosperidades (T03) na matriz tem headline
 "Mais de uma área da sua vida parece pedir atenção ao mesmo tempo" — mas
-hoje o motor só entrega T03 pra quem respondeu tema **Dinheiro** + pontual
-(um tema só, não vários). O texto da matriz não foi alterado (segue a regra
-de não inventar), mas o encaixe com a pergunta 1 do quiz está estranho —
-avisar a Bruna.
+hoje o motor só entrega T03 (+ T05, desde a mudança pedida pela Cida) pra
+quem respondeu tema **Dinheiro** + pontual (um tema só, não vários). O texto
+da matriz não foi alterado (segue a regra de não inventar), mas o encaixe da
+headline de T03 com a pergunta 1 do quiz continua estranho — avisar a Bruna.
 
 Testado com Playwright clicando o fluxo real (não injeção) em 22 cenários —
 toda regra de `recommendationRules.ts` — mais a checagem específica da

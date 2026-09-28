@@ -127,11 +127,9 @@ export interface QuizQuestion<T extends string> {
 // ---------- Motor de recomendação ----------
 
 export interface RecommendationResult {
-  /** Produto(s) principal(is). Normalmente 1 — pode ser mais de 1 só no caso espiritual+pontual. */
+  /** Produto(s) principal(is). Mais de 1 quando são mesas/atendimentos avulsos equivalentes e a Bruna ajuda a decidir pelo WhatsApp. */
   primaryProductIds: string[];
-  /** Produto(s) de próximo passo, quando houver. */
-  nextStepProductIds: string[];
-  /** true quando a recomendação não pôde ser uma única resposta (ex.: várias mesas espirituais). */
+  /** true quando a recomendação não pôde ser uma única resposta (ex.: várias mesas). */
   requiresWhatsappToChoose: boolean;
   /** true quando o resultado é difuso e não deve forçar um produto específico. */
   isDiffuse: boolean;
@@ -141,7 +139,13 @@ export interface RecommendationResult {
    * discreto padrão (regra do catálogo, não genérica de saúde).
    */
   professionalSupportNotice: boolean;
-  /** Texto curto explicando o "e depois" — sempre a partir do catálogo, nunca inventado. */
+  /**
+   * Texto de apoio mostrado só na tela, só quando há mais de um produto
+   * principal (ex.: "São duas mesas diferentes... a Bruna ajuda a escolher
+   * pelo WhatsApp"). Nunca entra na mensagem de WhatsApp — a cliente não
+   * deveria mandar pra Bruna um raciocínio interno de como o site decidiu o
+   * resultado dela.
+   */
   nextStepNote?: string;
   /** Identificador da regra aplicada (para depuração/analytics — ver recommendationRules.ts). */
   ruleId: string;

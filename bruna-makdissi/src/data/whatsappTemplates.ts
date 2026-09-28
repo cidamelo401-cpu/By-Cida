@@ -1,10 +1,12 @@
 /**
  * Geração da mensagem de WhatsApp a partir do resultado do quiz.
  *
- * Regra do catálogo: nunca enviar respostas sensíveis inteiras — só categoria e
- * resultado (produto recomendado), nunca o conteúdo bruto das respostas de
- * momento/histórico. O texto livre digitado pela pessoa (se algum campo permitir)
- * nunca deve compor a mensagem automaticamente sem revisão.
+ * A mensagem é composta pela própria cliente antes de enviar (ela abre o
+ * WhatsApp com o texto pré-preenchido e pode editar) — por isso só entra
+ * aqui o que faz sentido a cliente mandar pra Bruna: tema e produto(s).
+ * Nunca entra: resposta bruta e sensível de momento/histórico, nem qualquer
+ * raciocínio interno de como o site chegou nesse resultado (isso é o que
+ * `nextStepNote` guarda pra mostrar só na tela — ver `types.ts`).
  */
 
 import { getProductById } from './services';
@@ -13,12 +15,7 @@ import type { RecommendationResult, TemaId } from './types';
 
 export const WHATSAPP_NUMBER = '5511951273317'; // +55 11 95127-3317, formato E.164 sem símbolos
 
-/**
- * insights: opcional, até 2 linhas curtas do que a pessoa respondeu (ver
- * getInsightsFor em data/resultContent.ts) — nunca a resposta bruta e
- * sensível, só o resumo que já aparece na própria tela de resultado.
- */
-export function buildWhatsappMessage(temaId: TemaId, resultado: RecommendationResult, insights?: string[]): string {
+export function buildWhatsappMessage(temaId: TemaId, resultado: RecommendationResult): string {
   const temaLabel = temaQuestion.opcoes.find((o) => o.id === temaId)?.label ?? temaId;
 
   if (resultado.isDiffuse || resultado.primaryProductIds.length === 0) {
@@ -39,14 +36,6 @@ export function buildWhatsappMessage(temaId: TemaId, resultado: RecommendationRe
     linhas.push(`O tema que apareceu foi: ${temaLabel}.`, `Fiquei entre estas opções: ${nomesProdutos}.`, 'Pode me ajudar a escolher a certa?');
   } else {
     linhas.push(`Meu resultado principal foi: ${nomesProdutos}.`);
-  }
-
-  if (insights && insights.length > 0) {
-    linhas.push('', 'Alguns pontos que apareceram:', ...insights.slice(0, 2).map((i) => `- ${i}`));
-  }
-
-  if (resultado.nextStepNote) {
-    linhas.push('', resultado.nextStepNote);
   }
 
   linhas.push('', 'Quero entender melhor qual pode ser o meu próximo passo.');

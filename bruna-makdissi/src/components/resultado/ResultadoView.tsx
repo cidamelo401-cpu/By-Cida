@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { buildWhatsappMessage, buildWhatsappLink } from '@/data/whatsappTemplates';
 import { temaQuestion } from '@/data/questions';
 import { clearQuizSession, loadQuizSession, type QuizSession } from '@/lib/quizSession';
-import { getInsightsFor, getResultContent } from '@/data/resultContent';
+import { getResultContent } from '@/data/resultContent';
 import type { RecommendationResult, QuizAnswers } from '@/data/types';
 import { track } from '@/lib/analytics';
 import { RecommendationCard } from './RecommendationCard';
@@ -60,18 +60,20 @@ type ResultadoUnicoProps = {
 };
 
 /**
- * A tela de um produto só — segue as 8 seções da "Matriz de conteúdo dos
- * resultados — Direcionamento Bruna Makdissi": direcionamento, entendendo
- * esse momento, o que suas respostas mostraram, o caminho, como funciona,
- * investimento, cuidado, CTA. Todo o texto vem de `resultContent.ts`,
- * transcrito literal da matriz — nada aqui é gerado ou parafraseado.
+ * A tela de um produto só — segue a "Matriz de conteúdo dos resultados —
+ * Direcionamento Bruna Makdissi": direcionamento, entendendo esse momento,
+ * o caminho, como funciona, investimento, cuidado, CTA. Todo o texto vem de
+ * `resultContent.ts`, transcrito literal da matriz — nada aqui é gerado ou
+ * parafraseado.
+ *
+ * O bloco "O que suas respostas mostraram" existe em `resultContent.ts`
+ * (`getInsightsFor`) mas não é renderizado — pedido da Cida.
  */
 function ResultadoUnico({ productId, recommendation, answers }: ResultadoUnicoProps) {
   const content = getResultContent(productId);
   if (!content) return null;
 
-  const insights = getInsightsFor(productId, answers);
-  const mensagem = buildWhatsappMessage(answers.tema, recommendation, insights);
+  const mensagem = buildWhatsappMessage(answers.tema, recommendation);
   const linkWhatsapp = buildWhatsappLink(mensagem);
 
   return (
@@ -85,19 +87,6 @@ function ResultadoUnico({ productId, recommendation, answers }: ResultadoUnicoPr
           </p>
         ))}
       </div>
-
-      {insights.length > 0 && (
-        <div className="mt-10 border-t border-noite-900/10 pt-8">
-          <p className="label-margin mb-4 text-horizonte-600">O que suas respostas mostraram</p>
-          <ul className="space-y-2">
-            {insights.map((insight) => (
-              <li key={insight} className="font-body text-sm font-light leading-relaxed text-tinta-700">
-                {insight}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       <div className="mt-10 border-t border-noite-900/10 pt-8">
         <p className="label-margin mb-4 text-horizonte-600">{content.caminhoLabel}</p>
@@ -167,7 +156,7 @@ type ResultadoMultiploProps = {
  */
 function ResultadoMultiplo({ productIds, recommendation, answers }: ResultadoMultiploProps) {
   const temaLabel = temaQuestion.opcoes.find((o) => o.id === answers.tema)?.label ?? answers.tema;
-  const mensagem = buildWhatsappMessage(answers.tema, recommendation, []);
+  const mensagem = buildWhatsappMessage(answers.tema, recommendation);
   const linkWhatsapp = buildWhatsappLink(mensagem);
 
   return (
