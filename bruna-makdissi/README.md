@@ -131,13 +131,14 @@ soar como substituto de apoio psicológico.
 **Isso mexe numa pergunta que já tinha sido aprovada pela Bruna e pelo
 Jean com 7 opções — avisar eles que agora são 8.**
 
-**Quem escolhe "Luto" ou "Pet" responde só 2 perguntas (tema + momento), não
-4.** Os dois têm resultado fixo no motor (sempre a mesma mesa avulsa, sem
-diagnóstico/mentoria correspondente) — histórico e disposição não mudam nada,
-então pedir as duas era fricção sem propósito. Pedido direto da Cida pro
-luto, estendido pro pet pela mesma razão. A lista de temas do fluxo curto
-vive em `SHORT_FLOW_TEMAS` (`questions.ts`) — hoje `['luto', 'pet']` — e o
-quiz pula pra captura de lead assim que a pessoa responde o momento
+**Quem escolhe "Luto", "Pet" ou "Casa ou empresa" responde só 2 perguntas
+(tema + momento), não 4.** Os três têm resultado fixo no motor (sempre a
+mesma mesa avulsa) — histórico e disposição não mudam nada, então pedir as
+duas era fricção sem propósito. Pedido direto da Cida pro luto, estendido
+pro pet e pra casa/empresa pela mesma razão. A lista de temas do fluxo curto
+vive em `SHORT_FLOW_TEMAS` (`questions.ts`) — hoje
+`['luto', 'pet', 'casa_empresa']` — e o quiz pula pra captura de lead assim
+que a pessoa responde o momento
 (`SHORT_QUESTIONS` em `QuizFlow.tsx`); a barra de progresso mostra "1 de 2"
 e "2 de 2" nesse caminho. `getResultJustification` e `getAnswerInsights`
 (`lib/insights.ts`) tratam esses temas à parte pra nunca citar uma resposta
