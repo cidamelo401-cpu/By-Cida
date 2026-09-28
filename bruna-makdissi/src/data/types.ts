@@ -136,16 +136,11 @@ export interface RecommendationResult {
   /** true quando o resultado é difuso e não deve forçar um produto específico. */
   isDiffuse: boolean;
   /**
-   * true só para ansiedade: além do disclaimer padrão, a tela de resultado
-   * precisa de uma orientação explícita de apoio profissional (regra do
-   * catálogo, não genérica de saúde).
+   * true só para ansiedade: o bloco "Cuidado" do produto (vindo de
+   * `resultContent.ts`) precisa de destaque visual maior, não só o texto
+   * discreto padrão (regra do catálogo, não genérica de saúde).
    */
   professionalSupportNotice: boolean;
-  /**
-   * Qual disclaimer público curado mostrar (ver getDisclaimerText em
-   * lib/disclaimers.ts) — null quando o tema não toca saúde/corpo/pet/luto.
-   */
-  disclaimerKind: 'saude' | 'saude_mental' | 'veterinario' | 'luto' | null;
   /** Texto curto explicando o "e depois" — sempre a partir do catálogo, nunca inventado. */
   nextStepNote?: string;
   /** Identificador da regra aplicada (para depuração/analytics — ver recommendationRules.ts). */

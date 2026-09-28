@@ -15,8 +15,8 @@ export const WHATSAPP_NUMBER = '5511951273317'; // +55 11 95127-3317, formato E.
 
 /**
  * insights: opcional, até 2 linhas curtas do que a pessoa respondeu (ver
- * lib/insights.ts) — nunca a resposta bruta e sensível, só o resumo que já
- * aparece na própria tela de resultado.
+ * getInsightsFor em data/resultContent.ts) — nunca a resposta bruta e
+ * sensível, só o resumo que já aparece na própria tela de resultado.
  */
 export function buildWhatsappMessage(temaId: TemaId, resultado: RecommendationResult, insights?: string[]): string {
   const temaLabel = temaQuestion.opcoes.find((o) => o.id === temaId)?.label ?? temaId;

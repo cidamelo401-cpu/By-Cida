@@ -843,7 +843,3 @@ export const products: Product[] = [
 export function getProductById(id: string): Product | undefined {
   return products.find((p) => p.id === id);
 }
-
-export function getProductsByIds(ids: string[]): Product[] {
-  return ids.map(getProductById).filter((p): p is Product => Boolean(p));
-}

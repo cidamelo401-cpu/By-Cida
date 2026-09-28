@@ -29,9 +29,8 @@
  *   o gap ficar visível na revisão do quiz ao vivo). Vai direto pra Mesa do
  *   Luto, Morte e Encaminhamento (T09), ignorando momento/histórico/disposição
  *   — é uma mesa avulsa sem diagnóstico/mentoria correspondente no catálogo,
- *   mesmo padrão de pet/casa_empresa. Disclaimer dedicado (`disclaimerKind:
- *   'luto'`) segue a instrução `cuidadosLinguagem` de T09: acolhedor, sem
- *   promessa, nunca como substituto de apoio psicológico.
+ *   mesmo padrão de pet/casa_empresa. O bloco "Cuidado" acolhedor e sem
+ *   promessa vem pronto do texto de T09 em `resultContent.ts`.
  * - fluxo curto (luto, pet, casa_empresa): como histórico/disposição não
  *   mudam o resultado desses temas, o quiz pula as duas perguntas — só
  *   pergunta tema e momento, depois vai direto pra captura de lead (ver
@@ -49,9 +48,19 @@
  *   física) levam ambas a D01 — o quiz não pergunta PF/PJ. Assumido: resultado
  *   sempre D01, com nextStepNote genérico citando as 3 versões da mentoria; a
  *   Bruna decide qual delas na conversa do diagnóstico.
+ * - espiritual + intensivo: a matriz de conteúdo da Cida ("Matriz de conteúdo
+ *   dos resultados — Direcionamento Bruna Makdissi") cobre exatamente esse
+ *   caso com um bloco próprio do Caminho da Transformação ("mais de uma área
+ *   parece estar pedindo atenção, e você busca um processo concentrado").
+ *   Por isso o resultado principal passou a ser C01 direto, em vez do trio de
+ *   diagnósticos com C01 como próximo passo.
  * - espiritual + acompanhamento: a regra 10 diz "Diagnóstico → Caminho da
- *   Transformação" sem dizer qual diagnóstico. Assumido: resultado difuso
- *   (isDiffuse), com CTA de WhatsApp para definir junto com a Bruna.
+ *   Transformação" sem dizer qual diagnóstico, e a matriz de conteúdo não tem
+ *   um bloco específico pra esse caso. Decisão da Cida: reusar o mesmo bloco
+ *   do Caminho da Transformação (C01) usado em "espiritual + intensivo" — é
+ *   o único conteúdo da matriz que fala de "mais de uma área" sem cravar um
+ *   tema único, mesmo o encaixe não sendo perfeito (essa pessoa quer
+ *   acompanhamento, não processo intensivo).
  * - ansiedade: a Jornada (J06) está com a versão ao vivo já realizada e a
  *   gravada "em preparação" — ou seja, não está à venda agora. Seguindo a
  *   própria regra 9 ("enquanto a gravada não estiver à venda: Mesa DNB (T05)
@@ -77,7 +86,6 @@ export function getRecommendation(answers: QuizAnswers): RecommendationResult {
       requiresWhatsappToChoose: true,
       isDiffuse: false,
       professionalSupportNotice: false,
-      disclaimerKind: null,
       nextStepNote: undefined,
       ruleId: 'sustentacao-por-historico',
     };
@@ -97,7 +105,6 @@ export function getRecommendation(answers: QuizAnswers): RecommendationResult {
         requiresWhatsappToChoose: false,
         isDiffuse: false,
         professionalSupportNotice: false,
-        disclaimerKind: null,
         nextStepNote: 'Se o ambiente for de uma empresa, a Mentoria Financeira Energética — Empresa pode ser o passo seguinte.',
         ruleId: 'casa-empresa-limpeza',
       };
@@ -108,7 +115,6 @@ export function getRecommendation(answers: QuizAnswers): RecommendationResult {
         requiresWhatsappToChoose: false,
         isDiffuse: false,
         professionalSupportNotice: false,
-        disclaimerKind: 'veterinario',
         ruleId: 'pet-mesa-dnb',
       };
     case 'ansiedade':
@@ -122,7 +128,6 @@ export function getRecommendation(answers: QuizAnswers): RecommendationResult {
         requiresWhatsappToChoose: false,
         isDiffuse: false,
         professionalSupportNotice: false,
-        disclaimerKind: 'luto',
         ruleId: 'luto-mesa',
       };
     default:
@@ -139,7 +144,6 @@ function recomendarDinheiro(momento: QuizAnswers['momento'], disposicao: QuizAns
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      disclaimerKind: null,
       nextStepNote: 'O Diagnóstico Financeiro é o passo natural depois da jornada, para quem quiser continuar.',
       ruleId: `dinheiro-acessivel-${primary.toLowerCase()}`,
     };
@@ -152,7 +156,6 @@ function recomendarDinheiro(momento: QuizAnswers['momento'], disposicao: QuizAns
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      disclaimerKind: null,
       nextStepNote: 'Não existe uma mesa exclusiva de dinheiro — a das 4 Prosperidades inclui as finanças entre as áreas trabalhadas.',
       ruleId: 'dinheiro-pontual-4prosperidades',
     };
@@ -165,7 +168,6 @@ function recomendarDinheiro(momento: QuizAnswers['momento'], disposicao: QuizAns
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      disclaimerKind: null,
       nextStepNote: 'O Caminho da Transformação é a opção mais concentrada depois do diagnóstico — um formato curto e intenso, para quem quer ir rápido.',
       ruleId: 'dinheiro-intensivo-caminho',
     };
@@ -178,7 +180,6 @@ function recomendarDinheiro(momento: QuizAnswers['momento'], disposicao: QuizAns
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: false,
-    disclaimerKind: null,
     nextStepNote: 'Depois do diagnóstico, a Bruna indica a versão da mentoria que faz mais sentido: pessoal, empresário ou empresa.',
     ruleId: 'dinheiro-acompanhamento-diagnostico',
   };
@@ -192,7 +193,6 @@ function recomendarCorpo(disposicao: QuizAnswers['disposicao']): RecommendationR
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      disclaimerKind: 'saude',
       ruleId: 'corpo-pontual-leitura-orgaos',
     };
   }
@@ -204,7 +204,6 @@ function recomendarCorpo(disposicao: QuizAnswers['disposicao']): RecommendationR
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      disclaimerKind: 'saude',
       nextStepNote: 'O Caminho da Transformação é a opção mais concentrada depois do diagnóstico — um formato curto e intenso, para quem quer ir rápido.',
       ruleId: 'corpo-intensivo-caminho',
     };
@@ -217,7 +216,6 @@ function recomendarCorpo(disposicao: QuizAnswers['disposicao']): RecommendationR
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: false,
-    disclaimerKind: 'saude',
     nextStepNote:
       disposicao === 'acessivel'
         ? 'É uma sessão única, sem compromisso de continuidade — ainda não temos um conteúdo de entrada específico para esse tema.'
@@ -234,7 +232,6 @@ function recomendarRelacoes(disposicao: QuizAnswers['disposicao']): Recommendati
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      disclaimerKind: null,
       ruleId: 'relacoes-pontual-divorcio-energetico',
     };
   }
@@ -246,7 +243,6 @@ function recomendarRelacoes(disposicao: QuizAnswers['disposicao']): Recommendati
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      disclaimerKind: null,
       nextStepNote: 'O Caminho da Transformação é a opção mais concentrada depois do diagnóstico — um formato curto e intenso, para quem quer ir rápido.',
       ruleId: 'relacoes-intensivo-caminho',
     };
@@ -258,7 +254,6 @@ function recomendarRelacoes(disposicao: QuizAnswers['disposicao']): Recommendati
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: false,
-    disclaimerKind: null,
     nextStepNote:
       disposicao === 'acessivel'
         ? 'É uma sessão única, sem compromisso de continuidade — ainda não temos um conteúdo de entrada específico para esse tema.'
@@ -275,7 +270,6 @@ function recomendarAnsiedade(): RecommendationResult {
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: true,
-      disclaimerKind: 'saude_mental',
       ruleId: 'ansiedade-jornada',
     };
   }
@@ -286,7 +280,6 @@ function recomendarAnsiedade(): RecommendationResult {
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: true,
-    disclaimerKind: 'saude_mental',
     nextStepNote:
       'A Jornada Desprogramando a Ansiedade está com a versão gravada em preparação — enquanto isso, a Mesa DNB (ou, se preferir, a Mesa da Cura Ascensional) é a opção disponível agora.',
     ruleId: 'ansiedade-mesa-dnb-fallback',
@@ -301,7 +294,6 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
-      disclaimerKind: null,
       ruleId: 'espiritual-acessivel-portal',
     };
   }
@@ -315,45 +307,52 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
       professionalSupportNotice: false,
       // T08 (Cirurgia Espiritual) pede esse disclaimer no catálogo — como as
       // três mesas aparecem juntas, mostrar por segurança para o trio.
-      disclaimerKind: 'saude',
       nextStepNote: 'São três mesas diferentes para temas espirituais — a Bruna ajuda a escolher a certa pelo WhatsApp.',
       ruleId: 'espiritual-pontual-mesas',
     };
   }
 
   if (disposicao === 'intensivo') {
-    return diffuseFallback('espiritual-intensivo-caminho', {
-      nextStepProductIds: ['C01'],
-      nextStepNote:
-        'Um diagnóstico pode ajudar a mapear isso — financeiro, corporal ou de relações, dependendo de onde o sinal aparece mais forte. Depois dele, o Caminho da Transformação é a opção mais concentrada, para quem quer ir rápido.',
-    });
+    return {
+      primaryProductIds: ['C01'],
+      nextStepProductIds: [],
+      requiresWhatsappToChoose: false,
+      isDiffuse: false,
+      professionalSupportNotice: false,
+      ruleId: 'espiritual-intensivo-caminho',
+    };
   }
 
-  // acompanhamento — a regra fonte não especifica qual diagnóstico usar.
-  return diffuseFallback('espiritual-acompanhamento-diagnostico-indefinido');
+  // acompanhamento — a regra fonte não especifica qual diagnóstico usar; a
+  // matriz de conteúdo da Cida não tem um bloco próprio pra esse caso (só
+  // cobre "espiritual + intensivo" com o Caminho da Transformação). Decisão
+  // dela: usar o mesmo conteúdo do Caminho aqui também — é o único bloco da
+  // matriz que fala de "mais de uma área" sem cravar um tema único.
+  return {
+    primaryProductIds: ['C01'],
+    nextStepProductIds: [],
+    requiresWhatsappToChoose: false,
+    isDiffuse: false,
+    professionalSupportNotice: false,
+    ruleId: 'espiritual-acompanhamento-diagnostico-indefinido',
+  };
 }
 
 /**
- * Antes retornava sem produto nenhum ("resultado difuso"). A página é de alta
- * conversão — ninguém deveria sair sem um produto nomeado pra levar pro
- * WhatsApp. Quando os sinais realmente não apontam pra uma área só, o passo
- * mais seguro (baixo risco, mesmo preço, 1h) é oferecer os 3 diagnósticos e
- * deixar a Bruna ajudar a decidir por qual começar — nunca ficar sem nada.
+ * Rede de segurança pro `default:` do switch de tema — hoje inalcançável na
+ * prática, já que as 8 opções de `TemaId` são todas tratadas explicitamente
+ * acima. Mantido só por exaustividade de tipo. Se algum dia isso disparar de
+ * verdade, ainda assim ninguém sai sem produto nomeado pra levar pro
+ * WhatsApp.
  */
-function diffuseFallback(
-  ruleId = 'resultado-difuso',
-  overrides?: { nextStepProductIds?: string[]; nextStepNote?: string },
-): RecommendationResult {
+function diffuseFallback(): RecommendationResult {
   return {
     primaryProductIds: ['D01', 'D02', 'D03'],
-    nextStepProductIds: overrides?.nextStepProductIds ?? [],
+    nextStepProductIds: [],
     requiresWhatsappToChoose: true,
     isDiffuse: true,
     professionalSupportNotice: false,
-    disclaimerKind: null,
-    nextStepNote:
-      overrides?.nextStepNote ??
-      'Um diagnóstico pode ajudar a mapear isso — financeiro, corporal ou de relações, dependendo de onde o sinal aparece mais forte.',
-    ruleId,
+    nextStepNote: 'Um diagnóstico pode ajudar a mapear isso — financeiro, corporal ou de relações, dependendo de onde o sinal aparece mais forte.',
+    ruleId: 'resultado-difuso',
   };
 }
