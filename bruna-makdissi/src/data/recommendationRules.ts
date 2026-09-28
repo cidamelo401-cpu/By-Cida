@@ -32,6 +32,13 @@
  *   mesmo padrão de pet/casa_empresa. Disclaimer dedicado (`disclaimerKind:
  *   'luto'`) segue a instrução `cuidadosLinguagem` de T09: acolhedor, sem
  *   promessa, nunca como substituto de apoio psicológico.
+ *   Como histórico/disposição não mudam esse resultado, o quiz pula as duas
+ *   perguntas pra quem escolhe luto — só pergunta tema e momento, depois vai
+ *   direto pra captura de lead (ver LUTO_QUESTIONS em QuizFlow.tsx). Decisão
+ *   explícita da Cida: quem já concluiu mentoria/Caminho e escolhe luto NÃO
+ *   é desviado pra Sustentação (M06) — a checagem de histórico roda antes do
+ *   switch de tema, mas como o quiz nem pergunta histórico nesse caminho, ele
+ *   sempre chega aqui como 'nenhum' e cai direto na Mesa do Luto.
  * - dinheiro + acessível: a regra 1 (dívida/urgência → J01/J02) e a regra 4
  *   (quer prosperar → J03/Portal) não são discrimináveis só com Q2 (momento).
  *   Assumido: momento 'pesado' → J01; 'repete_tempo'/'comecando' → J02. J03 e

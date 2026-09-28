@@ -99,10 +99,11 @@ sem exceção) — sempre usar fotos reais da biblioteca dela.
 
 ## Quiz (Fase 3)
 
-`/quiz`: 4 telas (uma pergunta por vez), barra de progresso, botão voltar,
-avança sozinho ao selecionar uma opção, depois pede nome/WhatsApp/e-mail com
-checkbox de autorização (desmarcado por padrão, LGPD). Ao enviar, calcula a
-recomendação e manda pra `/resultado`.
+`/quiz`: até 4 telas (uma pergunta por vez — 2 telas pra quem escolhe "Luto",
+ver abaixo), barra de progresso, botão voltar, avança sozinho ao selecionar
+uma opção, depois pede nome/WhatsApp/e-mail com checkbox de autorização
+(desmarcado por padrão, LGPD). Ao enviar, calcula a recomendação e manda
+pra `/resultado`.
 
 **Pergunta 4 (disposição) ganhou uma 4ª opção: "Um processo intensivo e
 concentrado".** Achado ao reler a aba Direcionamento célula por célula: a
@@ -129,6 +130,20 @@ separado do de saúde mental, seguindo a instrução do catálogo de nunca
 soar como substituto de apoio psicológico.
 **Isso mexe numa pergunta que já tinha sido aprovada pela Bruna e pelo
 Jean com 7 opções — avisar eles que agora são 8.**
+
+**Quem escolhe "Luto" responde só 2 perguntas (tema + momento), não 4.**
+Como histórico e disposição não mudam esse resultado (é sempre a Mesa do
+Luto), pedir as duas era fricção sem propósito — pedido direto da Cida.
+O quiz pula pra captura de lead assim que a pessoa responde o momento
+(`LUTO_QUESTIONS` em `QuizFlow.tsx`); a barra de progresso mostra "1 de 2"
+e "2 de 2" nesse caminho. `getResultJustification` e `getAnswerInsights`
+(`lib/insights.ts`) tratam `tema === 'luto'` à parte pra nunca citar uma
+resposta de disposição/histórico que a pessoa não deu.
+**Decisão explícita da Cida, com trade-off consciente**: quem já concluiu
+mentoria ou o Caminho da Transformação e escolhe "Luto" não é mais desviado
+pra Sustentação (M06) — a regra de prioridade por histórico existe, mas como
+essa pergunta não é feita nesse caminho, ela nunca dispara aqui. Vai sempre
+direto pra Mesa do Luto.
 
 ## Resultado (Fase 4 — revisado após feedback da Cida)
 

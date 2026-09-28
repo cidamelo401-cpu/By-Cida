@@ -11,16 +11,21 @@ export function getAnswerInsights(answers: QuizAnswers): string[] {
   const temaLabel = temaQuestion.opcoes.find((o) => o.id === answers.tema)?.label ?? answers.tema;
   const momentoLabel = MOMENTO_LABEL[answers.momento];
   const historicoLabel = historicoQuestion.opcoes.find((o) => o.id === answers.historico)?.label ?? answers.historico;
-  const disposicaoLabel = DISPOSICAO_LABEL[answers.disposicao];
 
   const bullets = [
     `O tema que mais pede atenção agora, na sua resposta: ${temaLabel}.`,
     `Como você descreveu o momento: "${momentoLabel}".`,
-    `O que faz mais sentido pra você agora: "${disposicaoLabel}".`,
   ];
 
   if (answers.historico !== 'nenhum') {
-    bullets.splice(2, 0, `Você contou que já passou por: ${historicoLabel} com a Bruna.`);
+    bullets.push(`Você contou que já passou por: ${historicoLabel} com a Bruna.`);
+  }
+
+  // Luto pula histórico/disposição no quiz (ver QuizFlow) — não inventar uma
+  // resposta que a pessoa nunca deu.
+  if (answers.tema !== 'luto') {
+    const disposicaoLabel = DISPOSICAO_LABEL[answers.disposicao];
+    bullets.push(`O que faz mais sentido pra você agora: "${disposicaoLabel}".`);
   }
 
   return bullets;
@@ -66,8 +71,15 @@ const HISTORICO_PHRASE: Partial<Record<QuizAnswers['historico'], string>> = {
 export function getResultJustification(answers: QuizAnswers): string {
   const temaLabel = temaQuestion.opcoes.find((o) => o.id === answers.tema)?.label ?? answers.tema;
   const momentoPhrase = MOMENTO_PHRASE[answers.momento];
-  const disposicaoPhrase = DISPOSICAO_PHRASE[answers.disposicao];
   const historicoAddendum = HISTORICO_PHRASE[answers.historico] ?? '';
+
+  // Luto pula histórico/disposição no quiz (ver QuizFlow) — a frase não pode
+  // citar uma resposta de disposição que a pessoa nunca deu.
+  if (answers.tema === 'luto') {
+    return `Nas suas respostas, luto apareceu como o que mais pede atenção agora — algo que ${momentoPhrase}.`;
+  }
+
+  const disposicaoPhrase = DISPOSICAO_PHRASE[answers.disposicao];
 
   return `Nas suas respostas, ${temaLabel.toLowerCase()} apareceu como o que mais pede atenção agora — algo que ${momentoPhrase}.${historicoAddendum} Diante disso, o que parece fazer mais sentido é ${disposicaoPhrase}.`;
 }

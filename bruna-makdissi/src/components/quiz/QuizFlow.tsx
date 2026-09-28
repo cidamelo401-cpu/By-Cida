@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { quizQuestions } from '@/data/questions';
+import { quizQuestions, temaQuestion, momentoQuestion } from '@/data/questions';
 import { getRecommendation } from '@/data/recommendationRules';
 import type { QuizAnswers } from '@/data/types';
 import { track } from '@/lib/analytics';
@@ -12,13 +12,23 @@ import { QuestionCard } from './QuestionCard';
 import { LeadCapture } from './LeadCapture';
 import { Logo } from '../Logo';
 
-const TOTAL_QUESTIONS = quizQuestions.length;
+/**
+ * Luto só tem um produto (T09) — histórico e disposição não mudam o resultado
+ * (ver `case 'luto'` em recommendationRules.ts), então esse caminho pula direto
+ * de "momento" pra captura de lead. As duas primeiras perguntas são o prefixo
+ * comum de todo mundo, por isso dá pra truncar a lista sem quebrar o botão
+ * "voltar" (ver handleBack).
+ */
+const LUTO_QUESTIONS = [temaQuestion, momentoQuestion] as const;
 
 export function QuizFlow() {
   const router = useRouter();
-  const [step, setStep] = useState(0); // 0..3 perguntas, 4 = captura de lead
+  const [step, setStep] = useState(0); // 0..3 perguntas (0..1 pra luto), N = captura de lead
   const [answers, setAnswers] = useState<Partial<QuizAnswers>>({});
   const finished = useRef(false);
+
+  const effectiveQuestions = answers.tema === 'luto' ? LUTO_QUESTIONS : quizQuestions;
+  const totalQuestions = effectiveQuestions.length;
 
   useEffect(() => {
     track('quiz_started');
@@ -37,12 +47,14 @@ export function QuizFlow() {
     setAnswers(next);
     track('question_answered', { question: questionId, value });
 
+    const nextTotal = next.tema === 'luto' ? LUTO_QUESTIONS.length : quizQuestions.length;
+
     window.setTimeout(() => {
-      if (step < TOTAL_QUESTIONS - 1) {
+      if (step < nextTotal - 1) {
         setStep(step + 1);
       } else {
         track('lead_started');
-        setStep(TOTAL_QUESTIONS);
+        setStep(nextTotal);
       }
     }, 220);
   }
@@ -52,7 +64,14 @@ export function QuizFlow() {
   }
 
   function handleLeadSubmit(lead: LeadInfo) {
-    const finalAnswers = answers as QuizAnswers;
+    // Luto pula histórico/disposição — preenche com o neutro ('nenhum'/'pontual')
+    // só pra satisfazer o tipo; getRecommendation ignora os dois pra esse tema,
+    // e os textos de resultado tratam esse caso à parte (ver insights.ts).
+    const finalAnswers: QuizAnswers = {
+      historico: 'nenhum',
+      disposicao: 'pontual',
+      ...answers,
+    } as QuizAnswers;
     const recommendation = getRecommendation(finalAnswers);
 
     finished.current = true;
@@ -68,8 +87,8 @@ export function QuizFlow() {
     router.push('/resultado');
   }
 
-  const isLeadStep = step === TOTAL_QUESTIONS;
-  const question = !isLeadStep ? quizQuestions[step] : null;
+  const isLeadStep = step === totalQuestions;
+  const question = !isLeadStep ? effectiveQuestions[step] : null;
 
   return (
     <main className="min-h-screen bg-nevoa-200">
@@ -89,7 +108,7 @@ export function QuizFlow() {
 
         {!isLeadStep && (
           <div className="mb-10">
-            <QuizProgress current={step + 1} total={TOTAL_QUESTIONS} />
+            <QuizProgress current={step + 1} total={totalQuestions} />
           </div>
         )}
 
