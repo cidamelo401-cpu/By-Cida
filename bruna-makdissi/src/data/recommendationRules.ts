@@ -64,6 +64,7 @@ export function getRecommendation(answers: QuizAnswers): RecommendationResult {
       requiresWhatsappToChoose: true,
       isDiffuse: false,
       professionalSupportNotice: false,
+      disclaimerKind: null,
       nextStepNote: undefined,
       ruleId: 'sustentacao-por-historico',
     };
@@ -83,6 +84,7 @@ export function getRecommendation(answers: QuizAnswers): RecommendationResult {
         requiresWhatsappToChoose: false,
         isDiffuse: false,
         professionalSupportNotice: false,
+        disclaimerKind: null,
         nextStepNote: 'Se o ambiente for de uma empresa, a Mentoria Financeira Energética — Empresa pode ser o passo seguinte.',
         ruleId: 'casa-empresa-limpeza',
       };
@@ -93,6 +95,7 @@ export function getRecommendation(answers: QuizAnswers): RecommendationResult {
         requiresWhatsappToChoose: false,
         isDiffuse: false,
         professionalSupportNotice: false,
+        disclaimerKind: 'veterinario',
         ruleId: 'pet-mesa-dnb',
       };
     case 'ansiedade':
@@ -113,6 +116,7 @@ function recomendarDinheiro(momento: QuizAnswers['momento'], disposicao: QuizAns
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
+      disclaimerKind: null,
       nextStepNote: 'O Diagnóstico Financeiro é o passo natural depois da jornada, para quem quiser continuar.',
       ruleId: `dinheiro-acessivel-${primary.toLowerCase()}`,
     };
@@ -125,6 +129,7 @@ function recomendarDinheiro(momento: QuizAnswers['momento'], disposicao: QuizAns
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
+      disclaimerKind: null,
       nextStepNote: 'Não existe uma mesa exclusiva de dinheiro — a das 4 Prosperidades inclui as finanças entre as áreas trabalhadas.',
       ruleId: 'dinheiro-pontual-4prosperidades',
     };
@@ -137,6 +142,7 @@ function recomendarDinheiro(momento: QuizAnswers['momento'], disposicao: QuizAns
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: false,
+    disclaimerKind: null,
     nextStepNote: 'Depois do diagnóstico, a Bruna indica a versão da mentoria que faz mais sentido: pessoal, empresário ou empresa.',
     ruleId: 'dinheiro-acompanhamento-diagnostico',
   };
@@ -150,6 +156,7 @@ function recomendarCorpo(disposicao: QuizAnswers['disposicao']): RecommendationR
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
+      disclaimerKind: 'saude',
       ruleId: 'corpo-pontual-leitura-orgaos',
     };
   }
@@ -161,10 +168,11 @@ function recomendarCorpo(disposicao: QuizAnswers['disposicao']): RecommendationR
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: false,
+    disclaimerKind: 'saude',
     nextStepNote:
       disposicao === 'acessivel'
         ? 'É uma sessão única, sem compromisso de continuidade — ainda não temos um conteúdo de entrada específico para esse tema.'
-        : undefined,
+        : 'Depois do diagnóstico, a Mentoria do Corpo Consciente pode ser a continuidade, se fizer sentido pra você.',
     ruleId: disposicao === 'acessivel' ? 'corpo-acessivel-diagnostico' : 'corpo-acompanhamento-diagnostico',
   };
 }
@@ -177,6 +185,7 @@ function recomendarRelacoes(disposicao: QuizAnswers['disposicao']): Recommendati
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
+      disclaimerKind: null,
       ruleId: 'relacoes-pontual-divorcio-energetico',
     };
   }
@@ -187,10 +196,11 @@ function recomendarRelacoes(disposicao: QuizAnswers['disposicao']): Recommendati
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: false,
+    disclaimerKind: null,
     nextStepNote:
       disposicao === 'acessivel'
         ? 'É uma sessão única, sem compromisso de continuidade — ainda não temos um conteúdo de entrada específico para esse tema.'
-        : undefined,
+        : 'Depois do diagnóstico, a Mentoria das Relações pode ser a continuidade, se fizer sentido pra você.',
     ruleId: disposicao === 'acessivel' ? 'relacoes-acessivel-diagnostico' : 'relacoes-acompanhamento-diagnostico',
   };
 }
@@ -203,6 +213,7 @@ function recomendarAnsiedade(): RecommendationResult {
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: true,
+      disclaimerKind: 'saude_mental',
       ruleId: 'ansiedade-jornada',
     };
   }
@@ -213,6 +224,7 @@ function recomendarAnsiedade(): RecommendationResult {
     requiresWhatsappToChoose: false,
     isDiffuse: false,
     professionalSupportNotice: true,
+    disclaimerKind: 'saude_mental',
     nextStepNote:
       'A Jornada Desprogramando a Ansiedade está com a versão gravada em preparação — enquanto isso, a Mesa DNB (ou, se preferir, a Mesa da Cura Ascensional) é a opção disponível agora.',
     ruleId: 'ansiedade-mesa-dnb-fallback',
@@ -227,6 +239,7 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
       requiresWhatsappToChoose: false,
       isDiffuse: false,
       professionalSupportNotice: false,
+      disclaimerKind: null,
       ruleId: 'espiritual-acessivel-portal',
     };
   }
@@ -238,6 +251,9 @@ function recomendarEspiritual(disposicao: QuizAnswers['disposicao']): Recommenda
       requiresWhatsappToChoose: true,
       isDiffuse: false,
       professionalSupportNotice: false,
+      // T08 (Cirurgia Espiritual) pede esse disclaimer no catálogo — como as
+      // três mesas aparecem juntas, mostrar por segurança para o trio.
+      disclaimerKind: 'saude',
       nextStepNote: 'São três mesas diferentes para temas espirituais — a Bruna ajuda a escolher a certa pelo WhatsApp.',
       ruleId: 'espiritual-pontual-mesas',
     };
@@ -254,6 +270,7 @@ function diffuseFallback(ruleId = 'resultado-difuso'): RecommendationResult {
     requiresWhatsappToChoose: true,
     isDiffuse: true,
     professionalSupportNotice: false,
+    disclaimerKind: null,
     nextStepNote: 'Um diagnóstico pode ajudar a mapear isso — financeiro, corporal ou de relações, dependendo de onde o sinal aparece mais forte.',
     ruleId,
   };

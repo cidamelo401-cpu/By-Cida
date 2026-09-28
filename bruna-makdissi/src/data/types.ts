@@ -128,8 +128,17 @@ export interface RecommendationResult {
   requiresWhatsappToChoose: boolean;
   /** true quando o resultado é difuso e não deve forçar um produto específico. */
   isDiffuse: boolean;
-  /** true quando deve exibir a nota de apoio profissional (ex.: ansiedade). */
+  /**
+   * true só para ansiedade: além do disclaimer padrão, a tela de resultado
+   * precisa de uma orientação explícita de apoio profissional (regra do
+   * catálogo, não genérica de saúde).
+   */
   professionalSupportNotice: boolean;
+  /**
+   * Qual disclaimer público curado mostrar (ver getDisclaimerText em
+   * lib/disclaimers.ts) — null quando o tema não toca saúde/corpo/pet/luto.
+   */
+  disclaimerKind: 'saude' | 'saude_mental' | 'veterinario' | null;
   /** Texto curto explicando o "e depois" — sempre a partir do catálogo, nunca inventado. */
   nextStepNote?: string;
   /** Identificador da regra aplicada (para depuração/analytics — ver recommendationRules.ts). */

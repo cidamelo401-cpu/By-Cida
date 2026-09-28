@@ -8,22 +8,18 @@
  */
 
 import { getProductById } from './services';
-import type { RecommendationResult } from './types';
+import { temaQuestion } from './questions';
+import type { RecommendationResult, TemaId } from './types';
 
 export const WHATSAPP_NUMBER = '5511951273317'; // +55 11 95127-3317, formato E.164 sem símbolos
 
-const TEMA_LABEL: Record<string, string> = {
-  dinheiro: 'Dinheiro',
-  corpo: 'Corpo',
-  relacoes: 'Relações',
-  casa_empresa: 'Casa ou empresa',
-  pet: 'Pet',
-  ansiedade: 'Ansiedade',
-  espiritual: 'Algo espiritual',
-};
-
-export function buildWhatsappMessage(temaId: string, resultado: RecommendationResult): string {
-  const temaLabel = TEMA_LABEL[temaId] ?? temaId;
+/**
+ * insights: opcional, até 2 linhas curtas do que a pessoa respondeu (ver
+ * lib/insights.ts) — nunca a resposta bruta e sensível, só o resumo que já
+ * aparece na própria tela de resultado.
+ */
+export function buildWhatsappMessage(temaId: TemaId, resultado: RecommendationResult, insights?: string[]): string {
+  const temaLabel = temaQuestion.opcoes.find((o) => o.id === temaId)?.label ?? temaId;
 
   if (resultado.isDiffuse || resultado.primaryProductIds.length === 0) {
     return [
@@ -43,6 +39,10 @@ export function buildWhatsappMessage(temaId: string, resultado: RecommendationRe
     linhas.push(`O tema que apareceu foi: ${temaLabel}.`, `Fiquei entre estas opções: ${nomesProdutos}.`, 'Pode me ajudar a escolher a certa?');
   } else {
     linhas.push(`Meu resultado principal foi: ${nomesProdutos}.`);
+  }
+
+  if (insights && insights.length > 0) {
+    linhas.push('', 'Alguns pontos que apareceram:', ...insights.slice(0, 2).map((i) => `- ${i}`));
   }
 
   if (resultado.nextStepNote) {

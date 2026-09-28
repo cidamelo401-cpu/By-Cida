@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ResultadoPlaceholder } from '@/components/ResultadoPlaceholder';
+import { ResultadoView } from '@/components/resultado/ResultadoView';
 
 export const metadata: Metadata = {
   title: 'Seu direcionamento — Bruna Makdissi',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function ResultadoPage() {
-  return <ResultadoPlaceholder />;
+  return <ResultadoView />;
 }
