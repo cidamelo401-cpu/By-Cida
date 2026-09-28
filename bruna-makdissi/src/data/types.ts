@@ -60,7 +60,14 @@ export interface Product {
   cta: string;
   /** Texto livre do catálogo sobre indicação automática pelo questionário. */
   indicacaoAutomatica: string;
-  /** Cuidados de linguagem/disclaimers específicos deste produto — exibir junto ao card. */
+  /**
+   * Instrução INTERNA para quem escreve a copy deste produto (ex.: "nunca
+   * prometer X", "não copiar o site Y") — vem do catálogo tal como a Bruna
+   * escreveu para a equipe. NUNCA renderizar este campo direto para o
+   * visitante; um disclaimer público de verdade é texto curado à parte,
+   * escrito seguindo esta instrução (ver o componente Disclaimer da landing
+   * como exemplo do padrão certo).
+   */
   cuidadosLinguagem: string | null;
 }
 
