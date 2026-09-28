@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { quizQuestions, temaQuestion, momentoQuestion } from '@/data/questions';
+import { quizQuestions, temaQuestion, momentoQuestion, SHORT_FLOW_TEMAS } from '@/data/questions';
 import { getRecommendation } from '@/data/recommendationRules';
-import type { QuizAnswers } from '@/data/types';
+import type { QuizAnswers, TemaId } from '@/data/types';
 import { track } from '@/lib/analytics';
 import { saveQuizSession, type LeadInfo } from '@/lib/quizSession';
 import { QuizProgress } from './QuizProgress';
@@ -13,21 +13,24 @@ import { LeadCapture } from './LeadCapture';
 import { Logo } from '../Logo';
 
 /**
- * Luto só tem um produto (T09) — histórico e disposição não mudam o resultado
- * (ver `case 'luto'` em recommendationRules.ts), então esse caminho pula direto
- * de "momento" pra captura de lead. As duas primeiras perguntas são o prefixo
- * comum de todo mundo, por isso dá pra truncar a lista sem quebrar o botão
- * "voltar" (ver handleBack).
+ * Pra temas de `SHORT_FLOW_TEMAS` (resultado fixo, ignora histórico/disposição
+ * — ver comentário lá), o quiz pula direto de "momento" pra captura de lead.
+ * As duas primeiras perguntas são o prefixo comum de todo mundo, por isso dá
+ * pra truncar a lista sem quebrar o botão "voltar" (ver handleBack).
  */
-const LUTO_QUESTIONS = [temaQuestion, momentoQuestion] as const;
+const SHORT_QUESTIONS = [temaQuestion, momentoQuestion] as const;
+
+function isShortFlow(tema: TemaId | undefined): boolean {
+  return tema !== undefined && SHORT_FLOW_TEMAS.includes(tema);
+}
 
 export function QuizFlow() {
   const router = useRouter();
-  const [step, setStep] = useState(0); // 0..3 perguntas (0..1 pra luto), N = captura de lead
+  const [step, setStep] = useState(0); // 0..3 perguntas (0..1 no fluxo curto), N = captura de lead
   const [answers, setAnswers] = useState<Partial<QuizAnswers>>({});
   const finished = useRef(false);
 
-  const effectiveQuestions = answers.tema === 'luto' ? LUTO_QUESTIONS : quizQuestions;
+  const effectiveQuestions = isShortFlow(answers.tema) ? SHORT_QUESTIONS : quizQuestions;
   const totalQuestions = effectiveQuestions.length;
 
   useEffect(() => {
@@ -47,7 +50,7 @@ export function QuizFlow() {
     setAnswers(next);
     track('question_answered', { question: questionId, value });
 
-    const nextTotal = next.tema === 'luto' ? LUTO_QUESTIONS.length : quizQuestions.length;
+    const nextTotal = isShortFlow(next.tema) ? SHORT_QUESTIONS.length : quizQuestions.length;
 
     window.setTimeout(() => {
       if (step < nextTotal - 1) {
@@ -64,9 +67,10 @@ export function QuizFlow() {
   }
 
   function handleLeadSubmit(lead: LeadInfo) {
-    // Luto pula histórico/disposição — preenche com o neutro ('nenhum'/'pontual')
-    // só pra satisfazer o tipo; getRecommendation ignora os dois pra esse tema,
-    // e os textos de resultado tratam esse caso à parte (ver insights.ts).
+    // Temas do fluxo curto pulam histórico/disposição — preenche com o neutro
+    // ('nenhum'/'pontual') só pra satisfazer o tipo; getRecommendation ignora
+    // os dois nesses casos, e os textos de resultado tratam isso à parte
+    // (ver insights.ts).
     const finalAnswers: QuizAnswers = {
       historico: 'nenhum',
       disposicao: 'pontual',

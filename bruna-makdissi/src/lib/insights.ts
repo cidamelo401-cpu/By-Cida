@@ -1,4 +1,4 @@
-import { temaQuestion, historicoQuestion } from '@/data/questions';
+import { temaQuestion, historicoQuestion, SHORT_FLOW_TEMAS } from '@/data/questions';
 import type { QuizAnswers, MomentoId, DisposicaoId } from '@/data/types';
 
 /**
@@ -21,9 +21,9 @@ export function getAnswerInsights(answers: QuizAnswers): string[] {
     bullets.push(`Você contou que já passou por: ${historicoLabel} com a Bruna.`);
   }
 
-  // Luto pula histórico/disposição no quiz (ver QuizFlow) — não inventar uma
-  // resposta que a pessoa nunca deu.
-  if (answers.tema !== 'luto') {
+  // Temas do fluxo curto pulam histórico/disposição no quiz (ver QuizFlow) —
+  // não inventar uma resposta que a pessoa nunca deu.
+  if (!SHORT_FLOW_TEMAS.includes(answers.tema)) {
     const disposicaoLabel = DISPOSICAO_LABEL[answers.disposicao];
     bullets.push(`O que faz mais sentido pra você agora: "${disposicaoLabel}".`);
   }
@@ -73,10 +73,10 @@ export function getResultJustification(answers: QuizAnswers): string {
   const momentoPhrase = MOMENTO_PHRASE[answers.momento];
   const historicoAddendum = HISTORICO_PHRASE[answers.historico] ?? '';
 
-  // Luto pula histórico/disposição no quiz (ver QuizFlow) — a frase não pode
-  // citar uma resposta de disposição que a pessoa nunca deu.
-  if (answers.tema === 'luto') {
-    return `Nas suas respostas, luto apareceu como o que mais pede atenção agora — algo que ${momentoPhrase}.`;
+  // Temas do fluxo curto pulam histórico/disposição no quiz (ver QuizFlow) —
+  // a frase não pode citar uma resposta de disposição que a pessoa nunca deu.
+  if (SHORT_FLOW_TEMAS.includes(answers.tema)) {
+    return `Nas suas respostas, ${temaLabel.toLowerCase()} apareceu como o que mais pede atenção agora — algo que ${momentoPhrase}.`;
   }
 
   const disposicaoPhrase = DISPOSICAO_PHRASE[answers.disposicao];

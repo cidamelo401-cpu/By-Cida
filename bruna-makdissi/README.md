@@ -131,19 +131,22 @@ soar como substituto de apoio psicológico.
 **Isso mexe numa pergunta que já tinha sido aprovada pela Bruna e pelo
 Jean com 7 opções — avisar eles que agora são 8.**
 
-**Quem escolhe "Luto" responde só 2 perguntas (tema + momento), não 4.**
-Como histórico e disposição não mudam esse resultado (é sempre a Mesa do
-Luto), pedir as duas era fricção sem propósito — pedido direto da Cida.
-O quiz pula pra captura de lead assim que a pessoa responde o momento
-(`LUTO_QUESTIONS` em `QuizFlow.tsx`); a barra de progresso mostra "1 de 2"
+**Quem escolhe "Luto" ou "Pet" responde só 2 perguntas (tema + momento), não
+4.** Os dois têm resultado fixo no motor (sempre a mesma mesa avulsa, sem
+diagnóstico/mentoria correspondente) — histórico e disposição não mudam nada,
+então pedir as duas era fricção sem propósito. Pedido direto da Cida pro
+luto, estendido pro pet pela mesma razão. A lista de temas do fluxo curto
+vive em `SHORT_FLOW_TEMAS` (`questions.ts`) — hoje `['luto', 'pet']` — e o
+quiz pula pra captura de lead assim que a pessoa responde o momento
+(`SHORT_QUESTIONS` em `QuizFlow.tsx`); a barra de progresso mostra "1 de 2"
 e "2 de 2" nesse caminho. `getResultJustification` e `getAnswerInsights`
-(`lib/insights.ts`) tratam `tema === 'luto'` à parte pra nunca citar uma
-resposta de disposição/histórico que a pessoa não deu.
+(`lib/insights.ts`) tratam esses temas à parte pra nunca citar uma resposta
+de disposição/histórico que a pessoa não deu.
 **Decisão explícita da Cida, com trade-off consciente**: quem já concluiu
-mentoria ou o Caminho da Transformação e escolhe "Luto" não é mais desviado
-pra Sustentação (M06) — a regra de prioridade por histórico existe, mas como
-essa pergunta não é feita nesse caminho, ela nunca dispara aqui. Vai sempre
-direto pra Mesa do Luto.
+mentoria ou o Caminho da Transformação e escolhe um desses temas não é mais
+desviado pra Sustentação (M06) — a regra de prioridade por histórico existe,
+mas como essa pergunta não é feita nesse caminho, ela nunca dispara aqui. Vai
+sempre direto pra mesa do tema escolhido.
 
 ## Resultado (Fase 4 — revisado após feedback da Cida)
 

@@ -56,3 +56,15 @@ export const disposicaoQuestion: QuizQuestion<DisposicaoId> = {
 };
 
 export const quizQuestions = [temaQuestion, momentoQuestion, historicoQuestion, disposicaoQuestion] as const;
+
+/**
+ * Temas cujo resultado no motor (`recommendationRules.ts`) é fixo — sempre a
+ * mesma mesa avulsa, sem diagnóstico/mentoria correspondente — e por isso
+ * ignora histórico e disposição por completo. Pra esses temas, o quiz pula
+ * direto de "momento" (Q2) pra captura de lead (ver `QuizFlow.tsx`), sem
+ * perguntar as duas últimas telas. Trade-off aceito: quem já concluiu
+ * mentoria/Caminho e escolhe um desses temas não é desviado pra Sustentação
+ * (a checagem de histórico existe, mas nunca dispara, porque a pergunta nem
+ * é feita nesse caminho).
+ */
+export const SHORT_FLOW_TEMAS: readonly TemaId[] = ['luto', 'pet'];
