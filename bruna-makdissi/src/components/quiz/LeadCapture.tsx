@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import type { LeadInfo } from '@/lib/quizSession';
+import { formatPhoneBR } from '@/lib/phone';
 
 type LeadCaptureProps = {
   onSubmit: (lead: LeadInfo) => void;
@@ -13,7 +14,7 @@ export function LeadCapture({ onSubmit }: LeadCaptureProps) {
   const [email, setEmail] = useState('');
   const [autorizo, setAutorizo] = useState(false);
 
-  const podeEnviar = nome.trim().length > 1 && whatsapp.trim().length >= 8 && email.includes('@') && autorizo;
+  const podeEnviar = nome.trim().length > 1 && whatsapp.replace(/\D/g, '').length >= 10 && email.includes('@') && autorizo;
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -50,10 +51,11 @@ export function LeadCapture({ onSubmit }: LeadCaptureProps) {
           <input
             id="whatsapp"
             type="tel"
+            inputMode="numeric"
             required
             placeholder="(11) 90000-0000"
             value={whatsapp}
-            onChange={(e) => setWhatsapp(e.target.value)}
+            onChange={(e) => setWhatsapp(formatPhoneBR(e.target.value))}
             className="w-full rounded-field border border-noite-900/15 bg-nevoa-0 px-4 py-3 font-body text-sm text-noite-900 outline-none focus-visible:border-horizonte-500"
           />
         </div>
