@@ -96,7 +96,8 @@ export type TemaId =
   | 'casa_empresa'
   | 'pet'
   | 'ansiedade'
-  | 'espiritual';
+  | 'espiritual'
+  | 'luto';
 
 export type MomentoId = 'comecando' | 'repete_tempo' | 'pesado';
 
@@ -144,7 +145,7 @@ export interface RecommendationResult {
    * Qual disclaimer público curado mostrar (ver getDisclaimerText em
    * lib/disclaimers.ts) — null quando o tema não toca saúde/corpo/pet/luto.
    */
-  disclaimerKind: 'saude' | 'saude_mental' | 'veterinario' | null;
+  disclaimerKind: 'saude' | 'saude_mental' | 'veterinario' | 'luto' | null;
   /** Texto curto explicando o "e depois" — sempre a partir do catálogo, nunca inventado. */
   nextStepNote?: string;
   /** Identificador da regra aplicada (para depuração/analytics — ver recommendationRules.ts). */

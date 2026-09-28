@@ -24,10 +24,14 @@
  *   leve ("sessão única, sem compromisso de continuidade").
  * - relações + pontual: a regra 5 lista Divórcio Energético (T01) "conforme
  *   disposição", mas o quiz de 4 perguntas não tem um sinal de "rompimento de
- *   vínculo" isolado. Assumido: default para T01. O Luto (T09) fica fora do
- *   alcance automático do quiz atual — não há tema "luto" nem sub-pergunta
- *   para chegar lá; precisa de uma decisão futura (nova opção em Q1, ou
- *   sub-pergunta condicional) se a Bruna quiser essa rota automatizada.
+ *   vínculo" isolado. Assumido: default para T01.
+ * - luto: adicionado como 8ª opção de tema em Q1 (pedido direto da Cida, após
+ *   o gap ficar visível na revisão do quiz ao vivo). Vai direto pra Mesa do
+ *   Luto, Morte e Encaminhamento (T09), ignorando momento/histórico/disposição
+ *   — é uma mesa avulsa sem diagnóstico/mentoria correspondente no catálogo,
+ *   mesmo padrão de pet/casa_empresa. Disclaimer dedicado (`disclaimerKind:
+ *   'luto'`) segue a instrução `cuidadosLinguagem` de T09: acolhedor, sem
+ *   promessa, nunca como substituto de apoio psicológico.
  * - dinheiro + acessível: a regra 1 (dívida/urgência → J01/J02) e a regra 4
  *   (quer prosperar → J03/Portal) não são discrimináveis só com Q2 (momento).
  *   Assumido: momento 'pesado' → J01; 'repete_tempo'/'comecando' → J02. J03 e
@@ -102,6 +106,16 @@ export function getRecommendation(answers: QuizAnswers): RecommendationResult {
       return recomendarAnsiedade();
     case 'espiritual':
       return recomendarEspiritual(disposicao);
+    case 'luto':
+      return {
+        primaryProductIds: ['T09'],
+        nextStepProductIds: [],
+        requiresWhatsappToChoose: false,
+        isDiffuse: false,
+        professionalSupportNotice: false,
+        disclaimerKind: 'luto',
+        ruleId: 'luto-mesa',
+      };
     default:
       return diffuseFallback();
   }

@@ -11,6 +11,7 @@ const DISCLAIMER_TEXT: Record<NonNullable<RecommendationResult['disclaimerKind']
   saude_mental:
     'Ansiedade é um tema de saúde mental. Esse trabalho complementa, mas não substitui acompanhamento profissional — se você estiver em crise, procure apoio especializado.',
   veterinario: 'Esse trabalho complementa, mas não substitui acompanhamento veterinário.',
+  luto: 'Esse é um trabalho energético para ajudar a atravessar o luto. Ele complementa, mas não substitui acompanhamento psicológico especializado.',
 };
 
 export function getDisclaimerText(kind: RecommendationResult['disclaimerKind']): string | null {

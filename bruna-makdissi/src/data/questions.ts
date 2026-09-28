@@ -19,6 +19,7 @@ export const temaQuestion: QuizQuestion<TemaId> = {
     { id: 'pet', label: 'Pet', emoji: '🐾' },
     { id: 'ansiedade', label: 'Ansiedade', emoji: '🌀' },
     { id: 'espiritual', label: 'Algo espiritual', emoji: '✨' },
+    { id: 'luto', label: 'Luto', emoji: '🕊️' },
   ],
 };
 

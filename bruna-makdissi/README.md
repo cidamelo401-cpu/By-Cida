@@ -45,8 +45,7 @@ Resumo:
 - Não existe mesa exclusiva de "dinheiro" → usamos a Mesa das 4 Prosperidades.
 - Corpo/Relações não têm jornada de entrada → nesses casos o "acessível" cai
   no próprio diagnóstico, com CTA mais leve.
-- Relações + pontual sempre aponta para o Divórcio Energético — o Luto (T09)
-  ainda não é alcançável pelo quiz de 4 perguntas.
+- Relações + pontual sempre aponta para o Divórcio Energético.
 - Ansiedade aponta para a Mesa DNB enquanto a Jornada gravada não estiver à
   venda (flag `ANSIEDADE_JORNADA_DISPONIVEL` em `recommendationRules.ts`).
 - Espiritual + acompanhamento não tem diagnóstico único definido → resultado
@@ -119,6 +118,18 @@ descreve esse caminho pra esses temas) — comportamento inalterado.
 **Isso mexe numa pergunta que já tinha sido aprovada pela Bruna e pelo
 Jean com 3 opções — avisar eles que agora são 4.**
 
+**Pergunta 1 (tema) ganhou uma 8ª opção: "Luto".** Antes o Luto (Mesa do
+Luto, Morte e Encaminhamento, T09) existia no catálogo mas não tinha porta
+de entrada no quiz — a combinação mais próxima, relações + pontual, sempre
+caía no Divórcio Energético. Agora "Luto" é um tema próprio em Q1 e leva
+direto para T09, ignorando momento/histórico/disposição (é uma mesa avulsa,
+sem diagnóstico/mentoria correspondente — mesmo padrão de Pet e Casa/empresa).
+Ganhou também um disclaimer público dedicado (`disclaimerKind: 'luto'`),
+separado do de saúde mental, seguindo a instrução do catálogo de nunca
+soar como substituto de apoio psicológico.
+**Isso mexe numa pergunta que já tinha sido aprovada pela Bruna e pelo
+Jean com 7 opções — avisar eles que agora são 8.**
+
 ## Resultado (Fase 4 — revisado após feedback da Cida)
 
 `/resultado` monta, nessa ordem: headline de identificação (tema apareceu
@@ -170,4 +181,3 @@ npm run build         # build de produção
 - Persistência real do lead (Supabase) — hoje só sessionStorage
 - Validação da copy pela Bruna (todo texto está provisório)
 - Wire do Ebook (E01) na recomendação quando o preço for definido
-- Rota para o Luto (T09) — hoje não é alcançável pelo quiz de 4 perguntas
