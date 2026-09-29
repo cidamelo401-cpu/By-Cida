@@ -300,7 +300,12 @@ export default function CatalogoPage() {
                 onClick={() => { window.location.href = teamHrefByName(name) }}
                 className="flex-shrink-0 flex flex-col items-center gap-1.5 w-20 group"
               >
-                <div className="w-16 h-16 rounded-full bg-[#1A1A1A] border-2 transition-colors flex items-center justify-center overflow-hidden border-white/10 group-hover:border-[#C9A84C]">
+                <div
+                  className={`w-16 h-16 rounded-full border-2 transition-colors flex items-center justify-center overflow-hidden border-white/10 group-hover:border-[#C9A84C] ${
+                    badges[name] ? '' : 'bg-[#1A1A1A]'
+                  }`}
+                  style={badges[name] ? { backgroundColor: '#F3F3F0' } : undefined}
+                >
                   {badges[name] ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
