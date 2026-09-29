@@ -374,6 +374,27 @@ export interface Database {
         }
         Relationships: []
       }
+      team_badges: {
+        Row: {
+          team: string
+          badge_url: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          team: string
+          badge_url: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          team?: string
+          badge_url?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           id: string

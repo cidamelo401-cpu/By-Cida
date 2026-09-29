@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 /* ── TheSportsDB search names for each team ── */
 export const TEAM_SEARCH_NAMES: Record<string, string> = {
@@ -93,43 +94,55 @@ const LOCAL_BADGES: Record<string, string> = {
   'Al-Hilal': '/badges/al-hilal.png',
 }
 
-/* ── Hook to fetch team badges from TheSportsDB ── */
+/* ── Hook to fetch team badges: 1) cadastro manual do Sérgio (Supabase) 2) busca automática (TheSportsDB) ── */
 export function useTeamBadges(teams: string[]) {
   const [badges, setBadges] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (teams.length === 0) return
-
-    // Apply local overrides immediately
-    const localOverrides: Record<string, string> = {}
-    for (const t of teams) {
-      if (LOCAL_BADGES[t]) localOverrides[t] = LOCAL_BADGES[t]
-    }
-    if (Object.keys(localOverrides).length > 0) {
-      setBadges((prev) => ({ ...prev, ...localOverrides }))
-    }
-
-    // Only fetch from API for teams without local overrides
-    const teamsToFetch = teams.filter((t) => !LOCAL_BADGES[t])
-    if (teamsToFetch.length === 0) return
-
-    const CACHE_KEY = 'dms_team_badges'
-    const CACHE_TTL = 7 * 24 * 60 * 60 * 1000
-    try {
-      const cached = localStorage.getItem(CACHE_KEY)
-      if (cached) {
-        const { data, ts } = JSON.parse(cached)
-        if (Date.now() - ts < CACHE_TTL && data && typeof data === 'object') {
-          setBadges({ ...data, ...localOverrides })
-          const missing = teamsToFetch.filter((t) => !data[t])
-          if (missing.length === 0) return
-        }
-      }
-    } catch { /* ignore */ }
-
     let cancelled = false
 
-    async function fetchBadges() {
+    async function run() {
+      // 1) Brasões cadastrados manualmente (Sérgio colou o link) têm prioridade máxima
+      //    e nunca são sobrescritos pela busca automática — resolvidos antes de tudo.
+      const supabase = createClient()
+      const { data: manualRows } = await supabase.from('team_badges').select('team, badge_url').in('team', teams)
+      if (cancelled) return
+      const manualOverrides: Record<string, string> = {}
+      for (const row of manualRows ?? []) {
+        if (row.badge_url) manualOverrides[row.team] = row.badge_url
+      }
+      if (Object.keys(manualOverrides).length > 0) {
+        setBadges((prev) => ({ ...prev, ...manualOverrides }))
+      }
+
+      // 2) Overrides locais fixos (casos especiais tratados no código)
+      const localOverrides: Record<string, string> = {}
+      for (const t of teams) {
+        if (LOCAL_BADGES[t]) localOverrides[t] = LOCAL_BADGES[t]
+      }
+      if (Object.keys(localOverrides).length > 0) {
+        setBadges((prev) => ({ ...prev, ...localOverrides }))
+      }
+
+      // 3) Busca automática só para os times que não têm brasão manual nem override local
+      const teamsToFetch = teams.filter((t) => !manualOverrides[t] && !LOCAL_BADGES[t])
+      if (teamsToFetch.length === 0) return
+
+      const CACHE_KEY = 'dms_team_badges'
+      const CACHE_TTL = 7 * 24 * 60 * 60 * 1000
+      try {
+        const cached = localStorage.getItem(CACHE_KEY)
+        if (cached) {
+          const { data, ts } = JSON.parse(cached)
+          if (Date.now() - ts < CACHE_TTL && data && typeof data === 'object') {
+            setBadges((prev) => ({ ...prev, ...data, ...localOverrides, ...manualOverrides }))
+            const missing = teamsToFetch.filter((t) => !data[t])
+            if (missing.length === 0) return
+          }
+        }
+      } catch { /* ignore */ }
+
       const results: Record<string, string> = {}
 
       for (let i = 0; i < teamsToFetch.length; i += 5) {
@@ -161,15 +174,15 @@ export function useTeamBadges(teams: string[]) {
       if (cancelled) return
 
       setBadges((prev) => {
-        const merged = { ...prev, ...results, ...localOverrides }
+        const merged = { ...prev, ...results, ...localOverrides, ...manualOverrides }
         try {
-          localStorage.setItem(CACHE_KEY, JSON.stringify({ data: merged, ts: Date.now() }))
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ data: { ...results }, ts: Date.now() }))
         } catch { /* ignore */ }
         return merged
       })
     }
 
-    fetchBadges()
+    run()
     return () => { cancelled = true }
   }, [teams])
 
