@@ -252,7 +252,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             value={form.team_badge_url}
             onChange={(e) => updateField('team_badge_url', e.target.value)}
             placeholder="Cole o link de uma imagem (ex: clique com botão direito no brasão e 'Copiar endereço da imagem')"
-            helper="Se não preencher, o sistema tenta buscar o brasão automaticamente. Preencha só se o brasão não aparecer sozinho no catálogo."
+            helper="Se não preencher, o sistema tenta buscar o brasão automaticamente. Prefira imagens de fundo transparente (PNG), mas qualquer imagem funciona."
           />
 
           <div className="grid grid-cols-2 gap-4">
