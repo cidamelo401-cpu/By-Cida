@@ -15,6 +15,7 @@ type SizeEntry = { size: ProductSize; quantity: string }
 
 type FormState = {
   team: string
+  team_badge_url: string
   country_league: string
   season: string
   model: ProductModel
@@ -32,6 +33,7 @@ type FormState = {
 
 const initialState: FormState = {
   team: '',
+  team_badge_url: '',
   country_league: '',
   season: '',
   model: 'titular',
@@ -181,6 +183,14 @@ export default function NewProductPage() {
         if (moveError) throw moveError
       }
 
+      if (form.team_badge_url.trim()) {
+        await supabase.from('team_badges').upsert({
+          team: form.team.trim(),
+          badge_url: form.team_badge_url.trim(),
+          updated_by: user.id,
+        })
+      }
+
       const total = entries.reduce((sum, e) => sum + e.quantity, 0)
       const sizeCount = entries.length
       toast.success(
@@ -240,6 +250,14 @@ export default function NewProductPage() {
               </ul>
             )}
           </div>
+
+          <Input
+            label="Link do brasão do time (opcional)"
+            value={form.team_badge_url}
+            onChange={(e) => updateField('team_badge_url', e.target.value)}
+            placeholder="Cole o link de uma imagem (ex: clique com botão direito no brasão e 'Copiar endereço da imagem')"
+            helper="Se não preencher, o sistema tenta buscar o brasão automaticamente. Preencha só se o brasão não aparecer sozinho no catálogo."
+          />
 
           <div className="grid grid-cols-2 gap-4">
             <Input

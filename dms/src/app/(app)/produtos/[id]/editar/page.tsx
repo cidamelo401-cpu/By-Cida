@@ -25,6 +25,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
   const [form, setForm] = useState({
     team: '',
+    team_badge_url: '',
     country_league: '',
     season: '',
     model: 'titular' as ProductModel,
@@ -48,9 +49,15 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       try {
         const { data, error } = await supabase.from('products').select('*').eq('id', id).single()
         if (error) throw error
+        const { data: badgeRow } = await supabase
+          .from('team_badges')
+          .select('badge_url')
+          .eq('team', data.team)
+          .maybeSingle()
         setProduct(data)
         setForm({
           team: data.team,
+          team_badge_url: badgeRow?.badge_url ?? '',
           country_league: data.country_league ?? '',
           season: data.season ?? '',
           model: data.model,
@@ -170,6 +177,21 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         })
       }
 
+      // Brasão do time: salva o link colado, ou remove o override se o campo foi limpo
+      const teamName = form.team.trim()
+      if (form.team_badge_url.trim()) {
+        await supabase.from('team_badges').upsert({
+          team: teamName,
+          badge_url: form.team_badge_url.trim(),
+          updated_by: user?.id,
+        })
+      } else {
+        // Best-effort: apagar o override é restrito a admin; se falhar (RLS), não impede salvar o produto
+        try {
+          await supabase.from('team_badges').delete().eq('team', teamName)
+        } catch { /* ignore */ }
+      }
+
       toast.success('Produto atualizado com sucesso!')
       router.push(`/produtos/${product.id}`)
     } catch {
@@ -223,6 +245,14 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             value={form.team}
             onChange={(e) => updateField('team', e.target.value)}
             required
+          />
+
+          <Input
+            label="Link do brasão do time (opcional)"
+            value={form.team_badge_url}
+            onChange={(e) => updateField('team_badge_url', e.target.value)}
+            placeholder="Cole o link de uma imagem (ex: clique com botão direito no brasão e 'Copiar endereço da imagem')"
+            helper="Se não preencher, o sistema tenta buscar o brasão automaticamente. Preencha só se o brasão não aparecer sozinho no catálogo."
           />
 
           <div className="grid grid-cols-2 gap-4">
