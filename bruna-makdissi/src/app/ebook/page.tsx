@@ -28,7 +28,7 @@ export const metadata: Metadata = {
  * ajustar o catálogo — aqui na página eu descrevi o escopo real.
  */
 
-const PRECO_SUGERIDO = 37;
+const PRECO_SUGERIDO = 59;
 
 function Pendente({ children }: { children: React.ReactNode }) {
   return (
