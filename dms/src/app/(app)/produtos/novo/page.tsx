@@ -251,13 +251,26 @@ export default function NewProductPage() {
             )}
           </div>
 
-          <Input
-            label="Link do brasão do time (opcional)"
-            value={form.team_badge_url}
-            onChange={(e) => updateField('team_badge_url', e.target.value)}
-            placeholder="Cole o link de uma imagem (ex: clique com botão direito no brasão e 'Copiar endereço da imagem')"
-            helper="Se não preencher, o sistema tenta buscar o brasão automaticamente. Prefira imagens de fundo transparente (PNG), mas qualquer imagem funciona."
-          />
+          <div className="flex items-end gap-3">
+            <div className="flex-1">
+              <Input
+                label="Link do brasão do time (opcional)"
+                value={form.team_badge_url}
+                onChange={(e) => updateField('team_badge_url', e.target.value)}
+                placeholder="Cole o link de uma imagem (ex: clique com botão direito no brasão e 'Copiar endereço da imagem')"
+                helper="Se não preencher, o sistema tenta buscar o brasão automaticamente. Use uma imagem com fundo transparente (PNG) — confira ao lado como vai ficar no catálogo."
+              />
+            </div>
+            {form.team_badge_url.trim() && (
+              <div className="shrink-0 flex flex-col items-center gap-1 pb-1">
+                <div className="w-14 h-14 rounded-full bg-[#0A0A0A] border border-white/10 flex items-center justify-center overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={form.team_badge_url.trim()} alt="Prévia do brasão" className="w-10 h-10 object-contain" />
+                </div>
+                <span className="text-[10px] text-gray-400">Prévia</span>
+              </div>
+            )}
+          </div>
 
           <div className="grid grid-cols-2 gap-4">
             <Input

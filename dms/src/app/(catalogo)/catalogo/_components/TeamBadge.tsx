@@ -35,7 +35,7 @@ export default function TeamBadge({
             ? 'border-[#C9A84C] scale-110 shadow-[0_0_16px_rgba(201,168,76,0.5)]'
             : 'border-white/10 group-hover:border-white/30'
         }`}
-        style={!badgeUrl || imgError ? { backgroundColor: colors.bg } : { backgroundColor: '#F3F3F0' }}
+        style={!badgeUrl || imgError ? { backgroundColor: colors.bg } : { backgroundColor: '#151515' }}
       >
         {badgeUrl && !imgError ? (
           // eslint-disable-next-line @next/next/no-img-element
