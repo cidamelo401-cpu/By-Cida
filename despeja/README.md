@@ -1,0 +1,23 @@
+# Despeja! — Fase 0
+
+Base visual do app. HTML, CSS e JavaScript puros (sem build, sem dependências).
+
+## Rodar
+
+    cd despeja
+    python3 -m http.server 5173
+
+- App: http://localhost:5173/
+- Preview celular + desktop: http://localhost:5173/preview.html
+- Kit de componentes: http://localhost:5173/#/kit
+
+(Qualquer servidor estático serve. Abrir o arquivo direto, sem servidor, não funciona.)
+
+## Estrutura
+
+- `css/tokens.css` — cores, fontes, cantos, sombras
+- `css/components.css` — tarefa, projeto, categoria, botão, bloquinho, status, chips
+- `css/layout.css` — topo, navegação (celular e desktop) e telas
+- `js/components.js` — componentes reutilizáveis
+- `js/screens.js` — as telas (dados fictícios)
+- `js/app.js` — navegação por `#/rota`

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Preview · Despeja!</title>
+  <link rel="icon" href="data:,">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#2F2A36; --cream:#FFF6E4; --paper:#FFFDF7; --pink:#FF8FB1; --yellow:#FFD43B; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; font-family:'Nunito',system-ui,sans-serif; color:var(--ink);
+      background:#3A3441; background-image:radial-gradient(rgba(255,255,255,.07) 1.2px,transparent 1.5px); background-size:22px 22px; }
+    header { display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:18px 28px; color:#fff; }
+    header h1 { margin:0; font-family:'Caveat Brush',cursive; font-weight:400; font-size:2rem; }
+    header p { margin:0; opacity:.75; font-weight:600; flex:1; min-width:220px; }
+    button { font:inherit; font-weight:800; padding:10px 18px; cursor:pointer; color:var(--ink); background:var(--yellow);
+      border:2px solid var(--ink); border-radius:14px; box-shadow:3px 4px 0 #000; }
+    button:active { transform:translate(3px,4px); box-shadow:none; }
+    .stage { display:flex; gap:32px; align-items:flex-start; justify-content:center; padding:8px 28px 40px; flex-wrap:wrap; }
+    .col { display:grid; gap:12px; justify-items:center; }
+    .label { color:#fff; font-weight:800; opacity:.8; font-size:.9rem; }
+
+    /* Moldura de celular: tela de 390 x 844 */
+    .phone { padding:14px; background:#111; border-radius:54px; border:3px solid #000; box-shadow:0 20px 50px rgba(0,0,0,.5); position:relative; }
+    .phone iframe { display:block; width:390px; height:844px; border:0; border-radius:40px; background:var(--cream); }
+
+    /* Desktop: a página é renderizada em 1280 x 800 e reduzida para caber */
+    .desk { flex:1; min-width:420px; max-width:1280px; }
+    .desk__bar { display:flex; align-items:center; gap:7px; padding:10px 14px; background:#2a252f; border-radius:14px 14px 0 0; border:2px solid #000; border-bottom:0; }
+    .desk__bar i { width:11px; height:11px; border-radius:50%; background:#6b6573; }
+    .desk__bar span { margin-left:10px; padding:3px 14px; border-radius:999px; background:#413b48; color:#fff; font-size:.8rem; font-weight:600; opacity:.85; }
+    .desk__screen { position:relative; overflow:hidden; border:2px solid #000; border-radius:0 0 14px 14px; background:var(--cream); box-shadow:0 20px 50px rgba(0,0,0,.5); }
+    .desk__screen iframe { position:absolute; top:0; left:0; width:1280px; height:800px; border:0; transform-origin:0 0; }
+
+    #aviso { display:none; margin:0 28px 20px; padding:14px 18px; background:var(--pink); border:2px solid var(--ink); border-radius:16px; font-weight:800; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Despeja! · preview</h1>
+    <p>O mesmo app rodando duas vezes. Clique e navegue nos dois.</p>
+    <button type="button" id="recarregar">Recarregar os dois ↻</button>
+  </header>
+
+  <p id="aviso">Esta página precisa do app rodando num servidor local. Na pasta <code>despeja</code>, rode <code>python3 -m http.server 5173</code> e abra <code>http://localhost:5173/preview.html</code>.</p>
+
+  <div class="stage">
+    <div class="col">
+      <span class="label">📱 Celular · 390 px</span>
+      <div class="phone"><iframe id="mobile" src="index.html" title="Despeja! no celular"></iframe></div>
+    </div>
+    <div class="col desk">
+      <span class="label">🖥️ Desktop · 1280 px</span>
+      <div style="width:100%">
+        <div class="desk__bar"><i></i><i></i><i></i><span id="url">localhost</span></div>
+        <div class="desk__screen" id="screen"><iframe id="desktop" src="index.html" title="Despeja! no desktop"></iframe></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if (location.protocol === 'file:') document.getElementById('aviso').style.display = 'block';
+    document.getElementById('url').textContent = location.host ? location.host + '/index.html' : 'localhost';
+
+    const screen = document.getElementById('screen');
+    const desktop = document.getElementById('desktop');
+    function fit() {
+      const scale = screen.clientWidth / 1280;
+      desktop.style.transform = `scale(${scale})`;
+      screen.style.height = 800 * scale + 'px';
+    }
+    new ResizeObserver(fit).observe(screen);
+    fit();
+
+    document.getElementById('recarregar').addEventListener('click', () => {
+      for (const f of ['mobile', 'desktop']) document.getElementById(f).contentWindow.location.reload();
+    });
+  </script>
+</body>
+</html>
