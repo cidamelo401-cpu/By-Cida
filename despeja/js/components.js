@@ -2,6 +2,9 @@
 // Cada função devolve um pedaço de HTML. Ainda não há lógica real: só visual.
 
 export const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
+// Escapa texto digitado pelo usuário antes de colocar em HTML
+export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
 export const brl = (n) => 'R$ ' + n.toLocaleString('pt-BR');
 
 export const icon = (name) => `<svg class="icon" aria-hidden="true" focusable="false"><use href="#i-${name}"/></svg>`;
@@ -19,11 +22,11 @@ export const AREAS = {
 export const MORE = ['semana', 'financas', 'config'];
 
 /* ---------- Botão principal ---------- */
-export function button({ label, href, variant = '', size = '', iconName = '', block = false, disabled = false }) {
+export function button({ label, href, variant = '', size = '', iconName = '', block = false, disabled = false, attrs = '' }) {
   const cls = ['btn', variant && `btn--${variant}`, size && `btn--${size}`, block && 'btn--block'].filter(Boolean).join(' ');
   const inner = `${iconName ? icon(iconName) : ''}<span>${label}</span>`;
-  if (href) return `<a class="${cls}" href="${href}">${inner}</a>`;
-  return `<button type="button" class="${cls}" ${disabled ? 'aria-disabled="true"' : ''}>${inner}</button>`;
+  if (href) return `<a class="${cls}" href="${href}" ${attrs}>${inner}</a>`;
+  return `<button type="button" class="${cls}" ${disabled ? 'aria-disabled="true"' : ''} ${attrs}>${inner}</button>`;
 }
 
 /* ---------- Chip e status ---------- */

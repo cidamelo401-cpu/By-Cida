@@ -3,6 +3,7 @@ import {
   icon, chip, status, note, task, taskList, button, project, projectNew,
   category, dumpBanner, pageHead, soon, brl, plural,
 } from './components.js';
+import { despejaView as despeja, caixaView as caixa } from './flow.js';
 
 const hoje = () => {
   const bruta = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -58,31 +59,6 @@ const hoje = () => {
     </div>
   </div>`;
 };
-
-const despeja = () => `
-  ${pageHead({ kicker: 'Despeja', title: 'Pode despejar.', mark: 'pink', sub: 'Fala ou escreve tudo misturado. Eu separo depois, e você confirma.' })}
-  <div class="pad" aria-hidden="true">Tenho que comprar o presente do amigo do Pedro, falar com o fotógrafo do hotel e tive uma ideia de automação pra ByCida<span class="pad__cursor"></span></div>
-  <div class="pad-actions">
-    ${button({ label: 'Falar', variant: 'pink', size: 'lg', iconName: 'mic', disabled: true })}
-    ${button({ label: 'Escrever', variant: 'yellow', size: 'lg', iconName: 'pen', disabled: true })}
-  </div>
-  ${soon(1, 'Aqui vai ficar a captura por texto e voz.')}`;
-
-const caixa = () => `
-  ${pageHead({ kicker: 'Caixa Mental', title: 'Ainda precisa de decisão', mark: 'blue', sub: 'Nada que você despeja some. Fica aqui até você decidir.' })}
-  <div class="stack" style="margin-top:8px">
-    ${note({ tab: 'Tarefa', tabTone: 'pink', body: `<div class="inbox-item">
-      <p class="inbox-item__text">Fazer apresentação comercial</p>
-      <p class="inbox-item__hint">Isso parece grandinho 👀 Quer que eu quebre em passos menores?</p>
-      <div class="inbox-item__actions">${button({ label: 'Quebrar', variant: 'green', disabled: true })}${button({ label: 'Deixar assim', variant: 'ghost', disabled: true })}</div></div>` })}
-    ${note({ tab: 'Ideia', tabTone: 'lilac', body: `<div class="inbox-item">
-      <p class="inbox-item__text">Automação de atendimento para a ByCida</p>
-      <p>${chip('ByCida', 'blue')} ${status('Precisa decidir', 'lilac')}</p></div>` })}
-    ${note({ tab: 'Lembrete', body: `<div class="inbox-item">
-      <p class="inbox-item__text">Ligar para o dentista</p>
-      <p>${chip('Pessoal', 'green')} ${status('Sem prazo', 'yellow')}</p></div>` })}
-  </div>
-  ${soon(1, 'Aqui vai ficar a revisão do que você despejou.')}`;
 
 const projetos = () => `
   ${pageHead({ kicker: 'Projetos', title: 'Cada coisa no seu canto', mark: 'green', sub: 'Tarefas, ideias e “depois” agrupados por contexto.' })}
