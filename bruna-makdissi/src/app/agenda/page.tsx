@@ -91,6 +91,10 @@ const COMBOS = [
 
 const whatsappHref = buildWhatsappLink(`Oi, Bruna! Vi a Agenda de ${MES} e quero me inscrever.`);
 
+function linkParaItem(nome: string) {
+  return buildWhatsappLink(`Oi, Bruna! Vi a Agenda de ${MES} e quero me inscrever em: ${nome}.`);
+}
+
 export default function AgendaPage() {
   return (
     <main className="min-h-screen bg-nevoa-200">
@@ -140,6 +144,12 @@ export default function AgendaPage() {
                 <div>
                   <p className="font-display text-lg leading-snug text-noite-900">{s.titulo}</p>
                   <p className="mt-1 font-body text-sm font-light text-tinta-700">{s.subtitulo}</p>
+                  <a
+                    href={linkParaItem(s.titulo)}
+                    className="mt-2 inline-block font-body text-xs font-medium text-horizonte-600 hover:text-horizonte-700"
+                  >
+                    Quero essa →
+                  </a>
                 </div>
                 <div className="shrink-0 text-right">
                   {s.precoOriginal && (
@@ -165,6 +175,12 @@ export default function AgendaPage() {
                   <div>
                     <p className="font-display text-lg text-nevoa-0">{c.titulo}</p>
                     <p className="mt-1 font-body text-sm font-light text-noite-200">{c.subtitulo}</p>
+                    <a
+                      href={linkParaItem(c.titulo)}
+                      className="mt-2 inline-block font-body text-xs font-medium text-horizonte-300 hover:text-horizonte-200"
+                    >
+                      Quero esse combo →
+                    </a>
                   </div>
                 </div>
                 <div className="shrink-0 text-right">
