@@ -38,7 +38,7 @@ export default function MapeamentoEnergeticoPage() {
       <div className="mx-auto max-w-3xl px-6 py-16">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
           <div>
-            <Logo variant="claro" className="mb-8 h-7 w-auto" />
+            <Logo variant="claro" className="mb-8 h-10 w-auto md:h-11" />
             <p className="label-margin flex items-center gap-2 text-ouro-600">
               <span className="h-px w-6 bg-ouro-500" /> Vale-presente
             </p>
@@ -117,7 +117,7 @@ export default function MapeamentoEnergeticoPage() {
           <p className="max-w-sm font-display text-base italic leading-snug text-noite-900">
             Eu não te ensino a sair da escassez porque estudei sobre ela. Eu te ensino porque saí dela.
           </p>
-          <Logo variant="claro" className="h-7 w-auto" />
+          <Logo variant="claro" className="h-10 w-auto" />
         </div>
       </div>
     </main>
