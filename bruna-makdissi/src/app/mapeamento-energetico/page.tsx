@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   title: 'Vale-presente — Mapeamento Energético · Bruna Makdissi',
   description: 'Você ganhou um mapeamento energético individual, online, com a Bruna Makdissi.',
   robots: { index: false, follow: false },
+  openGraph: {
+    title: 'Você ganhou um mapeamento energético',
+    description: 'Um encontro individual, online, que normalmente é pago. Hoje ele é presente da Bruna para você.',
+  },
 };
 
 /**

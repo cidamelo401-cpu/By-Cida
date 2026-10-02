@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: 'Agenda de Outubro — Bruna Makdissi',
   description: 'O que a Bruna abre para caminhar com você este mês.',
   robots: { index: false, follow: false },
+  openGraph: {
+    title: 'Agenda de Outubro — Bruna Makdissi',
+    description: 'O que eu abro para caminhar com você este mês.',
+  },
 };
 
 /**

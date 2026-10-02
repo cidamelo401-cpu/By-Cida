@@ -7,6 +7,10 @@ import { CtaButton } from '@/components/ui/CtaButton';
 
 export const metadata: Metadata = {
   title: 'Serviços — Bruna Makdissi',
+  openGraph: {
+    title: 'Todos os atendimentos — Bruna Makdissi',
+    description: 'Organizado por tema: dinheiro, corpo, relações, casa ou empresa, pet, ansiedade, espiritual e luto.',
+  },
   robots: { index: false, follow: false },
 };
 

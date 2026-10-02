@@ -11,6 +11,10 @@ export const metadata: Metadata = {
   title: 'Escassez Invisível — Bruna Makdissi',
   description: 'Um guia completo para reprogramar o sistema operacional da sua vida — dinheiro, tempo, energia, corpo, relações e mais.',
   robots: { index: false, follow: false }, // trocar pra index:true só quando preço e checkout estiverem fechados
+  openGraph: {
+    title: 'Escassez Invisível — Ebook da Bruna Makdissi',
+    description: 'Um guia completo para reprogramar o sistema operacional da sua vida — dinheiro, tempo, energia, corpo, relações e mais.',
+  },
 };
 
 /**

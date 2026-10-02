@@ -13,7 +13,15 @@ const inter = Inter({
   subsets: ['latin'],
 });
 
+// Sem isso, o Next monta as URLs absolutas de og:image (usadas por
+// WhatsApp/Facebook pra buscar a imagem) com "localhost:3000" em produção —
+// quebra de verdade o preview do link, não é só aviso de build.
+// VERCEL_URL é preenchido automaticamente pelo Vercel com o domínio exato
+// de cada deploy.
+const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl),
   title: 'Bruna Makdissi — Consciência que transforma',
   description:
     'Responda algumas perguntas e descubra qual caminho pode fazer mais sentido para o seu momento: dinheiro, corpo, relações ou uma questão energética específica.',
