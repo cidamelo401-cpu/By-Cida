@@ -21,13 +21,16 @@ export default function Image() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={photoSrc}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
           alt=""
         />
         <div
           style={{
             position: 'absolute',
-            inset: 0,
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
             display: 'flex',
             background: 'linear-gradient(0deg, rgba(35,27,56,.88) 0%, rgba(35,27,56,.25) 48%, rgba(35,27,56,0) 75%)',
           }}
