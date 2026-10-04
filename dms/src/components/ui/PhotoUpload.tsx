@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { compressImage } from '@/lib/utils/image'
 import toast from 'react-hot-toast'
 
@@ -12,7 +11,6 @@ type PhotoUploadProps = {
 }
 
 export function PhotoUpload({ value, onChange, disabled }: PhotoUploadProps) {
-  const supabase = createClient()
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
 
@@ -29,23 +27,14 @@ export function PhotoUpload({ value, onChange, disabled }: PhotoUploadProps) {
     setUploading(true)
     try {
       const compressed = await compressImage(file)
-      const ext = compressed.name.split('.').pop() ?? 'jpg'
-      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+      const body = new FormData()
+      body.append('file', compressed)
 
-      const { error: uploadError } = await supabase.storage
-        .from('product-photos')
-        .upload(fileName, compressed, {
-          cacheControl: '31536000',
-          upsert: false,
-        })
+      const res = await fetch('/api/upload-photo', { method: 'POST', body })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Erro ao enviar foto.')
 
-      if (uploadError) throw uploadError
-
-      const { data: urlData } = supabase.storage
-        .from('product-photos')
-        .getPublicUrl(fileName)
-
-      onChange(urlData.publicUrl)
+      onChange(data.url as string)
       toast.success('Foto enviada!')
     } catch (err) {
       console.error(err)

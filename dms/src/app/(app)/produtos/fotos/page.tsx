@@ -100,22 +100,17 @@ export default function BulkPhotoUploadPage() {
 
       try {
         const compressed = await compressImage(item.file!)
-        const ext = compressed.name.split('.').pop() ?? 'jpg'
-        const fileName = `${item.product.team.toLowerCase().replace(/\s+/g, '-')}-${item.product.model}-${item.product.size}-${Date.now()}.${ext}`
+        const body = new FormData()
+        body.append('file', compressed)
 
-        const { error: uploadError } = await supabase.storage
-          .from('product-photos')
-          .upload(fileName, compressed, { cacheControl: '31536000', upsert: false })
-
-        if (uploadError) throw uploadError
-
-        const { data: urlData } = supabase.storage
-          .from('product-photos')
-          .getPublicUrl(fileName)
+        const uploadRes = await fetch('/api/upload-photo', { method: 'POST', body })
+        const uploadData = await uploadRes.json()
+        if (!uploadRes.ok) throw new Error(uploadData.error ?? 'Erro ao enviar foto.')
+        const publicUrl = uploadData.url as string
 
         // Add to photos array and set as photo_url if first photo
         const existingPhotos: string[] = (item.product as any).photos ?? []
-        const newPhotos = [...existingPhotos, urlData.publicUrl]
+        const newPhotos = [...existingPhotos, publicUrl]
         const { error: updateError } = await supabase
           .from('products')
           .update({
@@ -129,7 +124,7 @@ export default function BulkPhotoUploadPage() {
         setItems((prev) =>
           prev.map((i) =>
             i.product.id === item.product.id
-              ? { ...i, uploading: false, done: true, preview: urlData.publicUrl }
+              ? { ...i, uploading: false, done: true, preview: publicUrl }
               : i
           )
         )

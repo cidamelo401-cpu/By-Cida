@@ -4,13 +4,36 @@ import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
 
+type MigrationResult = {
+  migratedProducts: number
+  migratedFiles: number
+  failedFiles: number
+  failures: string[]
+}
+
 export default function ContaPage() {
-  const { user, profile, signOut } = useAuth()
+  const { user, profile, isAdmin, signOut } = useAuth()
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [migrating, setMigrating] = useState(false)
+  const [migrationResult, setMigrationResult] = useState<MigrationResult | { error: string } | null>(null)
+
+  async function handleMigratePhotos() {
+    setMigrating(true)
+    setMigrationResult(null)
+    try {
+      const res = await fetch('/api/admin/migrate-photos', { method: 'POST' })
+      const data = await res.json()
+      setMigrationResult(res.ok ? data : { error: data.error ?? 'Erro desconhecido.' })
+    } catch {
+      setMigrationResult({ error: 'Erro de conexão. Tente novamente.' })
+    } finally {
+      setMigrating(false)
+    }
+  }
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -148,6 +171,49 @@ export default function ContaPage() {
           </button>
         </form>
       </div>
+
+      {/* Admin: migração de fotos para o Cloudflare R2 */}
+      {isAdmin && (
+        <div className="rounded-xl border border-gray-200 bg-white p-5 mb-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-2">Migrar fotos antigas (R2)</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Reenvia as fotos de produto que ainda estão no armazenamento antigo (Supabase) para o
+            novo (Cloudflare R2), sem limite de tráfego. Pode rodar mais de uma vez: fotos já
+            migradas são puladas automaticamente. Pode levar alguns minutos.
+          </p>
+          <button
+            onClick={handleMigratePhotos}
+            disabled={migrating}
+            className="px-6 py-2.5 rounded-lg bg-gray-900 text-white text-sm font-semibold hover:bg-gray-800 transition-colors disabled:opacity-60"
+          >
+            {migrating ? 'Migrando...' : 'Migrar fotos agora'}
+          </button>
+
+          {migrationResult && (
+            <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm">
+              {'error' in migrationResult ? (
+                <p className="text-red-600 font-medium">Erro: {migrationResult.error}</p>
+              ) : (
+                <>
+                  <p className="text-green-700 font-medium">
+                    {migrationResult.migratedFiles} foto(s) migrada(s) em {migrationResult.migratedProducts} produto(s).
+                  </p>
+                  {migrationResult.failedFiles > 0 && (
+                    <div className="mt-2 text-red-600">
+                      <p className="font-medium">{migrationResult.failedFiles} falha(s):</p>
+                      <ul className="list-disc list-inside mt-1 space-y-0.5">
+                        {migrationResult.failures.map((f, i) => (
+                          <li key={i} className="text-xs break-all">{f}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Sign out */}
       <div className="rounded-xl border border-red-200 bg-red-50 p-5">
