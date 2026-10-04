@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { compressImage } from '@/lib/utils/image'
 import toast from 'react-hot-toast'
 
@@ -14,7 +13,6 @@ type MultiPhotoUploadProps = {
 }
 
 export function MultiPhotoUpload({ photos, onChange, disabled }: MultiPhotoUploadProps) {
-  const supabase = createClient()
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
@@ -32,21 +30,15 @@ export function MultiPhotoUpload({ photos, onChange, disabled }: MultiPhotoUploa
 
     const compressed = await compressImage(file)
 
-    const ext = compressed.name.split('.').pop() ?? 'jpg'
-    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+    const body = new FormData()
+    body.append('file', compressed)
 
-    const { error: uploadError } = await supabase.storage
-      .from('product-photos')
-      .upload(fileName, compressed, { cacheControl: '31536000', upsert: false })
+    const res = await fetch('/api/upload-photo', { method: 'POST', body })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error ?? 'Erro ao enviar foto.')
 
-    if (uploadError) throw uploadError
-
-    const { data: urlData } = supabase.storage
-      .from('product-photos')
-      .getPublicUrl(fileName)
-
-    return urlData.publicUrl
-  }, [supabase])
+    return data.url as string
+  }, [])
 
   async function handleFiles(files: FileList | File[]) {
     const fileArray = Array.from(files)
