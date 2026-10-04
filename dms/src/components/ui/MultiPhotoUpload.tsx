@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { compressImage } from '@/lib/utils/image'
 import toast from 'react-hot-toast'
 
 const MAX_PHOTOS = 5
@@ -29,12 +30,14 @@ export function MultiPhotoUpload({ photos, onChange, disabled }: MultiPhotoUploa
       return null
     }
 
-    const ext = file.name.split('.').pop() ?? 'jpg'
+    const compressed = await compressImage(file)
+
+    const ext = compressed.name.split('.').pop() ?? 'jpg'
     const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
 
     const { error: uploadError } = await supabase.storage
       .from('product-photos')
-      .upload(fileName, file, { cacheControl: '3600', upsert: false })
+      .upload(fileName, compressed, { cacheControl: '31536000', upsert: false })
 
     if (uploadError) throw uploadError
 

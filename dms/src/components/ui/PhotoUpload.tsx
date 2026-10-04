@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { compressImage } from '@/lib/utils/image'
 import toast from 'react-hot-toast'
 
 type PhotoUploadProps = {
@@ -27,13 +28,14 @@ export function PhotoUpload({ value, onChange, disabled }: PhotoUploadProps) {
 
     setUploading(true)
     try {
-      const ext = file.name.split('.').pop() ?? 'jpg'
+      const compressed = await compressImage(file)
+      const ext = compressed.name.split('.').pop() ?? 'jpg'
       const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
 
       const { error: uploadError } = await supabase.storage
         .from('product-photos')
-        .upload(fileName, file, {
-          cacheControl: '3600',
+        .upload(fileName, compressed, {
+          cacheControl: '31536000',
           upsert: false,
         })
 
