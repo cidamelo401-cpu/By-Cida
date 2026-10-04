@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { Button, LoadingSpinner } from '@/components/ui'
 import { MODEL_LABELS } from '@/lib/constants/products'
+import { compressImage } from '@/lib/utils/image'
 import type { Database } from '@/types/database'
 import toast from 'react-hot-toast'
 
@@ -98,13 +99,13 @@ export default function BulkPhotoUploadPage() {
       )
 
       try {
-        const file = item.file!
-        const ext = file.name.split('.').pop() ?? 'jpg'
+        const compressed = await compressImage(item.file!)
+        const ext = compressed.name.split('.').pop() ?? 'jpg'
         const fileName = `${item.product.team.toLowerCase().replace(/\s+/g, '-')}-${item.product.model}-${item.product.size}-${Date.now()}.${ext}`
 
         const { error: uploadError } = await supabase.storage
           .from('product-photos')
-          .upload(fileName, file, { cacheControl: '3600', upsert: false })
+          .upload(fileName, compressed, { cacheControl: '31536000', upsert: false })
 
         if (uploadError) throw uploadError
 
