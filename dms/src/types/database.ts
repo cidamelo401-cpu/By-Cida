@@ -34,6 +34,14 @@ export type StockMovementType =
 
 export type UserRole = 'admin' | 'user'
 
+export type PurchaseLotAllocation = {
+  purchase_lot_id: string
+  supplier_id: string
+  supplier_name: string
+  quantity: number
+  unit_cost: number
+}
+
 export interface Database {
   __InternalSupabase: {
     PostgrestVersion: '13.0.5'
@@ -343,6 +351,105 @@ export interface Database {
           reason?: string | null
           sale_id?: string | null
           created_by?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      suppliers: {
+        Row: {
+          id: string
+          name: string
+          contact: string | null
+          notes: string | null
+          archived: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          contact?: string | null
+          notes?: string | null
+          archived?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          contact?: string | null
+          notes?: string | null
+          archived?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      purchase_lots: {
+        Row: {
+          id: string
+          supplier_id: string
+          product_id: string
+          purchase_date: string
+          quantity: number
+          remaining_quantity: number
+          unit_cost: number
+          notes: string | null
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          supplier_id: string
+          product_id: string
+          purchase_date?: string
+          quantity: number
+          remaining_quantity?: number
+          unit_cost: number
+          notes?: string | null
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          supplier_id?: string
+          product_id?: string
+          purchase_date?: string
+          quantity?: number
+          remaining_quantity?: number
+          unit_cost?: number
+          notes?: string | null
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      purchase_lot_allocations: {
+        Row: {
+          id: string
+          stock_movement_id: string
+          purchase_lot_id: string
+          quantity: number
+          unit_cost: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          stock_movement_id: string
+          purchase_lot_id: string
+          quantity: number
+          unit_cost: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          stock_movement_id?: string
+          purchase_lot_id?: string
+          quantity?: number
+          unit_cost?: number
           created_at?: string
         }
         Relationships: []
