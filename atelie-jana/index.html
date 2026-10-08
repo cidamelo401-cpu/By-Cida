@@ -8,225 +8,242 @@
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #FFF6F1;
+      --bg: #FBF5F2;
       --card: #FFFFFF;
-      --text: #3A2A33;
-      --soft: #8A7580;
-      --pink: #D6336C;
-      --pink-deep: #B02456;
-      --pink-tint: #FDE4EC;
-      --teal: #1FA8A0;
-      --gold: #E9A93B;
-      --border: rgba(58, 42, 51, 0.1);
-      --shadow: 0 6px 24px rgba(214, 51, 108, 0.12);
-      --wa: #25A55F;
+      --text: #3B2F35;
+      --soft: #8F7F87;
+      --rose: #C9788F;
+      --rose-deep: #A8566F;
+      --blush: #F6DDE3;
+      --lilac: #E7DDF2;
+      --sage: #DDE7DC;
+      --line: rgba(59, 47, 53, 0.12);
+      --shadow: 0 10px 30px rgba(168, 86, 111, 0.10);
     }
 
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
-        --bg: #1E1519;
-        --card: #2A1E24;
-        --text: #F6E9EE;
-        --soft: #B49DA6;
-        --pink: #F06292;
-        --pink-deep: #D6336C;
-        --pink-tint: rgba(240, 98, 146, 0.14);
-        --border: rgba(246, 233, 238, 0.1);
-        --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+        --bg: #1D1619;
+        --card: #272025;
+        --text: #F3E8EC;
+        --soft: #B3A0A8;
+        --rose: #E39AB0;
+        --rose-deep: #D17C96;
+        --blush: rgba(227, 154, 176, 0.14);
+        --lilac: rgba(190, 165, 225, 0.14);
+        --sage: rgba(160, 200, 160, 0.12);
+        --line: rgba(243, 232, 236, 0.12);
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
       }
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Nunito', system-ui, sans-serif;
+      font-family: 'Jost', system-ui, sans-serif;
+      font-weight: 400;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.5;
+      line-height: 1.55;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
-    .wrap { max-width: 480px; margin: 0 auto; padding: 0 16px 48px; }
+    /* Manchas suaves de cor no fundo */
+    body::before, body::after {
+      content: ''; position: fixed; z-index: -1; border-radius: 50%; filter: blur(70px); pointer-events: none;
+    }
+    body::before { width: 320px; height: 320px; background: var(--blush); top: -80px; right: -100px; }
+    body::after  { width: 300px; height: 300px; background: var(--lilac); bottom: 10%; left: -120px; }
+
+    .wrap { max-width: 460px; margin: 0 auto; padding: 0 20px 48px; }
+
+    .eyebrow {
+      font-size: 11px; font-weight: 500; letter-spacing: .28em; text-transform: uppercase;
+      color: var(--rose-deep); text-align: center;
+    }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .eyebrow { color: var(--rose); } }
 
     /* Topo */
-    .hero { text-align: center; padding: 36px 0 8px; }
-    .avatar {
-      width: 128px; height: 128px; border-radius: 50%;
-      object-fit: cover; object-position: center top;
-      border: 4px solid var(--card);
-      box-shadow: 0 0 0 3px var(--pink), var(--shadow);
+    .hero { text-align: center; padding: 40px 0 8px; }
+    .arch {
+      width: 168px; height: 208px; margin: 18px auto 0;
+      border-radius: 999px 999px 28px 28px; overflow: hidden;
+      border: 1px solid var(--line); padding: 6px; background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .arch img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center 15%;
+      border-radius: 999px 999px 22px 22px; display: block;
     }
     h1 {
-      font-family: 'Fraunces', Georgia, serif;
-      font-size: 28px; line-height: 1.15; margin-top: 18px; font-weight: 700;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 600; font-size: 38px; line-height: 1.05; margin-top: 26px; letter-spacing: -.01em;
     }
     .tagline {
-      font-family: 'Fraunces', Georgia, serif; font-style: italic;
-      color: var(--pink); font-size: 18px; margin-top: 4px;
+      font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic;
+      font-size: 21px; color: var(--rose-deep); margin-top: 6px;
     }
-    .sub { color: var(--soft); font-size: 14px; margin-top: 10px; }
-
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
-    .chip {
-      background: var(--pink-tint); color: var(--pink-deep);
-      font-size: 12px; font-weight: 800; letter-spacing: .02em;
-      padding: 6px 12px; border-radius: 999px;
-    }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .chip { color: var(--pink); } }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tagline { color: var(--rose); } }
+    .sub { color: var(--soft); font-size: 15px; font-weight: 300; margin: 12px auto 0; max-width: 320px; }
 
     /* Botões */
     .btn {
       display: flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; padding: 16px 20px; border-radius: 16px;
-      font: 800 16px 'Nunito', sans-serif; text-decoration: none;
-      transition: transform .15s ease, box-shadow .15s ease;
+      width: 100%; padding: 16px 22px; border-radius: 999px;
+      font: 500 15px 'Jost', sans-serif; letter-spacing: .03em; text-decoration: none;
+      transition: transform .15s ease, box-shadow .2s ease;
     }
     .btn:active { transform: scale(.98); }
-    .btn-wa { background: var(--wa); color: #fff; box-shadow: 0 8px 20px rgba(37, 165, 95, .28); margin-top: 22px; }
-    .btn-ghost { background: var(--card); color: var(--text); border: 1px solid var(--border); margin-top: 10px; font-weight: 700; }
-    .btn svg { width: 22px; height: 22px; flex: none; }
+    .btn svg { width: 20px; height: 20px; flex: none; }
+    .btn-main {
+      background: linear-gradient(135deg, #D58AA0, var(--rose-deep)); color: #fff;
+      box-shadow: 0 12px 26px rgba(168, 86, 111, .28); margin-top: 26px;
+    }
+    .btn-line { border: 1px solid var(--line); color: var(--text); background: rgba(255,255,255,.35); backdrop-filter: blur(6px); margin-top: 18px; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn-line { background: rgba(255,255,255,.04); } }
 
-    /* Seções */
+    /* Títulos de seção */
+    .section { margin-top: 52px; }
     h2 {
-      font-family: 'Fraunces', Georgia, serif; font-size: 22px;
-      margin: 36px 0 14px; text-align: center;
+      font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600;
+      font-size: 29px; line-height: 1.1; text-align: center; margin-top: 8px;
     }
-    h2 small {
-      display: block; font-family: 'Nunito', sans-serif; font-size: 13px;
-      font-weight: 600; color: var(--soft); margin-top: 2px;
-    }
+    h2 em { font-style: italic; color: var(--rose-deep); }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) h2 em { color: var(--rose); } }
+    .divider { width: 40px; height: 1px; background: var(--rose); margin: 14px auto 0; opacity: .6; }
 
-    .cards { display: grid; gap: 14px; }
-    .card {
-      display: grid; grid-template-columns: 112px 1fr; align-items: stretch;
-      background: var(--card); border-radius: 20px; overflow: hidden;
-      border: 1px solid var(--border); box-shadow: var(--shadow);
-      text-decoration: none; color: inherit;
-      transition: transform .15s ease;
+    /* Serviços */
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
+    .item { text-decoration: none; color: inherit; display: block; }
+    .item .ph {
+      aspect-ratio: 4 / 5; border-radius: 22px; overflow: hidden; position: relative;
+      background: var(--card); box-shadow: var(--shadow); border: 1px solid var(--line);
     }
-    .card:active { transform: scale(.985); }
-    .card img { width: 112px; height: 100%; min-height: 112px; object-fit: cover; display: block; }
-    .card .body { padding: 14px 16px; display: flex; flex-direction: column; justify-content: center; }
-    .card h3 { font-family: 'Fraunces', Georgia, serif; font-size: 18px; line-height: 1.2; }
-    .card p { color: var(--soft); font-size: 13.5px; margin-top: 4px; }
-    .card .go { color: var(--pink); font-weight: 800; font-size: 13px; margin-top: 8px; }
+    .item:nth-child(1) .ph, .item:nth-child(4) .ph { border-radius: 90px 90px 22px 22px; }
+    .item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+    .item:hover img { transform: scale(1.05); }
+    .item h3 {
+      font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600;
+      font-size: 20px; line-height: 1.15; margin-top: 12px;
+    }
+    .item p { font-size: 13px; font-weight: 300; color: var(--soft); margin-top: 2px; line-height: 1.4; }
+    .item .go { display: inline-block; margin-top: 6px; font-size: 12px; letter-spacing: .08em; font-weight: 500; color: var(--rose-deep); }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .item .go { color: var(--rose); } }
 
     /* Galeria */
-    .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .gallery a { display: block; aspect-ratio: 1; overflow: hidden; border-radius: 12px; }
-    .gallery img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s ease; }
-    .gallery a:hover img { transform: scale(1.06); }
-
-    /* Faixa final */
-    .cta-box {
-      margin-top: 36px; padding: 26px 20px; text-align: center; border-radius: 24px;
-      background: linear-gradient(135deg, var(--pink) 0%, var(--pink-deep) 100%);
-      color: #fff; position: relative; overflow: hidden;
+    .strip {
+      display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+      margin: 24px -20px 0; padding: 4px 20px 14px; scrollbar-width: none;
     }
-    .cta-box::after {
-      content: ''; position: absolute; right: -30px; top: -30px; width: 110px; height: 110px;
-      border-radius: 50%; background: rgba(255, 255, 255, .12);
+    .strip::-webkit-scrollbar { display: none; }
+    .strip a {
+      flex: 0 0 62%; scroll-snap-align: center; aspect-ratio: 1; border-radius: 24px; overflow: hidden;
+      border: 1px solid var(--line); box-shadow: var(--shadow); background: var(--card);
     }
-    .cta-box h2 { margin: 0; color: #fff; font-size: 24px; }
-    .cta-box p { margin-top: 8px; font-size: 15px; opacity: .95; }
-    .cta-box .btn { background: #fff; color: var(--pink-deep); margin-top: 18px; box-shadow: none; }
+    .strip img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    footer { text-align: center; color: var(--soft); font-size: 12px; margin-top: 28px; }
-    footer a { color: var(--soft); }
+    /* Convite final */
+    .invite {
+      margin-top: 52px; padding: 36px 24px 30px; text-align: center; border-radius: 32px;
+      background: linear-gradient(160deg, var(--blush), var(--lilac));
+      border: 1px solid var(--line);
+    }
+    .invite h2 { margin-top: 10px; }
+    .invite p { font-weight: 300; color: var(--soft); margin: 12px auto 0; max-width: 300px; font-size: 15px; }
+    .invite .btn-main { margin-top: 22px; }
 
-    .fade { animation: up .5s ease both; }
-    @keyframes up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-    @media (prefers-reduced-motion: reduce) { .fade { animation: none; } html { scroll-behavior: auto; } }
+    footer { text-align: center; margin-top: 30px; font-size: 12px; letter-spacing: .16em; color: var(--soft); }
+    footer a { color: inherit; text-decoration: none; }
+
+    .rise { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .rise { animation: none; } html { scroll-behavior: auto; } .item img { transition: none; } }
   </style>
 </head>
 <body>
   <main class="wrap">
 
-    <header class="hero fade">
-      <img class="avatar" src="img/jana.jpg" alt="Jana Lourenço segurando uma tesoura e uma caixinha de presente">
-      <h1>Ateliê Jana Lourenço</h1>
+    <header class="hero rise">
+      <p class="eyebrow">Ateliê de papelaria e presentes</p>
+      <div class="arch">
+        <img src="img/jana.jpg" alt="Janaína Lourenço segurando uma tesoura e uma caixinha de presente">
+      </div>
+      <h1>Ateliê<br>Jana Lourenço</h1>
       <p class="tagline">O que precisa? Eu faço.</p>
       <p class="sub">Presentes, papelaria e encadernação feitos à mão, do seu jeito.</p>
-      <div class="chips">
-        <span class="chip">Gift box</span>
-        <span class="chip">Agendas e planners</span>
-        <span class="chip">Lembrancinhas</span>
-        <span class="chip">Papelaria para festas</span>
-      </div>
 
-      <a class="btn btn-wa" data-wa="Oi, Jana! Vim pelo Instagram e quero fazer um orçamento." href="#" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7a11.9 11.9 0 0 0 5.6 1.4c6.6 0 11.9-5.3 11.9-11.9C23.9 5.3 18.6 0 12 0Zm5.8 16.8c-.2.7-1.4 1.300-1.9 1.400-.5.100-1.200.1-3.600-.8-3-1.300-4.900-4.400-5-4.600-.2-.2-1.200-1.600-1.200-3s.8-2.200 1-2.500c.3-.3.600-.4.800-.4h.6c.2 0 .5 0 .7.600l.9 2.100c.1.200.1.400 0 .5l-.9 1c-.1.200-.3.300-.1.600a6.500 6.500 0 0 0 3.600 3.100c.3.100.4.100.6-.1l.9-1.100c.2-.2.400-.2.700-.1l2 1c.3.100.5.200.6.300.1.100.1.800-.1 1.400Z"/></svg>
-        Pedir orçamento no WhatsApp
+      <a class="btn btn-main" data-wa="Oi, Jana! Vim pelo Instagram e quero fazer um orçamento." href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7a11.9 11.9 0 0 0 5.6 1.4c6.6 0 11.9-5.3 11.9-11.9C23.9 5.3 18.6 0 12 0Zm5.8 16.8c-.2.7-1.4 1.3-1.9 1.4-.5.1-1.2.1-3.6-.8-3-1.300-4.900-4.400-5-4.600-.2-.2-1.200-1.600-1.200-3s.8-2.200 1-2.500c.3-.3.600-.4.800-.4h.6c.2 0 .5 0 .7.600l.9 2.100c.1.200.1.400 0 .5l-.9 1c-.1.200-.3.300-.1.600a6.500 6.500 0 0 0 3.600 3.100c.3.100.4.100.6-.1l.9-1.100c.2-.2.4-.2.700-.1l2 1c.3.100.5.200.6.300.1.100.1.800-.1 1.400Z"/></svg>
+        Pedir orçamento
       </a>
     </header>
 
-    <section class="fade" style="animation-delay:.1s">
-      <h2>O que eu faço<small>Toque para pedir o seu</small></h2>
-      <div class="cards">
-        <a class="card" data-wa="Oi, Jana! Quero um orçamento de Gift Box." href="#" target="_blank" rel="noopener">
-          <img src="img/giftbox.jpg" alt="Gift box com caneca personalizada e laço rosa de bolinhas" loading="lazy">
-          <div class="body">
-            <h3>Gift Box</h3>
-            <p>Caixas de presente montadas com carinho para cada ocasião.</p>
-            <span class="go">Quero a minha →</span>
-          </div>
+    <section class="section rise" style="animation-delay:.12s">
+      <p class="eyebrow">O que eu faço</p>
+      <h2>Feito <em>sob medida</em><br>para você</h2>
+      <div class="divider"></div>
+
+      <div class="grid">
+        <a class="item" data-wa="Oi, Jana! Quero um orçamento de Gift Box." href="#" target="_blank" rel="noopener">
+          <div class="ph"><img src="img/giftbox.jpg" alt="Gift box com caneca personalizada e laço rosa de bolinhas" loading="lazy"></div>
+          <h3>Gift Box</h3>
+          <p>Presentes montados com carinho.</p>
+          <span class="go">QUERO →</span>
         </a>
-        <a class="card" data-wa="Oi, Jana! Quero um orçamento de agenda ou planner." href="#" target="_blank" rel="noopener">
-          <img src="img/planner.jpg" alt="Planner espiral rosa personalizado com inicial e flores" loading="lazy">
-          <div class="body">
-            <h3>Agendas e planners</h3>
-            <p>Encadernação sob medida, com nome, cores e capa que combinam com você.</p>
-            <span class="go">Quero a minha →</span>
-          </div>
+        <a class="item" data-wa="Oi, Jana! Quero um orçamento de agenda ou planner." href="#" target="_blank" rel="noopener">
+          <div class="ph"><img src="img/planner.jpg" alt="Planner espiral rosa personalizado com inicial e flores" loading="lazy"></div>
+          <h3>Agendas e planners</h3>
+          <p>Encadernação com a sua cara.</p>
+          <span class="go">QUERO →</span>
         </a>
-        <a class="card" data-wa="Oi, Jana! Quero um orçamento de lembrancinhas." href="#" target="_blank" rel="noopener">
-          <img src="img/figurinhas.jpg" alt="Lembrancinha de figurinhas com embalagem personalizada" loading="lazy">
-          <div class="body">
-            <h3>Lembrancinhas</h3>
-            <p>Para professores, avós, clientes, equipes e quem merece um mimo.</p>
-            <span class="go">Quero as minhas →</span>
-          </div>
+        <a class="item" data-wa="Oi, Jana! Quero um orçamento de lembrancinhas." href="#" target="_blank" rel="noopener">
+          <div class="ph"><img src="img/figurinhas.jpg" alt="Lembrancinha de figurinhas com embalagem personalizada" loading="lazy"></div>
+          <h3>Lembrancinhas</h3>
+          <p>Mimos para quem você ama.</p>
+          <span class="go">QUERO →</span>
         </a>
-        <a class="card" data-wa="Oi, Jana! Quero um orçamento de papelaria para festa." href="#" target="_blank" rel="noopener">
-          <img src="img/festa.jpg" alt="Topo de bolo personalizado com tema de futebol" loading="lazy">
-          <div class="body">
-            <h3>Papelaria para festas</h3>
-            <p>Topos de bolo, tags, caixinhas e tudo no tema da sua festa.</p>
-            <span class="go">Quero a minha →</span>
-          </div>
+        <a class="item" data-wa="Oi, Jana! Quero um orçamento de papelaria para festa." href="#" target="_blank" rel="noopener">
+          <div class="ph"><img src="img/festa.jpg" alt="Topo de bolo personalizado com tema de futebol" loading="lazy"></div>
+          <h3>Papelaria para festas</h3>
+          <p>Tudo no tema da sua festa.</p>
+          <span class="go">QUERO →</span>
         </a>
       </div>
     </section>
 
-    <section class="fade" style="animation-delay:.2s">
-      <h2>Feito à mão<small>Alguns trabalhos recentes</small></h2>
-      <div class="gallery">
+    <section class="section rise" style="animation-delay:.2s">
+      <p class="eyebrow">Portfólio</p>
+      <h2>Detalhes que <em>encantam</em></h2>
+      <div class="divider"></div>
+      <div class="strip">
         <a href="https://www.instagram.com/ateliejanalourenco/" target="_blank" rel="noopener"><img src="img/natal.jpg" alt="Caixinha de Natal com laço verde" loading="lazy"></a>
         <a href="https://www.instagram.com/ateliejanalourenco/" target="_blank" rel="noopener"><img src="img/voce-e-preciosa.jpg" alt="Bloco de notas Você é preciosa" loading="lazy"></a>
         <a href="https://www.instagram.com/ateliejanalourenco/" target="_blank" rel="noopener"><img src="img/caderno.jpg" alt="Kit de caderno e canetas personalizados" loading="lazy"></a>
       </div>
-      <a class="btn btn-ghost" href="https://www.instagram.com/ateliejanalourenco/" target="_blank" rel="noopener">Ver mais no Instagram</a>
+      <a class="btn btn-line" href="https://www.instagram.com/ateliejanalourenco/" target="_blank" rel="noopener">Ver mais no Instagram</a>
     </section>
 
-    <section class="cta-box fade" style="animation-delay:.3s">
-      <h2>Não achou o que procura?</h2>
-      <p>Me conta a ideia. Se dá para fazer com papel, criatividade e capricho, eu faço.</p>
-      <a class="btn" data-wa="Oi, Jana! Tenho uma ideia e queria saber se você faz." href="#" target="_blank" rel="noopener">Falar com a Jana</a>
+    <section class="invite rise" style="animation-delay:.28s">
+      <p class="eyebrow">Tem uma ideia?</p>
+      <h2>Me conta que<br>eu <em>faço</em></h2>
+      <p>Se dá para criar com papel, criatividade e capricho, a gente dá um jeito.</p>
+      <a class="btn btn-main" data-wa="Oi, Jana! Tenho uma ideia e queria saber se você faz." href="#" target="_blank" rel="noopener">Falar com a Jana</a>
     </section>
 
     <footer>
-      <p>@ateliejanalourenco</p>
+      <a href="https://www.instagram.com/ateliejanalourenco/" target="_blank" rel="noopener">@ATELIEJANALOURENCO</a>
     </footer>
   </main>
 
   <script>
-    // Troque pelo WhatsApp da Jana: DDI + DDD + número, só dígitos (ex.: 5521999999999)
-    var WHATSAPP = '5500000000000';
+    // WhatsApp: DDI + DDD + número, só dígitos
+    var WHATSAPP = '5511984826048';
 
     document.querySelectorAll('[data-wa]').forEach(function (el) {
       el.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(el.getAttribute('data-wa'));
