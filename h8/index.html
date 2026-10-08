@@ -11,7 +11,7 @@
   <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,600;1,700;1,800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,600;1,700;1,800&family=Barlow:wght@400;500;600&family=Montserrat:wght@600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -46,31 +46,7 @@
 
     /* Marca */
     .brand { text-align: center; margin-bottom: 28px; }
-    .logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-style: italic;
-      font-weight: 800;
-      font-size: 96px;
-      line-height: 0.9;
-      letter-spacing: -2px;
-      background: linear-gradient(180deg, #ffffff 0%, #b9bbc0 55%, #7d7f85 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      filter: drop-shadow(0 0 22px rgba(211, 21, 31, 0.45));
-    }
-    .logo span { background: linear-gradient(180deg, #ff5059 0%, var(--red) 70%); -webkit-background-clip: text; background-clip: text; }
-    .sub {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-style: italic;
-      font-weight: 600;
-      letter-spacing: 6px;
-      font-size: 14px;
-      text-transform: uppercase;
-      color: var(--silver);
-      margin-top: 8px;
-    }
-    .stars { color: var(--red-bright); letter-spacing: 4px; font-size: 11px; margin-top: 6px; }
+    .logo { display: block; width: 270px; max-width: 80%; height: auto; margin: 0 auto; filter: drop-shadow(0 0 22px rgba(211, 21, 31, 0.4)); }
     .tagline { margin-top: 18px; font-size: 15px; color: var(--text-soft); }
     .tagline strong { color: var(--text); font-weight: 600; }
 
@@ -147,9 +123,27 @@
   <main class="wrap">
 
     <header class="brand">
-      <div class="logo" aria-label="H8">H<span>8</span></div>
-      <div class="sub">Funilaria Premium</div>
-      <div class="stars" aria-hidden="true">★ ★ ★ ★ ★</div>
+      <svg class="logo" viewBox="0 0 310 185" role="img" aria-label="H8 Funilaria e Pintura">
+        <defs>
+          <linearGradient id="gH" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#fafafa"/>
+            <stop offset=".45" stop-color="#c9cacd"/>
+            <stop offset=".55" stop-color="#9c9ea3"/>
+            <stop offset="1" stop-color="#e4e5e8"/>
+          </linearGradient>
+          <linearGradient id="g8" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f0453d"/>
+            <stop offset=".6" stop-color="#c3201b"/>
+            <stop offset="1" stop-color="#8e100d"/>
+          </linearGradient>
+        </defs>
+        <g transform="translate(40 8) skewX(-14)">
+          <path fill="url(#gH)" d="M0 0H31V38H89V0H120V100H89V62H31V100H0Z"/>
+          <path fill="url(#g8)" fill-rule="evenodd" d="M168 0H222Q252 0 252 26Q252 42 238 50Q252 58 252 74Q252 100 222 100H168Q138 100 138 74Q138 58 152 50Q138 42 138 26Q138 0 168 0ZM172 22Q166 22 166 28V32Q166 38 172 38H218Q224 38 224 32V28Q224 22 218 22ZM172 62Q166 62 166 68V72Q166 78 172 78H218Q224 78 224 72V68Q224 62 218 62Z"/>
+        </g>
+        <text x="155" y="142" text-anchor="middle" font-family="Montserrat, 'Barlow', sans-serif" font-weight="600" font-size="15" fill="#d9dadd" textLength="262" lengthAdjust="spacing">FUNILARIA E PINTURA</text>
+        <text x="155" y="172" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#e0262c" letter-spacing="9">★★★★★</text>
+      </svg>
       <p class="tagline"><strong>Funilaria, pintura automotiva e martelinho de ouro</strong><br>Tatuapé · São Paulo</p>
       <a class="rating" href="https://share.google/T29PLIBWbmID7pN8N" target="_blank" rel="noopener">
         <span class="gold" aria-hidden="true">★★★★★</span> <b>5,0</b> <small>no Google · 11 avaliações</small>
