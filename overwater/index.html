@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overwater Motors | Catálogo</title>
+  <meta name="description" content="Náutica premium e lifestyle: lanchas, jet skis e embarcações selecionadas. Igaratá e Ubatuba.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0A1A2F">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #08162A;
+      --surface: #0F2240;
+      --surface-2: #14294A;
+      --text: #F2F0EA;
+      --text-soft: #9FB0C8;
+      --accent: #F26A1B;
+      --accent-hover: #FF7F36;
+      --gold: #C9A962;
+      --border: rgba(242, 240, 234, 0.1);
+      --wa: #25D366;
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+    /* Aviso de demonstração */
+    .demo-bar {
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      padding: 8px 16px;
+    }
+
+    /* Topo */
+    .hero { text-align: center; padding: 40px 0 28px; }
+    .logo {
+      width: 88px; height: 88px; margin: 0 auto 18px;
+      border-radius: 50%;
+      border: 1px solid var(--gold);
+      background: radial-gradient(circle at 30% 20%, #17345E, #060F1E);
+      display: grid; place-items: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 34px; font-weight: 600; color: var(--gold); letter-spacing: 2px;
+    }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 34px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    }
+    .tagline { color: var(--gold); font-size: 14px; letter-spacing: 1.5px; margin-top: 4px; }
+    .place { color: var(--text-soft); font-size: 13px; margin-top: 6px; }
+
+    /* Abas */
+    .tabs {
+      display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 20px;
+      scrollbar-width: none; justify-content: center; flex-wrap: wrap;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 600;
+      border: 1px solid var(--border); color: var(--text-soft); white-space: nowrap;
+      min-height: 44px;
+    }
+    .tab[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* Cards */
+    .grid { display: grid; gap: 18px; grid-template-columns: 1fr; padding-bottom: 40px; }
+    @media (min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 960px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .photo { position: relative; aspect-ratio: 4 / 3; background: var(--surface-2); cursor: pointer; }
+    .photo img, .photo svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .badge {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(8, 22, 42, 0.85); border: 1px solid var(--gold); color: var(--gold);
+      font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px;
+    }
+    .badge.status { left: auto; right: 12px; border-color: var(--accent); color: var(--accent); }
+    .sample {
+      position: absolute; bottom: 10px; left: 12px;
+      font-size: 11px; color: var(--text-soft); background: rgba(8, 22, 42, 0.75);
+      padding: 2px 8px; border-radius: 6px;
+    }
+    .info { padding: 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .name { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 700; line-height: 1.15; }
+    .meta { color: var(--text-soft); font-size: 14px; }
+    .price { font-size: 22px; font-weight: 700; margin-top: 4px; }
+    .price.consult { font-size: 16px; color: var(--gold); font-weight: 600; }
+    .actions { display: flex; gap: 8px; margin-top: auto; padding-top: 12px; }
+    .btn {
+      flex: 1; text-align: center; padding: 12px 14px; border-radius: 12px;
+      font-weight: 600; font-size: 14px; min-height: 44px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-wa { background: var(--wa); color: #06210F; }
+    .btn-wa:hover { filter: brightness(1.08); }
+    .btn-ghost { border: 1px solid var(--border); color: var(--text); }
+    .btn-ghost:hover { border-color: var(--text-soft); }
+    .card.sold { opacity: 0.6; }
+
+    .empty { text-align: center; color: var(--text-soft); padding: 40px 0; grid-column: 1 / -1; }
+
+    /* Quero vender */
+    .sell {
+      background: linear-gradient(135deg, var(--surface-2), var(--surface));
+      border: 1px solid var(--gold); border-radius: var(--radius);
+      padding: 28px 20px; text-align: center; margin-bottom: 40px;
+    }
+    .sell h2 { font-family: 'Cormorant Garamond', serif; font-size: 28px; }
+    .sell p { color: var(--text-soft); margin: 8px auto 18px; max-width: 460px; }
+    .sell .btn { max-width: 320px; margin: 0 auto; background: var(--accent); color: #fff; flex: none; width: 100%; }
+    .sell .btn:hover { background: var(--accent-hover); }
+
+    footer { text-align: center; color: var(--text-soft); font-size: 13px; padding: 0 0 40px; }
+    footer a { color: var(--gold); }
+
+    /* Detalhe */
+    dialog {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--surface); color: var(--text);
+      width: min(560px, calc(100% - 24px)); max-height: calc(100% - 24px);
+      margin: auto; padding: 0; overflow: auto;
+    }
+    dialog::backdrop { background: rgba(2, 8, 18, 0.8); }
+    .dlg-photo { aspect-ratio: 4 / 3; background: var(--surface-2); }
+    .dlg-photo img, .dlg-photo svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .dlg-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .dlg-body .name { font-size: 30px; }
+    .specs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 6px 0; }
+    .spec { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; }
+    .spec small { display: block; color: var(--text-soft); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    .spec span { font-weight: 600; font-size: 15px; }
+    .desc { color: var(--text-soft); font-size: 15px; }
+    .close {
+      position: absolute; top: 10px; right: 10px; width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(8, 22, 42, 0.85); font-size: 22px; line-height: 1; z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="demo-bar" id="demoBar">DEMONSTRAÇÃO · barcos, preços e fotos de exemplo, não são reais</div>
+
+  <header class="hero wrap">
+    <div class="logo" aria-hidden="true">OM</div>
+    <h1>Overwater Motors</h1>
+    <p class="tagline">Náutica Premium &amp; Lifestyle</p>
+    <p class="place">Igaratá · Ubatuba</p>
+  </header>
+
+  <main class="wrap">
+    <nav class="tabs" id="tabs" aria-label="Categorias"></nav>
+    <section class="grid" id="grid" aria-live="polite"></section>
+
+    <section class="sell">
+      <h2>Quer vender seu barco ou jet?</h2>
+      <p>A gente cuida da avaliação, das fotos e da divulgação. Fale com a gente e descubra quanto vale a sua embarcação.</p>
+      <a class="btn" id="sellBtn" href="#" target="_blank" rel="noopener">Quero vender o meu</a>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <p><a href="https://www.instagram.com/overwatermotors" target="_blank" rel="noopener">@overwatermotors</a></p>
+    <p style="margin-top:6px">Página criada pela ByCida</p>
+  </footer>
+
+  <dialog id="dlg" aria-label="Detalhes da embarcação">
+    <button class="close" id="dlgClose" aria-label="Fechar">×</button>
+    <div id="dlgContent"></div>
+  </dialog>
+
+<script>
+(function () {
+  /* ========== CONFIGURAÇÃO (a única parte que muda por cliente) ========== */
+  var WHATSAPP = '5500000000000';   // TROCAR: número da H8, só dígitos, com 55 + DDD
+  var SHEET_CSV_URL = '';           // Link da planilha publicada como CSV. Vazio = usa os exemplos abaixo.
+  var IS_DEMO = true;               // false quando for ao ar com dados reais
+
+  /* Colunas da planilha (linha 1):
+     categoria | nome | ano | horas | condicao | preco | status | comprimento | motor | descricao | foto1 | foto2 | foto3
+     preco vazio = "Sob consulta" · status: Disponível, Reservado ou Vendido · categoria: Lanchas, Jet Skis, UTVs... */
+  var DEMO_DATA = [
+    { categoria: 'Lanchas', nome: 'Lancha Exemplo 265', ano: '2023', horas: '40', condicao: 'Seminova',
+      preco: '690000', status: 'Disponível', comprimento: '26,5 pés', motor: 'Motor de exemplo',
+      descricao: 'Texto de exemplo. Aqui entra a descrição real do barco: estado, equipamentos, histórico de uso e documentação.' },
+    { categoria: 'Lanchas', nome: 'Lancha Exemplo 320', ano: '2021', horas: '120', condicao: 'Usada',
+      preco: '', status: 'Disponível', comprimento: '32 pés', motor: 'Motor de exemplo',
+      descricao: 'Texto de exemplo. Barco sem preço divulgado aparece como "Sob consulta" e leva o cliente direto para o WhatsApp.' },
+    { categoria: 'Jet Skis', nome: 'Jet Ski Exemplo GT', ano: '2024', horas: '12', condicao: 'Seminovo',
+      preco: '95000', status: 'Reservado', comprimento: '3,5 m', motor: 'Motor de exemplo',
+      descricao: 'Texto de exemplo. Itens reservados ou vendidos continuam na página com a etiqueta correspondente.' }
+  ];
+
+  /* ========== CÓDIGO ========== */
+  var items = [];
+  var current = 'Todos';
+  var $grid = document.getElementById('grid');
+  var $tabs = document.getElementById('tabs');
+  var $dlg = document.getElementById('dlg');
+  var $dlgContent = document.getElementById('dlgContent');
+
+  if (!IS_DEMO) document.getElementById('demoBar').remove();
+
+  function wa(text) { return 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(text); }
+  function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+  function money(v) {
+    var n = parseFloat(String(v).replace(/[^\d,.-]/g, '').replace(/\.(?=\d{3}\b)/g, '').replace(',', '.'));
+    return isNaN(n) ? '' : n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+  }
+
+  /* Imagem de exemplo (silhueta de barco) quando não há foto */
+  function placeholder(seed) {
+    var hue = 205 + (seed * 11) % 25;
+    return '<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Foto de exemplo">' +
+      '<defs><linearGradient id="s' + seed + '" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0" stop-color="hsl(' + hue + ',55%,22%)"/><stop offset="1" stop-color="hsl(' + hue + ',60%,10%)"/></linearGradient></defs>' +
+      '<rect width="400" height="300" fill="url(#s' + seed + ')"/>' +
+      '<rect y="190" width="400" height="110" fill="hsl(' + hue + ',60%,8%)"/>' +
+      '<path d="M70 190 L330 190 L300 225 L110 225 Z" fill="#F2F0EA"/>' +
+      '<path d="M140 190 L165 150 L250 150 L275 190 Z" fill="#C9A962" opacity=".9"/>' +
+      '<rect x="178" y="160" width="60" height="22" rx="3" fill="hsl(' + hue + ',60%,16%)"/>' +
+      '<path d="M0 232 Q50 222 100 232 T200 232 T300 232 T400 232" stroke="#F26A1B" stroke-opacity=".5" fill="none" stroke-width="2"/>' +
+      '</svg>';
+  }
+  function photo(it, i) {
+    return it.foto1 ? '<img src="' + esc(it.foto1) + '" alt="' + esc(it.nome) + '" loading="lazy">' : placeholder(i + 1);
+  }
+
+  function priceHtml(it) {
+    var p = money(it.preco);
+    return p ? '<div class="price">' + p + '</div>' : '<div class="price consult">Sob consulta</div>';
+  }
+  function metaLine(it) {
+    var parts = [];
+    if (it.ano) parts.push(it.ano);
+    if (it.horas) parts.push(it.horas + ' h de uso');
+    return parts.join(' · ');
+  }
+  function isSold(it) { return /vendid/i.test(it.status || ''); }
+  function statusBadge(it) {
+    return it.status && !/dispon/i.test(it.status) ? '<span class="badge status">' + esc(it.status) + '</span>' : '';
+  }
+
+  function renderTabs() {
+    var cats = ['Todos'];
+    items.forEach(function (it) { if (it.categoria && cats.indexOf(it.categoria) < 0) cats.push(it.categoria); });
+    if (cats.length <= 2) { $tabs.innerHTML = ''; return; }   // uma categoria só: sem abas
+    $tabs.innerHTML = cats.map(function (c) {
+      var n = c === 'Todos' ? items.length : items.filter(function (i) { return i.categoria === c; }).length;
+      return '<button class="tab" data-cat="' + esc(c) + '" aria-pressed="' + (c === current) + '">' + esc(c) + ' (' + n + ')</button>';
+    }).join('');
+  }
+
+  function renderGrid() {
+    var list = items.map(function (it, i) { return { it: it, i: i }; })
+      .filter(function (x) { return current === 'Todos' || x.it.categoria === current; });
+    if (!list.length) { $grid.innerHTML = '<p class="empty">Nenhuma embarcação nesta categoria no momento.</p>'; return; }
+    $grid.innerHTML = list.map(function (x) {
+      var it = x.it;
+      var msg = 'Olá! Vi o ' + it.nome + (it.ano ? ' ' + it.ano : '') + ' no catálogo da Overwater Motors e tenho interesse.';
+      return '<article class="card' + (isSold(it) ? ' sold' : '') + '">' +
+        '<div class="photo" data-open="' + x.i + '">' + photo(it, x.i) +
+          (it.condicao ? '<span class="badge">' + esc(it.condicao) + '</span>' : '') + statusBadge(it) +
+          (it.foto1 ? '' : '<span class="sample">Foto de exemplo</span>') + '</div>' +
+        '<div class="info"><h2 class="name">' + esc(it.nome) + '</h2>' +
+          '<p class="meta">' + esc(metaLine(it)) + '</p>' + priceHtml(it) +
+          '<div class="actions"><button class="btn btn-ghost" data-open="' + x.i + '">Ver detalhes</button>' +
+          (isSold(it) ? '' : '<a class="btn btn-wa" target="_blank" rel="noopener" href="' + wa(msg) + '">Tenho interesse</a>') +
+        '</div></div></article>';
+    }).join('');
+  }
+
+  function openItem(i) {
+    var it = items[i];
+    var specs = [['Ano', it.ano], ['Uso', it.horas ? it.horas + ' horas' : ''], ['Condição', it.condicao],
+                 ['Tamanho', it.comprimento], ['Motor', it.motor], ['Status', it.status]]
+      .filter(function (s) { return s[1]; })
+      .map(function (s) { return '<div class="spec"><small>' + s[0] + '</small><span>' + esc(s[1]) + '</span></div>'; }).join('');
+    var msg = 'Olá! Vi o ' + it.nome + (it.ano ? ' ' + it.ano : '') + ' no catálogo da Overwater Motors e tenho interesse.';
+    $dlgContent.innerHTML = '<div class="dlg-photo">' + photo(it, i + 1) + '</div><div class="dlg-body">' +
+      '<h2 class="name">' + esc(it.nome) + '</h2>' + priceHtml(it) +
+      '<div class="specs">' + specs + '</div>' +
+      (it.descricao ? '<p class="desc">' + esc(it.descricao) + '</p>' : '') +
+      (isSold(it) ? '' : '<a class="btn btn-wa" target="_blank" rel="noopener" href="' + wa(msg) + '">Chamar no WhatsApp</a>') + '</div>';
+    $dlg.showModal();
+  }
+
+  /* CSV simples, com suporte a aspas */
+  function parseCSV(text) {
+    var rows = [], row = [], cur = '', q = false;
+    for (var k = 0; k < text.length; k++) {
+      var c = text[k];
+      if (q) {
+        if (c === '"' && text[k + 1] === '"') { cur += '"'; k++; }
+        else if (c === '"') q = false;
+        else cur += c;
+      } else if (c === '"') q = true;
+      else if (c === ',') { row.push(cur); cur = ''; }
+      else if (c === '\n' || c === '\r') {
+        if (c === '\r' && text[k + 1] === '\n') k++;
+        row.push(cur); rows.push(row); row = []; cur = '';
+      } else cur += c;
+    }
+    if (cur || row.length) { row.push(cur); rows.push(row); }
+    var head = rows.shift().map(function (h) { return h.trim().toLowerCase(); });
+    return rows.filter(function (r) { return r.join('').trim(); }).map(function (r) {
+      var o = {}; head.forEach(function (h, idx) { o[h] = (r[idx] || '').trim(); }); return o;
+    });
+  }
+
+  function start(data) {
+    items = data.filter(function (it) { return it.nome; });
+    renderTabs(); renderGrid();
+  }
+
+  $tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-cat]'); if (!b) return;
+    current = b.getAttribute('data-cat'); renderTabs(); renderGrid();
+  });
+  $grid.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-open]'); if (b) openItem(+b.getAttribute('data-open'));
+  });
+  document.getElementById('dlgClose').addEventListener('click', function () { $dlg.close(); });
+  $dlg.addEventListener('click', function (e) { if (e.target === $dlg) $dlg.close(); });
+  document.getElementById('sellBtn').href = wa('Olá! Quero vender meu barco/jet com a Overwater Motors.');
+
+  if (SHEET_CSV_URL) {
+    fetch(SHEET_CSV_URL).then(function (r) { if (!r.ok) throw 0; return r.text(); })
+      .then(function (t) { start(parseCSV(t)); })
+      .catch(function () {
+        if (IS_DEMO) start(DEMO_DATA);
+        else $grid.innerHTML = '<p class="empty">Não foi possível carregar o catálogo agora. Chame a gente no WhatsApp.</p>';
+      });
+  } else {
+    start(DEMO_DATA);
+  }
+})();
+</script>
+</body>
+</html>
