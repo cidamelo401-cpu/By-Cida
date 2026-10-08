@@ -154,7 +154,10 @@ export default function CatalogoPage() {
 
     for (const p of filteredProducts) {
       const isKids = KIDS_SIZES.includes(p.size)
-      const key = (p as any).catalog_group ?? `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+      // Agrupamento sempre por time+modelo+temporada — o catalog_group (quando existe) não é usado
+      // como chave porque um tamanho cadastrado separadamente pode ficar sem esse elo e formar
+      // indevidamente um card próprio em vez de se juntar aos demais tamanhos da mesma camisa.
+      const key = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
       const isAvailable = p.status !== 'sob_encomenda' && p.quantity > 0
 
       const existing = map.get(key)
