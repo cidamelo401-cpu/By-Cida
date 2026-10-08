@@ -82,6 +82,17 @@
     }
     .tab[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
 
+    /* Busca */
+    .search { max-width: 520px; margin: 0 auto 16px; }
+    .search input {
+      width: 100%; min-height: 48px; padding: 12px 18px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      font: inherit; font-size: 16px;
+    }
+    .search input::placeholder { color: var(--text-soft); }
+    .more { grid-column: 1 / -1; text-align: center; padding-top: 6px; }
+    .more .btn { display: inline-flex; flex: none; padding: 12px 28px; }
+
     /* Cards */
     .grid { display: grid; gap: 18px; grid-template-columns: 1fr; padding-bottom: 40px; }
     @media (min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
@@ -174,6 +185,7 @@
   </header>
 
   <main class="wrap">
+    <div class="search"><input id="q" type="search" placeholder="Buscar por nome, modelo ou categoria" aria-label="Buscar no catálogo" autocomplete="off"></div>
     <nav class="tabs" id="tabs" aria-label="Categorias"></nav>
     <section class="grid" id="grid" aria-live="polite"></section>
 
@@ -210,15 +222,27 @@
       descricao: 'Texto de exemplo. Aqui entra a descrição real do barco: estado, equipamentos, histórico de uso e documentação.' },
     { categoria: 'Lanchas', nome: 'Lancha Exemplo 320', ano: '2021', horas: '120', condicao: 'Usada',
       preco: '', status: 'Disponível', comprimento: '32 pés', motor: 'Motor de exemplo',
-      descricao: 'Texto de exemplo. Barco sem preço divulgado aparece como "Sob consulta" e leva o cliente direto para o WhatsApp.' },
+      descricao: 'Texto de exemplo. Item sem preço divulgado aparece como "Sob consulta" e leva o cliente direto para o WhatsApp.' },
     { categoria: 'Jet Skis', nome: 'Jet Ski Exemplo GT', ano: '2024', horas: '12', condicao: 'Seminovo',
       preco: '95000', status: 'Reservado', comprimento: '3,5 m', motor: 'Motor de exemplo',
-      descricao: 'Texto de exemplo. Itens reservados ou vendidos continuam na página com a etiqueta correspondente.' }
+      descricao: 'Texto de exemplo. Itens reservados ou vendidos continuam na página com a etiqueta correspondente.' },
+    { categoria: 'Jet Skis', nome: 'Jet Ski Exemplo Sport', ano: '2022', horas: '60', condicao: 'Usado',
+      preco: '72000', status: 'Disponível', comprimento: '3,3 m', motor: 'Motor de exemplo',
+      descricao: 'Texto de exemplo para um segundo jet ski.' },
+    { categoria: 'Triciclos', nome: 'Triciclo Exemplo 4x4', ano: '2025', horas: '', condicao: 'Novo',
+      preco: '58000', status: 'Disponível', comprimento: '', motor: 'Motor de exemplo',
+      descricao: 'Texto de exemplo. Cada categoria aparece como uma aba, e os campos sem informação simplesmente não aparecem.' },
+    { categoria: 'Acessórios', nome: 'Acessório Exemplo', ano: '', horas: '', condicao: 'Novo',
+      preco: '2500', status: 'Disponível', comprimento: '', motor: '',
+      descricao: 'Texto de exemplo. Peças e acessórios também podem entrar no catálogo.' }
   ];
 
   /* ========== CÓDIGO ========== */
   var items = [];
   var current = 'Todos';
+  var PAGE = 12;                    // itens mostrados por vez
+  var shown = PAGE;
+  var query = '';
   var $grid = document.getElementById('grid');
   var $tabs = document.getElementById('tabs');
   var $dlg = document.getElementById('dlg');
@@ -227,6 +251,7 @@
   if (!IS_DEMO) document.getElementById('demoBar').remove();
 
   function wa(text) { return 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(text); }
+  function norm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
   function money(v) {
     var n = parseFloat(String(v).replace(/[^\d,.-]/g, '').replace(/\.(?=\d{3}\b)/g, '').replace(',', '.'));
@@ -277,10 +302,13 @@
   }
 
   function renderGrid() {
+    var q = norm(query).trim();
     var list = items.map(function (it, i) { return { it: it, i: i }; })
-      .filter(function (x) { return current === 'Todos' || x.it.categoria === current; });
-    if (!list.length) { $grid.innerHTML = '<p class="empty">Nenhuma embarcação nesta categoria no momento.</p>'; return; }
-    $grid.innerHTML = list.map(function (x) {
+      .filter(function (x) { return current === 'Todos' || x.it.categoria === current; })
+      .filter(function (x) { return !q || norm([x.it.nome, x.it.categoria, x.it.ano, x.it.condicao, x.it.motor].join(' ')).indexOf(q) > -1; });
+    if (!list.length) { $grid.innerHTML = '<p class="empty">Nada encontrado. Tente outra busca ou chame a gente no WhatsApp.</p>'; return; }
+    var visible = list.slice(0, shown);
+    $grid.innerHTML = visible.map(function (x) {
       var it = x.it;
       var msg = 'Olá! Vi o ' + it.nome + (it.ano ? ' ' + it.ano : '') + ' no catálogo da Overwater Motors e tenho interesse.';
       return '<article class="card' + (isSold(it) ? ' sold' : '') + '">' +
@@ -292,7 +320,8 @@
           '<div class="actions"><button class="btn btn-ghost" data-open="' + x.i + '">Ver detalhes</button>' +
           (isSold(it) ? '' : '<a class="btn btn-wa" target="_blank" rel="noopener" href="' + wa(msg) + '">Tenho interesse</a>') +
         '</div></div></article>';
-    }).join('');
+    }).join('') + (list.length > shown
+      ? '<div class="more"><button class="btn btn-ghost" id="moreBtn">Ver mais (' + (list.length - shown) + ')</button></div>' : '');
   }
 
   function openItem(i) {
@@ -340,11 +369,13 @@
 
   $tabs.addEventListener('click', function (e) {
     var b = e.target.closest('[data-cat]'); if (!b) return;
-    current = b.getAttribute('data-cat'); renderTabs(); renderGrid();
+    current = b.getAttribute('data-cat'); shown = PAGE; renderTabs(); renderGrid();
   });
   $grid.addEventListener('click', function (e) {
+    if (e.target.id === 'moreBtn') { shown += PAGE; renderGrid(); return; }
     var b = e.target.closest('[data-open]'); if (b) openItem(+b.getAttribute('data-open'));
   });
+  document.getElementById('q').addEventListener('input', function (e) { query = e.target.value; shown = PAGE; renderGrid(); });
   document.getElementById('dlgClose').addEventListener('click', function () { $dlg.close(); });
   $dlg.addEventListener('click', function (e) { if (e.target === $dlg) $dlg.close(); });
   document.getElementById('sellBtn').href = wa('Olá! Quero vender meu barco/jet com a Overwater Motors.');
