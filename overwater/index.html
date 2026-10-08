@@ -152,7 +152,7 @@
     }
     .photo { position: relative; aspect-ratio: 4 / 3; background: var(--surface-2); cursor: pointer; overflow: hidden; }
     .photo img, .photo svg { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .9s var(--ease); }
-    .photo::after { content: ''; position: absolute; inset: auto 0 0 0; height: 55%; background: linear-gradient(180deg, transparent, rgba(6, 16, 31, 0.78)); pointer-events: none; }
+    .photo::after { content: ''; position: absolute; inset: auto 0 0 0; height: 40%; background: linear-gradient(180deg, transparent, rgba(6, 16, 31, 0.5)); pointer-events: none; }
     .badge {
       position: absolute; top: 12px; left: 12px; z-index: 2;
       background: rgba(6, 16, 31, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -161,8 +161,8 @@
     }
     .badge.status { left: auto; right: 12px; border-color: var(--accent); color: #FFB48A; }
     .badge.status.sold { border-color: #8892A6; color: #C3CBDA; }
-    .chip { position: absolute; left: 14px; bottom: 12px; z-index: 2; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text); font-weight: 600; }
-    .sample { position: absolute; right: 12px; bottom: 12px; z-index: 2; font-size: 11px; color: var(--text-soft); }
+    .chip { position: absolute; left: 12px; bottom: 12px; z-index: 2; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text); font-weight: 600; background: rgba(6, 16, 31, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 5px 11px; border-radius: 999px; }
+    .sample { position: absolute; right: 12px; bottom: 12px; z-index: 2; font-size: 11px; color: var(--text); background: rgba(6, 16, 31, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 999px; }
     .info { padding: 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
     .name { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; line-height: 1.12; }
     .meta { color: var(--text-soft); font-size: 14px; }
@@ -315,23 +315,20 @@
      categoria: Lanchas, Jet Skis, Triciclos... (cada categoria vira uma aba) */
   var DEMO_DATA = [
     { categoria: 'Lanchas', nome: 'Lancha Exemplo 265', ano: '2023', horas: '40', condicao: 'Seminova', destaque: 'sim',
-      preco: '690000', status: 'Disponível', comprimento: '26,5 pés', motor: 'Motor de exemplo',
+      preco: '690000', status: 'Disponível', comprimento: '26,5 pés', motor: 'Motor de exemplo', foto1: 'img/lancha-branca.webp', foto2: 'img/lancha-azul.webp',
       descricao: 'Texto de exemplo. Aqui entra a descrição real do barco: estado, equipamentos, histórico de uso e documentação.' },
     { categoria: 'Lanchas', nome: 'Lancha Exemplo 320', ano: '2021', horas: '120', condicao: 'Usada',
-      preco: '', status: 'Disponível', comprimento: '32 pés', motor: 'Motor de exemplo',
+      preco: '', status: 'Disponível', comprimento: '32 pés', motor: 'Motor de exemplo', foto1: 'img/lancha-azul.webp',
       descricao: 'Texto de exemplo. Item sem preço divulgado aparece como "Sob consulta" e leva o cliente direto para o WhatsApp.' },
     { categoria: 'Jet Skis', nome: 'Jet Ski Exemplo GT', ano: '2024', horas: '12', condicao: 'Seminovo',
-      preco: '95000', status: 'Reservado', comprimento: '3,5 m', motor: 'Motor de exemplo',
+      preco: '95000', status: 'Reservado', comprimento: '3,5 m', motor: 'Motor de exemplo', foto1: 'img/jet-azul.webp',
       descricao: 'Texto de exemplo. Itens reservados ou vendidos continuam na página com a etiqueta correspondente.' },
     { categoria: 'Jet Skis', nome: 'Jet Ski Exemplo Sport', ano: '2022', horas: '60', condicao: 'Usado',
-      preco: '72000', status: 'Disponível', comprimento: '3,3 m', motor: 'Motor de exemplo',
+      preco: '72000', status: 'Disponível', comprimento: '3,3 m', motor: 'Motor de exemplo', foto1: 'img/jet-amarelo.webp',
       descricao: 'Texto de exemplo para um segundo jet ski.' },
     { categoria: 'Triciclos', nome: 'Triciclo Exemplo 4x4', ano: '2025', horas: '', condicao: 'Novo',
-      preco: '58000', status: 'Disponível', comprimento: '', motor: 'Motor de exemplo',
-      descricao: 'Texto de exemplo. Cada categoria aparece como uma aba, e os campos sem informação simplesmente não aparecem.' },
-    { categoria: 'Acessórios', nome: 'Acessório Exemplo', ano: '', horas: '', condicao: 'Novo',
-      preco: '2500', status: 'Disponível', comprimento: '', motor: '',
-      descricao: 'Texto de exemplo. Peças e acessórios também podem entrar no catálogo.' }
+      preco: '58000', status: 'Disponível', comprimento: '', motor: 'Motor de exemplo', foto1: 'img/triciclo.webp',
+      descricao: 'Texto de exemplo. Cada categoria aparece como uma aba, e os campos sem informação simplesmente não aparecem.' }
   ];
 
   /* ========== CÓDIGO ========== */
@@ -433,7 +430,7 @@
       '<div class="photo" data-open="' + i + '">' + cover(it, i) +
         (it.condicao ? '<span class="badge">' + esc(it.condicao) + '</span>' : '') + statusBadge(it) +
         (it.categoria ? '<span class="chip">' + esc(it.categoria) + '</span>' : '') +
-        (it.foto1 ? '' : '<span class="sample">Foto de exemplo</span>') + '</div>' +
+        (IS_DEMO || !it.foto1 ? '<span class="sample">Foto ilustrativa</span>' : '') + '</div>' +
       '<div class="info"><h2 class="name">' + esc(it.nome) + '</h2>' +
         '<p class="meta">' + esc(metaLine(it)) + '</p>' + priceHtml(it) +
         '<div class="actions"><button class="btn btn-ghost" data-open="' + i + '">Ver detalhes</button>' +
@@ -464,7 +461,7 @@
       var f = items[fi];
       $feat.innerHTML = '<div class="feat reveal"><div class="photo" data-open="' + fi + '">' + cover(f, fi) +
         (f.condicao ? '<span class="badge">' + esc(f.condicao) + '</span>' : '') +
-        (f.foto1 ? '' : '<span class="sample">Foto de exemplo</span>') + '</div>' +
+        (IS_DEMO || !f.foto1 ? '<span class="sample">Foto ilustrativa</span>' : '') + '</div>' +
         '<div class="info"><span class="kicker">Em destaque</span><h2 class="name">' + esc(f.nome) + '</h2>' +
         '<p class="meta">' + esc(metaLine(f)) + '</p>' + priceHtml(f) +
         '<p class="meta">' + esc(f.descricao || '') + '</p>' +
