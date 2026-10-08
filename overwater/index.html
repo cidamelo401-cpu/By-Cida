@@ -6,17 +6,17 @@
   <title>Overwater Motors | Catálogo</title>
   <meta name="description" content="Náutica premium e lifestyle: lanchas, jet skis e embarcações selecionadas. Igaratá e Ubatuba.">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#0A1A2F">
+  <meta name="theme-color" content="#06101F">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #08162A;
-      --surface: #0F2240;
-      --surface-2: #14294A;
+      --bg: #06101F;
+      --surface: #0C1D38;
+      --surface-2: #122848;
       --text: #F2F0EA;
       --text-soft: #9FB0C8;
       --accent: #F26A1B;
@@ -24,172 +24,266 @@
       --gold: #C9A962;
       --border: rgba(242, 240, 234, 0.1);
       --wa: #25D366;
-      --radius: 16px;
+      --radius: 18px;
+      --ease: cubic-bezier(.2, .7, .2, 1);
     }
 
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
+      background: var(--bg); color: var(--text);
+      line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden;
     }
     a { color: inherit; text-decoration: none; }
     button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
-    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
 
-    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+    .demo-bar { background: var(--accent); color: #fff; font-size: 13px; font-weight: 600; text-align: center; padding: 8px 16px; position: relative; z-index: 5; }
 
-    /* Aviso de demonstração */
-    .demo-bar {
-      background: var(--accent);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      text-align: center;
-      padding: 8px 16px;
+    /* ===== Barra fixa ===== */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 30;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 16px; background: rgba(6, 16, 31, 0.78);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transform: translateY(-110%); transition: transform .45s var(--ease);
     }
+    .topbar.on { transform: none; }
+    .topbar .mini { display: flex; align-items: center; gap: 10px; font-family: 'Cormorant Garamond', serif; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-size: 17px; }
+    .topbar .mark { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--gold); display: grid; place-items: center; font-size: 14px; color: var(--gold); letter-spacing: 1px; }
+    .pill-wa { background: var(--wa); color: #06210F; font-weight: 600; font-size: 14px; padding: 9px 16px; border-radius: 999px; min-height: 40px; display: inline-flex; align-items: center; }
 
-    /* Topo */
-    .hero { text-align: center; padding: 40px 0 28px; }
+    /* ===== Hero ===== */
+    .hero {
+      position: relative; min-height: 78vh; min-height: 78svh;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; padding: 72px 16px 150px; overflow: hidden; isolation: isolate;
+      background:
+        radial-gradient(ellipse 70% 45% at 50% 100%, rgba(242, 106, 27, 0.55), transparent 70%),
+        radial-gradient(ellipse 90% 60% at 20% 0%, rgba(30, 70, 130, 0.45), transparent 70%),
+        linear-gradient(180deg, #050C18 0%, #0A1B36 55%, #12284A 100%);
+    }
+    .hero-inner { position: relative; z-index: 2; will-change: transform; }
     .logo {
-      width: 88px; height: 88px; margin: 0 auto 18px;
-      border-radius: 50%;
+      width: 96px; height: 96px; margin: 0 auto 22px; border-radius: 50%;
       border: 1px solid var(--gold);
-      background: radial-gradient(circle at 30% 20%, #17345E, #060F1E);
+      background: radial-gradient(circle at 30% 20%, #1B3A68, #050C18);
       display: grid; place-items: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 34px; font-weight: 600; color: var(--gold); letter-spacing: 2px;
+      font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 600; color: var(--gold); letter-spacing: 2px;
+      box-shadow: 0 0 0 8px rgba(201, 169, 98, 0.07), 0 0 50px rgba(242, 106, 27, 0.28);
+      animation: float 6s ease-in-out infinite;
     }
     h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 34px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+      font-family: 'Cormorant Garamond', serif; font-weight: 700;
+      font-size: clamp(38px, 9vw, 74px); letter-spacing: 4px; text-transform: uppercase; line-height: 1.05;
     }
-    .tagline { color: var(--gold); font-size: 14px; letter-spacing: 1.5px; margin-top: 4px; }
-    .place { color: var(--text-soft); font-size: 13px; margin-top: 6px; }
+    .tagline { color: var(--gold); font-size: 14px; letter-spacing: 3px; text-transform: uppercase; margin-top: 12px; }
+    .place { color: var(--text-soft); font-size: 14px; margin-top: 6px; }
+    .hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+    .btn-hero { padding: 14px 26px; border-radius: 999px; font-weight: 600; font-size: 15px; min-height: 48px; display: inline-flex; align-items: center; transition: transform .25s var(--ease), background .25s; }
+    .btn-hero.primary { background: var(--accent); color: #fff; box-shadow: 0 10px 30px rgba(242, 106, 27, 0.35); }
+    .btn-hero.primary:hover { background: var(--accent-hover); transform: translateY(-2px); }
+    .btn-hero.ghost { border: 1px solid rgba(242, 240, 234, 0.3); }
+    .btn-hero.ghost:hover { border-color: var(--text); transform: translateY(-2px); }
+    .count { margin-top: 22px; font-size: 13px; color: var(--text-soft); letter-spacing: 1px; min-height: 20px; }
 
-    /* Abas */
-    .tabs {
-      display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 20px;
-      scrollbar-width: none; justify-content: center; flex-wrap: wrap;
+    .waves { position: absolute; left: 0; right: 0; bottom: -1px; height: 120px; z-index: 1; pointer-events: none; }
+    .waves svg { position: absolute; bottom: 0; left: 0; width: 200%; height: 100%; }
+    .waves .w1 { animation: drift 16s linear infinite; opacity: .35; }
+    .waves .w2 { animation: drift 24s linear infinite reverse; opacity: .55; height: 80%; }
+    .waves .w3 { animation: drift 32s linear infinite; height: 55%; }
+
+    @keyframes drift { to { transform: translateX(-50%); } }
+    @keyframes float { 50% { transform: translateY(-8px); } }
+
+    /* ===== Catálogo ===== */
+    main { position: relative; background: var(--bg); padding-top: 28px; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 5vw, 40px); text-align: center; margin-bottom: 6px; }
+    .section-sub { text-align: center; color: var(--text-soft); font-size: 14px; margin-bottom: 22px; }
+
+    .search { max-width: 520px; margin: 0 auto 16px; position: relative; }
+    .search input {
+      width: 100%; min-height: 50px; padding: 12px 20px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      font: inherit; font-size: 16px; transition: border-color .25s, box-shadow .25s;
     }
-    .tabs::-webkit-scrollbar { display: none; }
+    .search input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(242, 106, 27, 0.15); }
+    .search input::placeholder { color: var(--text-soft); }
+
+    .tabs { display: flex; gap: 8px; padding: 4px 0 22px; justify-content: center; flex-wrap: wrap; }
     .tab {
       padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 600;
-      border: 1px solid var(--border); color: var(--text-soft); white-space: nowrap;
-      min-height: 44px;
+      border: 1px solid var(--border); color: var(--text-soft); white-space: nowrap; min-height: 44px;
+      transition: all .3s var(--ease);
     }
-    .tab[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .tab:hover { color: var(--text); border-color: var(--text-soft); }
+    .tab[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 6px 20px rgba(242, 106, 27, 0.35); transform: translateY(-1px); }
 
-    /* Busca */
-    .search { max-width: 520px; margin: 0 auto 16px; }
-    .search input {
-      width: 100%; min-height: 48px; padding: 12px 18px; border-radius: 999px;
-      border: 1px solid var(--border); background: var(--surface); color: var(--text);
-      font: inherit; font-size: 16px;
+    /* Destaque */
+    .featured { margin-bottom: 22px; }
+    .feat {
+      display: grid; grid-template-columns: 1fr; background: linear-gradient(135deg, var(--surface-2), var(--surface));
+      border: 1px solid rgba(201, 169, 98, 0.5); border-radius: 22px; overflow: hidden; position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
     }
-    .search input::placeholder { color: var(--text-soft); }
-    .more { grid-column: 1 / -1; text-align: center; padding-top: 6px; }
-    .more .btn { display: inline-flex; flex: none; padding: 12px 28px; }
+    @media (min-width: 820px) { .feat { grid-template-columns: 1.25fr 1fr; } }
+    .feat .photo { aspect-ratio: 4 / 3; border-radius: 0; }
+    @media (min-width: 820px) { .feat .photo { aspect-ratio: auto; min-height: 380px; } }
+    .feat .info { padding: 28px 24px; justify-content: center; gap: 10px; }
+    .feat .name { font-size: clamp(30px, 5vw, 44px); }
+    .feat .price { font-size: 30px; }
+    .kicker { color: var(--gold); font-size: 12px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; }
 
     /* Cards */
-    .grid { display: grid; gap: 18px; grid-template-columns: 1fr; padding-bottom: 40px; }
+    .grid { display: grid; gap: 20px; grid-template-columns: 1fr; padding-bottom: 44px; }
     @media (min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 960px) { .grid { grid-template-columns: repeat(3, 1fr); } }
 
     .card {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden;
-      display: flex; flex-direction: column;
+      border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column;
+      transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s;
     }
-    .photo { position: relative; aspect-ratio: 4 / 3; background: var(--surface-2); cursor: pointer; }
-    .photo img, .photo svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+    @media (hover: hover) {
+      .card:hover { transform: translateY(-6px); border-color: rgba(242, 106, 27, 0.55); box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(242, 106, 27, 0.2); }
+      .card:hover .photo svg, .card:hover .photo img { transform: scale(1.07); }
+    }
+    .photo { position: relative; aspect-ratio: 4 / 3; background: var(--surface-2); cursor: pointer; overflow: hidden; }
+    .photo img, .photo svg { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .9s var(--ease); }
+    .photo::after { content: ''; position: absolute; inset: auto 0 0 0; height: 55%; background: linear-gradient(180deg, transparent, rgba(6, 16, 31, 0.78)); pointer-events: none; }
     .badge {
-      position: absolute; top: 12px; left: 12px;
-      background: rgba(8, 22, 42, 0.85); border: 1px solid var(--gold); color: var(--gold);
-      font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-      padding: 4px 10px; border-radius: 999px;
+      position: absolute; top: 12px; left: 12px; z-index: 2;
+      background: rgba(6, 16, 31, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(201, 169, 98, 0.7); color: var(--gold);
+      font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; padding: 5px 11px; border-radius: 999px;
     }
-    .badge.status { left: auto; right: 12px; border-color: var(--accent); color: var(--accent); }
-    .sample {
-      position: absolute; bottom: 10px; left: 12px;
-      font-size: 11px; color: var(--text-soft); background: rgba(8, 22, 42, 0.75);
-      padding: 2px 8px; border-radius: 6px;
-    }
-    .info { padding: 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
-    .name { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 700; line-height: 1.15; }
+    .badge.status { left: auto; right: 12px; border-color: var(--accent); color: #FFB48A; }
+    .badge.status.sold { border-color: #8892A6; color: #C3CBDA; }
+    .chip { position: absolute; left: 14px; bottom: 12px; z-index: 2; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text); font-weight: 600; }
+    .sample { position: absolute; right: 12px; bottom: 12px; z-index: 2; font-size: 11px; color: var(--text-soft); }
+    .info { padding: 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .name { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; line-height: 1.12; }
     .meta { color: var(--text-soft); font-size: 14px; }
-    .price { font-size: 22px; font-weight: 700; margin-top: 4px; }
-    .price.consult { font-size: 16px; color: var(--gold); font-weight: 600; }
-    .actions { display: flex; gap: 8px; margin-top: auto; padding-top: 12px; }
+    .price { font-size: 23px; font-weight: 700; margin-top: 4px; background: linear-gradient(90deg, #fff, #E6D3A3); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .price.consult { font-size: 16px; font-weight: 600; background: none; color: var(--gold); }
+    .actions { display: flex; gap: 8px; margin-top: auto; padding-top: 14px; }
     .btn {
-      flex: 1; text-align: center; padding: 12px 14px; border-radius: 12px;
-      font-weight: 600; font-size: 14px; min-height: 44px;
-      display: inline-flex; align-items: center; justify-content: center;
+      flex: 1; text-align: center; padding: 12px 14px; border-radius: 12px; font-weight: 600; font-size: 14px; min-height: 46px;
+      display: inline-flex; align-items: center; justify-content: center; transition: transform .25s var(--ease), filter .25s, border-color .25s;
     }
+    .btn:active { transform: scale(.97); }
     .btn-wa { background: var(--wa); color: #06210F; }
-    .btn-wa:hover { filter: brightness(1.08); }
+    .btn-wa:hover { filter: brightness(1.1); }
     .btn-ghost { border: 1px solid var(--border); color: var(--text); }
     .btn-ghost:hover { border-color: var(--text-soft); }
-    .card.sold { opacity: 0.6; }
+    .card.sold { opacity: .6; }
+    .card.sold .photo svg, .card.sold .photo img { filter: grayscale(.7); }
+
+    /* Entrada suave */
+    .reveal { opacity: 0; transform: translateY(26px) scale(.98); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+    .reveal.in { opacity: 1; transform: none; }
 
     .empty { text-align: center; color: var(--text-soft); padding: 40px 0; grid-column: 1 / -1; }
+    .more { grid-column: 1 / -1; text-align: center; padding-top: 6px; }
+    .more .btn { display: inline-flex; flex: none; padding: 12px 30px; }
+
+    /* Carregando */
+    .skel { height: 360px; border-radius: var(--radius); background: linear-gradient(100deg, var(--surface) 30%, var(--surface-2) 50%, var(--surface) 70%); background-size: 300% 100%; animation: shimmer 1.4s linear infinite; }
+    @keyframes shimmer { to { background-position: -150% 0; } }
 
     /* Quero vender */
     .sell {
-      background: linear-gradient(135deg, var(--surface-2), var(--surface));
-      border: 1px solid var(--gold); border-radius: var(--radius);
-      padding: 28px 20px; text-align: center; margin-bottom: 40px;
+      position: relative; border-radius: 22px; padding: 44px 22px; text-align: center; margin-bottom: 48px; overflow: hidden; isolation: isolate;
+      background: linear-gradient(135deg, #0F2748, #0A1830); border: 1px solid rgba(201, 169, 98, 0.55);
     }
-    .sell h2 { font-family: 'Cormorant Garamond', serif; font-size: 28px; }
-    .sell p { color: var(--text-soft); margin: 8px auto 18px; max-width: 460px; }
-    .sell .btn { max-width: 320px; margin: 0 auto; background: var(--accent); color: #fff; flex: none; width: 100%; }
+    .sell::before { content: ''; position: absolute; width: 420px; height: 420px; right: -120px; top: -160px; z-index: -1;
+      background: radial-gradient(circle, rgba(242, 106, 27, 0.4), transparent 65%); animation: float 7s ease-in-out infinite; }
+    .sell h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 5vw, 38px); }
+    .sell p { color: var(--text-soft); margin: 10px auto 22px; max-width: 470px; }
+    .sell .btn { max-width: 330px; margin: 0 auto; background: var(--accent); color: #fff; flex: none; width: 100%; box-shadow: 0 12px 30px rgba(242, 106, 27, 0.35); }
     .sell .btn:hover { background: var(--accent-hover); }
 
-    footer { text-align: center; color: var(--text-soft); font-size: 13px; padding: 0 0 40px; }
+    footer { text-align: center; color: var(--text-soft); font-size: 13px; padding: 0 0 100px; }
     footer a { color: var(--gold); }
+
+    /* WhatsApp flutuante */
+    .fab { position: fixed; right: 16px; bottom: 16px; z-index: 25; background: var(--wa); color: #06210F; font-weight: 700; font-size: 14px;
+      padding: 14px 20px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); display: inline-flex; align-items: center; gap: 10px; transition: transform .25s var(--ease); }
+    .fab:hover { transform: translateY(-2px); }
+    .fab i { width: 10px; height: 10px; border-radius: 50%; background: #06210F; position: relative; }
+    .fab i::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid #06210F; opacity: 0; animation: ping 2s ease-out infinite; }
+    @keyframes ping { 0% { transform: scale(.4); opacity: .7; } 100% { transform: scale(1.4); opacity: 0; } }
 
     /* Detalhe */
     dialog {
-      border: 1px solid var(--border); border-radius: var(--radius);
-      background: var(--surface); color: var(--text);
-      width: min(560px, calc(100% - 24px)); max-height: calc(100% - 24px);
-      margin: auto; padding: 0; overflow: auto;
+      border: 1px solid var(--border); border-radius: 22px; background: var(--surface); color: var(--text);
+      width: min(600px, calc(100% - 20px)); max-height: calc(100% - 20px); margin: auto; padding: 0; overflow: auto;
     }
-    dialog::backdrop { background: rgba(2, 8, 18, 0.8); }
-    .dlg-photo { aspect-ratio: 4 / 3; background: var(--surface-2); }
-    .dlg-photo img, .dlg-photo svg { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .dlg-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-    .dlg-body .name { font-size: 30px; }
+    dialog[open] { animation: pop .45s var(--ease); }
+    dialog::backdrop { background: rgba(2, 8, 18, 0.82); backdrop-filter: blur(4px); }
+    @keyframes pop { from { opacity: 0; transform: translateY(24px) scale(.96); } }
+    .gal { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: var(--surface-2); }
+    .gal::-webkit-scrollbar { display: none; }
+    .slide { flex: 0 0 100%; scroll-snap-align: center; aspect-ratio: 4 / 3; }
+    .slide img, .slide svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .dots { display: flex; justify-content: center; gap: 6px; padding: 12px 0 0; }
+    .dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: all .3s; }
+    .dots span.on { background: var(--accent); width: 20px; border-radius: 4px; }
+    .dlg-body { padding: 14px 22px 24px; display: flex; flex-direction: column; gap: 10px; }
+    .dlg-body .name { font-size: 32px; }
     .specs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 6px 0; }
-    .spec { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; }
+    .spec { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
     .spec small { display: block; color: var(--text-soft); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
     .spec span { font-weight: 600; font-size: 15px; }
     .desc { color: var(--text-soft); font-size: 15px; }
-    .close {
-      position: absolute; top: 10px; right: 10px; width: 44px; height: 44px; border-radius: 50%;
-      background: rgba(8, 22, 42, 0.85); font-size: 22px; line-height: 1; z-index: 1;
+    .close { position: absolute; top: 10px; right: 10px; width: 44px; height: 44px; border-radius: 50%; background: rgba(6, 16, 31, 0.8); backdrop-filter: blur(6px); font-size: 22px; line-height: 1; z-index: 3; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
     }
   </style>
 </head>
 <body>
 
-  <div class="demo-bar" id="demoBar">DEMONSTRAÇÃO · barcos, preços e fotos de exemplo, não são reais</div>
+  <div class="demo-bar" id="demoBar">DEMONSTRAÇÃO · embarcações, preços e fotos de exemplo, não são reais</div>
 
-  <header class="hero wrap">
-    <div class="logo" aria-hidden="true">OM</div>
-    <h1>Overwater Motors</h1>
-    <p class="tagline">Náutica Premium &amp; Lifestyle</p>
-    <p class="place">Igaratá · Ubatuba</p>
+  <div class="topbar" id="topbar">
+    <div class="mini"><span class="mark">OM</span><span>Overwater</span></div>
+    <a class="pill-wa" id="topWa" target="_blank" rel="noopener" href="#">WhatsApp</a>
+  </div>
+
+  <header class="hero" id="hero">
+    <div class="hero-inner" id="heroInner">
+      <div class="logo" aria-hidden="true">OM</div>
+      <h1>Overwater Motors</h1>
+      <p class="tagline">Náutica Premium &amp; Lifestyle</p>
+      <p class="place">Igaratá · Ubatuba</p>
+      <div class="hero-cta">
+        <a class="btn-hero primary" href="#catalogo">Ver o catálogo</a>
+        <a class="btn-hero ghost" id="heroWa" target="_blank" rel="noopener" href="#">Falar no WhatsApp</a>
+      </div>
+      <p class="count" id="count"></p>
+    </div>
+    <div class="waves" aria-hidden="true">
+      <svg class="w1" viewBox="0 0 2400 120" preserveAspectRatio="none"><path fill="#F26A1B" d="M0 60 Q150 20 300 60 T600 60 T900 60 T1200 60 T1500 60 T1800 60 T2100 60 T2400 60 V120 H0Z"/></svg>
+      <svg class="w2" viewBox="0 0 2400 120" preserveAspectRatio="none"><path fill="#12284A" d="M0 60 Q150 100 300 60 T600 60 T900 60 T1200 60 T1500 60 T1800 60 T2100 60 T2400 60 V120 H0Z"/></svg>
+      <svg class="w3" viewBox="0 0 2400 120" preserveAspectRatio="none"><path fill="#06101F" d="M0 60 Q150 30 300 60 T600 60 T900 60 T1200 60 T1500 60 T1800 60 T2100 60 T2400 60 V120 H0Z"/></svg>
+    </div>
   </header>
 
-  <main class="wrap">
+  <main class="wrap" id="catalogo">
+    <h2 class="section-title">Nosso catálogo</h2>
+    <p class="section-sub">Selecionados um a um. Toque em um item para ver os detalhes.</p>
     <div class="search"><input id="q" type="search" placeholder="Buscar por nome, modelo ou categoria" aria-label="Buscar no catálogo" autocomplete="off"></div>
     <nav class="tabs" id="tabs" aria-label="Categorias"></nav>
+    <section class="featured" id="featured"></section>
     <section class="grid" id="grid" aria-live="polite"></section>
 
-    <section class="sell">
+    <section class="sell reveal">
       <h2>Quer vender seu barco ou jet?</h2>
       <p>A gente cuida da avaliação, das fotos e da divulgação. Fale com a gente e descubra quanto vale a sua embarcação.</p>
       <a class="btn" id="sellBtn" href="#" target="_blank" rel="noopener">Quero vender o meu</a>
@@ -201,7 +295,9 @@
     <p style="margin-top:6px">Página criada pela ByCida</p>
   </footer>
 
-  <dialog id="dlg" aria-label="Detalhes da embarcação">
+  <a class="fab" id="fab" target="_blank" rel="noopener" href="#"><i></i>WhatsApp</a>
+
+  <dialog id="dlg" aria-label="Detalhes do item">
     <button class="close" id="dlgClose" aria-label="Fechar">×</button>
     <div id="dlgContent"></div>
   </dialog>
@@ -214,10 +310,11 @@
   var IS_DEMO = true;               // false quando for ao ar com dados reais
 
   /* Colunas da planilha (linha 1):
-     categoria | nome | ano | horas | condicao | preco | status | comprimento | motor | descricao | foto1 | foto2 | foto3
-     preco vazio = "Sob consulta" · status: Disponível, Reservado ou Vendido · categoria: Lanchas, Jet Skis, UTVs... */
+     categoria | nome | ano | horas | condicao | preco | status | destaque | comprimento | motor | descricao | foto1 | foto2 | foto3
+     preco vazio = "Sob consulta" · status: Disponível, Reservado ou Vendido · destaque: sim (só o primeiro "sim" aparece em destaque)
+     categoria: Lanchas, Jet Skis, Triciclos... (cada categoria vira uma aba) */
   var DEMO_DATA = [
-    { categoria: 'Lanchas', nome: 'Lancha Exemplo 265', ano: '2023', horas: '40', condicao: 'Seminova',
+    { categoria: 'Lanchas', nome: 'Lancha Exemplo 265', ano: '2023', horas: '40', condicao: 'Seminova', destaque: 'sim',
       preco: '690000', status: 'Disponível', comprimento: '26,5 pés', motor: 'Motor de exemplo',
       descricao: 'Texto de exemplo. Aqui entra a descrição real do barco: estado, equipamentos, histórico de uso e documentação.' },
     { categoria: 'Lanchas', nome: 'Lancha Exemplo 320', ano: '2021', horas: '120', condicao: 'Usada',
@@ -243,7 +340,9 @@
   var PAGE = 12;                    // itens mostrados por vez
   var shown = PAGE;
   var query = '';
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var $grid = document.getElementById('grid');
+  var $feat = document.getElementById('featured');
   var $tabs = document.getElementById('tabs');
   var $dlg = document.getElementById('dlg');
   var $dlgContent = document.getElementById('dlgContent');
@@ -251,29 +350,66 @@
   if (!IS_DEMO) document.getElementById('demoBar').remove();
 
   function wa(text) { return 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(text); }
-  function norm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  function norm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
   function money(v) {
     var n = parseFloat(String(v).replace(/[^\d,.-]/g, '').replace(/\.(?=\d{3}\b)/g, '').replace(',', '.'));
     return isNaN(n) ? '' : n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
   }
 
-  /* Imagem de exemplo (silhueta de barco) quando não há foto */
-  function placeholder(seed) {
-    var hue = 205 + (seed * 11) % 25;
-    return '<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Foto de exemplo">' +
-      '<defs><linearGradient id="s' + seed + '" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0" stop-color="hsl(' + hue + ',55%,22%)"/><stop offset="1" stop-color="hsl(' + hue + ',60%,10%)"/></linearGradient></defs>' +
-      '<rect width="400" height="300" fill="url(#s' + seed + ')"/>' +
-      '<rect y="190" width="400" height="110" fill="hsl(' + hue + ',60%,8%)"/>' +
-      '<path d="M70 190 L330 190 L300 225 L110 225 Z" fill="#F2F0EA"/>' +
-      '<path d="M140 190 L165 150 L250 150 L275 190 Z" fill="#C9A962" opacity=".9"/>' +
-      '<rect x="178" y="160" width="60" height="22" rx="3" fill="hsl(' + hue + ',60%,16%)"/>' +
-      '<path d="M0 232 Q50 222 100 232 T200 232 T300 232 T400 232" stroke="#F26A1B" stroke-opacity=".5" fill="none" stroke-width="2"/>' +
-      '</svg>';
+  /* ---- Ilustração de exemplo (enquanto não há foto real) ---- */
+  function kindOf(cat) {
+    var c = norm(cat);
+    if (/jet/.test(c)) return 'jet';
+    if (/tric|quad|utv|moto|buggy/.test(c)) return 'quad';
+    if (/lancha|barco|embarc|veleiro|iate/.test(c)) return 'boat';
+    return 'gear';
   }
-  function photo(it, i) {
-    return it.foto1 ? '<img src="' + esc(it.foto1) + '" alt="' + esc(it.nome) + '" loading="lazy">' : placeholder(i + 1);
+  function scene(kind, seed) {
+    var id = 'g' + kind + seed, sx = 90 + ((seed * 83) % 220), shift = (seed % 3) * 14;
+    var out = '<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Foto de exemplo"><defs>' +
+      '<linearGradient id="s' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#07142A"/><stop offset=".55" stop-color="#1B2F57"/><stop offset="1" stop-color="#F26A1B"/></linearGradient>' +
+      '<linearGradient id="w' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E2547"/><stop offset="1" stop-color="#040B17"/></linearGradient>' +
+      '<filter id="b' + id + '"><feGaussianBlur stdDeviation="6"/></filter></defs>' +
+      '<rect width="400" height="300" fill="url(#s' + id + ')"/>' +
+      '<circle cx="' + sx + '" cy="176" r="34" fill="#FFB070" filter="url(#b' + id + ')" opacity=".9"/>' +
+      '<circle cx="' + sx + '" cy="176" r="22" fill="#FFD6A8"/>' +
+      '<path d="M0 190 L60 160 L110 182 L170 148 L240 188 L310 156 L400 190 Z" fill="#0A1A33" opacity=".85"/>';
+    if (kind === 'quad') {
+      out += '<rect y="196" width="400" height="104" fill="#0B0F18"/><path d="M0 196 H400" stroke="#F26A1B" stroke-opacity=".5"/>' +
+        '<circle cx="120" cy="226" r="30" fill="#05070B" stroke="#F26A1B" stroke-width="6"/><circle cx="290" cy="226" r="30" fill="#05070B" stroke="#F26A1B" stroke-width="6"/>' +
+        '<path d="M110 214 L150 168 L215 164 L250 190 L300 196 L292 220 L122 220 Z" fill="#F4F1EA"/>' +
+        '<path d="M150 168 L215 164 L214 150 L158 150 Z" fill="#C9A962"/><path d="M215 164 L222 138 L240 138" stroke="#F4F1EA" stroke-width="5" fill="none"/>' +
+        '<path d="M118 222 L294 222" stroke="#F26A1B" stroke-width="4"/>';
+    } else if (kind === 'gear') {
+      out += '<rect y="196" width="400" height="104" fill="url(#w' + id + ')"/>' +
+        '<g fill="none" stroke="#C9A962" stroke-width="7" stroke-linecap="round"><circle cx="200" cy="98" r="14"/><path d="M200 112 V232"/><path d="M168 138 H232"/><path d="M146 196 Q150 238 200 238 Q250 238 254 196"/><path d="M146 196 l-14 10 M254 196 l14 10"/></g>';
+    } else {
+      out += '<rect y="190" width="400" height="110" fill="url(#w' + id + ')"/>' +
+        '<rect x="' + (sx - 12) + '" y="192" width="24" height="90" fill="#F26A1B" opacity=".28" filter="url(#b' + id + ')"/>' +
+        '<path d="M0 214 Q50 204 100 214 T200 214 T300 214 T400 214" stroke="#F26A1B" stroke-opacity=".35" fill="none" stroke-width="2"/>';
+      if (kind === 'jet') {
+        out += '<g transform="translate(' + shift + ' 0)"><path d="M90 205 Q130 168 215 176 L290 194 Q306 204 282 210 L110 214 Z" fill="#F4F1EA"/>' +
+          '<path d="M96 206 L290 200" stroke="#F26A1B" stroke-width="5"/><path d="M150 180 L200 176 L206 190 L150 194 Z" fill="#12284A"/>' +
+          '<path d="M205 176 L222 150 L240 150" stroke="#C9A962" stroke-width="5" fill="none" stroke-linecap="round"/></g>';
+      } else {
+        out += '<g transform="translate(' + (shift - 14) + ' 0)"><path d="M62 190 L340 190 L316 226 L92 226 Z" fill="#F4F1EA"/>' +
+          '<path d="M72 205 L330 205 L324 214 L80 214 Z" fill="#F26A1B"/>' +
+          '<path d="M132 190 L162 150 L252 150 L284 190 Z" fill="#E7E2D6"/><path d="M168 157 L246 157 L266 187 L150 187 Z" fill="#102140"/>' +
+          '<path d="M162 150 L252 150" stroke="#C9A962" stroke-width="4"/></g>' +
+          '<ellipse cx="' + (200 + shift) + '" cy="230" rx="130" ry="7" fill="#fff" opacity=".18"/>';
+      }
+    }
+    return out + '</svg>';
+  }
+  function gallery(it, i) {
+    var f = [it.foto1, it.foto2, it.foto3].filter(Boolean);
+    if (f.length) return f.map(function (u) { return '<img src="' + esc(u) + '" alt="' + esc(it.nome) + '" loading="lazy">'; });
+    var k = kindOf(it.categoria);
+    return [scene(k, i + 1), scene(k, i + 2), scene(k, i + 3)];
+  }
+  function cover(it, i) {
+    return it.foto1 ? '<img src="' + esc(it.foto1) + '" alt="' + esc(it.nome) + '" loading="lazy">' : scene(kindOf(it.categoria), i + 1);
   }
 
   function priceHtml(it) {
@@ -288,54 +424,95 @@
   }
   function isSold(it) { return /vendid/i.test(it.status || ''); }
   function statusBadge(it) {
-    return it.status && !/dispon/i.test(it.status) ? '<span class="badge status">' + esc(it.status) + '</span>' : '';
+    return it.status && !/dispon/i.test(it.status) ? '<span class="badge status' + (isSold(it) ? ' sold' : '') + '">' + esc(it.status) + '</span>' : '';
+  }
+  function interestMsg(it) { return 'Olá! Vi o ' + it.nome + (it.ano ? ' ' + it.ano : '') + ' no catálogo da Overwater Motors e tenho interesse.'; }
+
+  function cardHtml(it, i, extra) {
+    return '<article class="card reveal' + (isSold(it) ? ' sold' : '') + '">' +
+      '<div class="photo" data-open="' + i + '">' + cover(it, i) +
+        (it.condicao ? '<span class="badge">' + esc(it.condicao) + '</span>' : '') + statusBadge(it) +
+        (it.categoria ? '<span class="chip">' + esc(it.categoria) + '</span>' : '') +
+        (it.foto1 ? '' : '<span class="sample">Foto de exemplo</span>') + '</div>' +
+      '<div class="info"><h2 class="name">' + esc(it.nome) + '</h2>' +
+        '<p class="meta">' + esc(metaLine(it)) + '</p>' + priceHtml(it) +
+        '<div class="actions"><button class="btn btn-ghost" data-open="' + i + '">Ver detalhes</button>' +
+        (isSold(it) ? '' : '<a class="btn btn-wa" target="_blank" rel="noopener" href="' + wa(interestMsg(it)) + '">Tenho interesse</a>') +
+      '</div></div></article>';
+  }
+
+  function featuredIndex() {
+    if (current !== 'Todos' || norm(query).trim()) return -1;
+    for (var k = 0; k < items.length; k++) if (/^(sim|s|1|true)$/i.test(items[k].destaque || '') && !isSold(items[k])) return k;
+    return -1;
   }
 
   function renderTabs() {
     var cats = ['Todos'];
     items.forEach(function (it) { if (it.categoria && cats.indexOf(it.categoria) < 0) cats.push(it.categoria); });
-    if (cats.length <= 2) { $tabs.innerHTML = ''; return; }   // uma categoria só: sem abas
+    if (cats.length <= 2) { $tabs.innerHTML = ''; return; }
     $tabs.innerHTML = cats.map(function (c) {
       var n = c === 'Todos' ? items.length : items.filter(function (i) { return i.categoria === c; }).length;
       return '<button class="tab" data-cat="' + esc(c) + '" aria-pressed="' + (c === current) + '">' + esc(c) + ' (' + n + ')</button>';
     }).join('');
   }
 
-  function renderGrid() {
+  function render() {
     var q = norm(query).trim();
+    var fi = featuredIndex();
+    if (fi > -1) {
+      var f = items[fi];
+      $feat.innerHTML = '<div class="feat reveal"><div class="photo" data-open="' + fi + '">' + cover(f, fi) +
+        (f.condicao ? '<span class="badge">' + esc(f.condicao) + '</span>' : '') +
+        (f.foto1 ? '' : '<span class="sample">Foto de exemplo</span>') + '</div>' +
+        '<div class="info"><span class="kicker">Em destaque</span><h2 class="name">' + esc(f.nome) + '</h2>' +
+        '<p class="meta">' + esc(metaLine(f)) + '</p>' + priceHtml(f) +
+        '<p class="meta">' + esc(f.descricao || '') + '</p>' +
+        '<div class="actions"><button class="btn btn-ghost" data-open="' + fi + '">Ver detalhes</button>' +
+        '<a class="btn btn-wa" target="_blank" rel="noopener" href="' + wa(interestMsg(f)) + '">Tenho interesse</a></div></div></div>';
+    } else { $feat.innerHTML = ''; }
+
     var list = items.map(function (it, i) { return { it: it, i: i }; })
+      .filter(function (x) { return x.i !== fi; })
       .filter(function (x) { return current === 'Todos' || x.it.categoria === current; })
       .filter(function (x) { return !q || norm([x.it.nome, x.it.categoria, x.it.ano, x.it.condicao, x.it.motor].join(' ')).indexOf(q) > -1; });
-    if (!list.length) { $grid.innerHTML = '<p class="empty">Nada encontrado. Tente outra busca ou chame a gente no WhatsApp.</p>'; return; }
-    var visible = list.slice(0, shown);
-    $grid.innerHTML = visible.map(function (x) {
-      var it = x.it;
-      var msg = 'Olá! Vi o ' + it.nome + (it.ano ? ' ' + it.ano : '') + ' no catálogo da Overwater Motors e tenho interesse.';
-      return '<article class="card' + (isSold(it) ? ' sold' : '') + '">' +
-        '<div class="photo" data-open="' + x.i + '">' + photo(it, x.i) +
-          (it.condicao ? '<span class="badge">' + esc(it.condicao) + '</span>' : '') + statusBadge(it) +
-          (it.foto1 ? '' : '<span class="sample">Foto de exemplo</span>') + '</div>' +
-        '<div class="info"><h2 class="name">' + esc(it.nome) + '</h2>' +
-          '<p class="meta">' + esc(metaLine(it)) + '</p>' + priceHtml(it) +
-          '<div class="actions"><button class="btn btn-ghost" data-open="' + x.i + '">Ver detalhes</button>' +
-          (isSold(it) ? '' : '<a class="btn btn-wa" target="_blank" rel="noopener" href="' + wa(msg) + '">Tenho interesse</a>') +
-        '</div></div></article>';
-    }).join('') + (list.length > shown
-      ? '<div class="more"><button class="btn btn-ghost" id="moreBtn">Ver mais (' + (list.length - shown) + ')</button></div>' : '');
+    if (!list.length && fi < 0) { $grid.innerHTML = '<p class="empty">Nada encontrado. Tente outra busca ou chame a gente no WhatsApp.</p>'; return; }
+    $grid.innerHTML = list.slice(0, shown).map(function (x) { return cardHtml(x.it, x.i); }).join('') +
+      (list.length > shown ? '<div class="more"><button class="btn btn-ghost" id="moreBtn">Ver mais (' + (list.length - shown) + ')</button></div>' : '');
+    observe();
+  }
+
+  /* Entrada suave dos cards, com atraso escalonado */
+  var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.08 }) : null;
+  function observe() {
+    var els = document.querySelectorAll('.reveal:not(.in)');
+    els.forEach(function (el, n) {
+      if (!io || reduce) { el.classList.add('in'); return; }
+      el.style.transitionDelay = (n % 3) * 90 + 'ms';
+      io.observe(el);
+    });
   }
 
   function openItem(i) {
     var it = items[i];
+    var slides = gallery(it, i);
     var specs = [['Ano', it.ano], ['Uso', it.horas ? it.horas + ' horas' : ''], ['Condição', it.condicao],
                  ['Tamanho', it.comprimento], ['Motor', it.motor], ['Status', it.status]]
       .filter(function (s) { return s[1]; })
       .map(function (s) { return '<div class="spec"><small>' + s[0] + '</small><span>' + esc(s[1]) + '</span></div>'; }).join('');
-    var msg = 'Olá! Vi o ' + it.nome + (it.ano ? ' ' + it.ano : '') + ' no catálogo da Overwater Motors e tenho interesse.';
-    $dlgContent.innerHTML = '<div class="dlg-photo">' + photo(it, i + 1) + '</div><div class="dlg-body">' +
-      '<h2 class="name">' + esc(it.nome) + '</h2>' + priceHtml(it) +
+    $dlgContent.innerHTML = '<div class="gal" id="gal">' + slides.map(function (h) { return '<div class="slide">' + h + '</div>'; }).join('') + '</div>' +
+      (slides.length > 1 ? '<div class="dots" id="dots">' + slides.map(function (_, n) { return '<span' + (n ? '' : ' class="on"') + '></span>'; }).join('') + '</div>' : '') +
+      '<div class="dlg-body"><h2 class="name">' + esc(it.nome) + '</h2>' + priceHtml(it) +
       '<div class="specs">' + specs + '</div>' +
       (it.descricao ? '<p class="desc">' + esc(it.descricao) + '</p>' : '') +
-      (isSold(it) ? '' : '<a class="btn btn-wa" target="_blank" rel="noopener" href="' + wa(msg) + '">Chamar no WhatsApp</a>') + '</div>';
+      (isSold(it) ? '' : '<a class="btn btn-wa" target="_blank" rel="noopener" href="' + wa(interestMsg(it)) + '">Chamar no WhatsApp</a>') + '</div>';
+    var gal = document.getElementById('gal'), dots = document.querySelectorAll('#dots span');
+    gal.addEventListener('scroll', function () {
+      var n = Math.round(gal.scrollLeft / gal.clientWidth);
+      dots.forEach(function (d, k) { d.classList.toggle('on', k === n); });
+    }, { passive: true });
     $dlg.showModal();
   }
 
@@ -364,23 +541,46 @@
 
   function start(data) {
     items = data.filter(function (it) { return it.nome; });
-    renderTabs(); renderGrid();
+    var avail = items.filter(function (it) { return !isSold(it); }).length;
+    document.getElementById('count').textContent = avail + (avail === 1 ? ' item disponível' : ' itens disponíveis') + ' no catálogo';
+    renderTabs(); render();
   }
 
+  /* Eventos */
   $tabs.addEventListener('click', function (e) {
     var b = e.target.closest('[data-cat]'); if (!b) return;
-    current = b.getAttribute('data-cat'); shown = PAGE; renderTabs(); renderGrid();
+    current = b.getAttribute('data-cat'); shown = PAGE; renderTabs(); render();
   });
-  $grid.addEventListener('click', function (e) {
-    if (e.target.id === 'moreBtn') { shown += PAGE; renderGrid(); return; }
+  function onOpen(e) {
+    if (e.target.id === 'moreBtn') { shown += PAGE; render(); return; }
     var b = e.target.closest('[data-open]'); if (b) openItem(+b.getAttribute('data-open'));
-  });
-  document.getElementById('q').addEventListener('input', function (e) { query = e.target.value; shown = PAGE; renderGrid(); });
+  }
+  $grid.addEventListener('click', onOpen);
+  $feat.addEventListener('click', onOpen);
+  document.getElementById('q').addEventListener('input', function (e) { query = e.target.value; shown = PAGE; render(); });
   document.getElementById('dlgClose').addEventListener('click', function () { $dlg.close(); });
   $dlg.addEventListener('click', function (e) { if (e.target === $dlg) $dlg.close(); });
+
+  var general = wa('Olá! Vi o catálogo da Overwater Motors e gostaria de mais informações.');
+  ['topWa', 'heroWa', 'fab'].forEach(function (id) { document.getElementById(id).href = general; });
   document.getElementById('sellBtn').href = wa('Olá! Quero vender meu barco/jet com a Overwater Motors.');
 
+  /* Barra fixa aparece depois do hero; hero tem um leve parallax */
+  var hero = document.getElementById('hero'), top = document.getElementById('topbar'), inner = document.getElementById('heroInner'), tick = false;
+  function onScroll() {
+    if (tick) return; tick = true;
+    requestAnimationFrame(function () {
+      var y = window.scrollY, h = hero.offsetHeight;
+      top.classList.toggle('on', y > h * 0.6);
+      if (!reduce && y < h) { inner.style.transform = 'translateY(' + (y * 0.25) + 'px)'; inner.style.opacity = String(Math.max(0, 1 - y / (h * 0.9))); }
+      tick = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* Dados */
   if (SHEET_CSV_URL) {
+    $grid.innerHTML = '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
     fetch(SHEET_CSV_URL).then(function (r) { if (!r.ok) throw 0; return r.text(); })
       .then(function (t) { start(parseCSV(t)); })
       .catch(function () {
@@ -390,6 +590,7 @@
   } else {
     start(DEMO_DATA);
   }
+  observe();
 })();
 </script>
 </body>
