@@ -128,7 +128,7 @@ export default function PurchaseLotsPage() {
         )}
       </div>
 
-      {!loading && (
+      {!loading && filtered.length > 0 && (
         <Link
           href="/compras/novo"
           className="fixed bottom-20 sm:bottom-8 right-4 sm:right-8 z-20 inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-primary-900 text-white text-sm font-semibold shadow-lg hover:bg-primary-800 transition-colors"
