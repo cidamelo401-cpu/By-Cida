@@ -74,6 +74,24 @@ const items: NavItem[] = [
     ),
   },
   {
+    label: 'Fornecedores',
+    href: '/fornecedores',
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 7l1-3h16l1 3M4 7h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V7zm5 4a3 3 0 006 0" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Compras',
+    href: '/compras',
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 14l2 2 4-4m5-6v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2h7l5 5z" />
+      </svg>
+    ),
+  },
+  {
     label: 'Relatórios',
     href: '/relatorios',
     icon: (
