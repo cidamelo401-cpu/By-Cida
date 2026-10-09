@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Button, LoadingSpinner } from '@/components/ui'
 import { MODEL_LABELS } from '@/lib/constants/products'
 import { compressImage } from '@/lib/utils/image'
@@ -148,14 +148,16 @@ export default function BulkPhotoUploadPage() {
 
   if (loading) {
     return (
-      <AppLayout title="Upload de Fotos">
+      <>
+        <TopBar title="Upload de Fotos" />
         <LoadingSpinner label="Carregando produtos..." />
-      </AppLayout>
+      </>
     )
   }
 
   return (
-    <AppLayout title="Upload de Fotos">
+    <>
+      <TopBar title="Upload de Fotos" />
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
           <div>
@@ -217,7 +219,7 @@ export default function BulkPhotoUploadPage() {
           </div>
         )}
       </div>
-    </AppLayout>
+    </>
   )
 }
 

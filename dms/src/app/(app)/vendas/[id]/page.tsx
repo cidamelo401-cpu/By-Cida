@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Badge, Button, Card, ConfirmDialog, CurrencyInput, Input, LoadingSpinner, Modal, Select } from '@/components/ui'
 import { formatCurrency, formatDate, formatDateTime, formatPhone, getWhatsAppLink, parseCurrency } from '@/lib/utils/format'
 import { deleteSale, registerPayment, updateSaleDetails, updateSaleStatus } from '@/lib/actions/sales'
@@ -175,17 +175,19 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
 
   if (loading) {
     return (
-      <AppLayout title="Venda" showBack>
+      <>
+        <TopBar title="Venda" showBack />
         <LoadingSpinner label="Carregando venda..." />
-      </AppLayout>
+      </>
     )
   }
 
   if (!sale) {
     return (
-      <AppLayout title="Venda" showBack>
+      <>
+        <TopBar title="Venda" showBack />
         <p className="text-center text-gray-500 py-12">Venda não encontrada.</p>
-      </AppLayout>
+      </>
     )
   }
 
@@ -212,7 +214,8 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
   const whatsappNumber = customer?.whatsapp ?? ''
 
   return (
-    <AppLayout title={sale.code} showBack>
+    <>
+      <TopBar title={sale.code} showBack />
       <div className="flex flex-col gap-5 pb-10">
         {/* Header */}
         <Card className="p-5 flex flex-col gap-4 relative overflow-hidden">
@@ -482,7 +485,7 @@ export default function VendaDetailPage({ params }: { params: Promise<{ id: stri
       >
         <Input label="Código de rastreio" value={trackingCode} onChange={(e) => setTrackingCode(e.target.value)} />
       </Modal>
-    </AppLayout>
+    </>
   )
 }
 

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Card, EmptyState, LoadingSpinner, Select } from '@/components/ui'
 import type { Database } from '@/types/database'
 
@@ -62,7 +62,8 @@ export default function PurchaseLotsPage() {
   )
 
   return (
-    <AppLayout title="Compras">
+    <>
+      <TopBar title="Compras" />
       <div className="flex flex-col gap-5">
         <div className="hidden lg:block">
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">Compras</h1>
@@ -139,6 +140,6 @@ export default function PurchaseLotsPage() {
           Nova Compra
         </Link>
       )}
-    </AppLayout>
+    </>
   )
 }

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import {
   Badge,
   Button,
@@ -46,7 +46,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const { id } = usePromise(params)
   const router = useRouter()
   const supabase = createClient()
-  const { user, isAdmin, signOut, profile } = useAuth()
+  const { user, isAdmin } = useAuth()
 
   const [product, setProduct] = useState<Product | null>(null)
   const [movements, setMovements] = useState<StockMovement[]>([])
@@ -181,30 +181,27 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   if (loading) {
     return (
-      <AppLayout title="Produto" showBack userName={profile?.full_name ?? undefined} userRole={profile?.role} onSignOut={signOut}>
+      <>
+        <TopBar title="Produto" showBack />
         <LoadingSpinner label="Carregando produto..." />
-      </AppLayout>
+      </>
     )
   }
 
   if (!product) {
     return (
-      <AppLayout title="Produto" showBack userName={profile?.full_name ?? undefined} userRole={profile?.role} onSignOut={signOut}>
+      <>
+        <TopBar title="Produto" showBack />
         <EmptyState title="Produto não encontrado" description="Este produto pode ter sido removido." />
-      </AppLayout>
+      </>
     )
   }
 
   const lowStock = product.quantity <= product.min_stock
 
   return (
-    <AppLayout
-      title={product.team}
-      showBack
-      userName={profile?.full_name ?? undefined}
-      userRole={profile?.role}
-      onSignOut={signOut}
-    >
+    <>
+      <TopBar title={product.team} showBack />
       <div className="flex flex-col gap-5 max-w-3xl mx-auto pb-10">
         <Card className="overflow-hidden">
           <div className="aspect-[4/3] sm:aspect-[16/7] bg-primary-50 flex items-center justify-center relative">
@@ -399,7 +396,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         onConfirm={handleDelete}
         onCancel={() => setDeleteOpen(false)}
       />
-    </AppLayout>
+    </>
   )
 }
 

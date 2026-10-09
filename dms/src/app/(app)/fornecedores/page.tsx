@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Card, EmptyState, LoadingSpinner, SearchInput } from '@/components/ui'
 import type { Database } from '@/types/database'
 
@@ -66,7 +66,8 @@ export default function SuppliersPage() {
   }, [suppliers, search])
 
   return (
-    <AppLayout title="Fornecedores">
+    <>
+      <TopBar title="Fornecedores" />
       <div className="flex flex-col gap-5">
         <div className="hidden lg:block">
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">Fornecedores</h1>
@@ -138,6 +139,6 @@ export default function SuppliersPage() {
           Novo Fornecedor
         </Link>
       )}
-    </AppLayout>
+    </>
   )
 }

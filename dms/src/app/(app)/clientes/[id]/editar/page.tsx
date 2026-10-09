@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { LoadingSpinner } from '@/components/ui'
 import { CustomerForm, type CustomerFormValues } from '@/components/customers/CustomerForm'
 import type { Database } from '@/types/database'
@@ -62,7 +62,8 @@ export default function EditCustomerPage() {
   }
 
   return (
-    <AppLayout title="Editar Cliente" showBack>
+    <>
+      <TopBar title="Editar Cliente" showBack />
       {loading || !customer ? (
         <LoadingSpinner label="Carregando cliente..." />
       ) : (
@@ -81,6 +82,6 @@ export default function EditCustomerPage() {
           submitLabel="Salvar Alterações"
         />
       )}
-    </AppLayout>
+    </>
   )
 }
