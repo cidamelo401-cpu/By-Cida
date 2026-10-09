@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Button, Card, ConfirmDialog, CurrencyInput, EmptyState, Input, LoadingSpinner, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
 import { CATALOG_SIZE_LABELS, MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
 import type { Database, ProductModel, ProductSize, ProductVersion } from '@/types/database'
@@ -16,7 +16,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const { id } = usePromise(params)
   const router = useRouter()
   const supabase = createClient()
-  const { user, signOut, profile } = useAuth()
+  const { user } = useAuth()
 
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -203,39 +203,37 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
   if (loading) {
     return (
-      <AppLayout title="Editar Camisa" showBack userName={profile?.full_name ?? undefined} userRole={profile?.role} onSignOut={signOut}>
+      <>
+        <TopBar title="Editar Camisa" showBack />
         <LoadingSpinner label="Carregando produto..." />
-      </AppLayout>
+      </>
     )
   }
 
   if (!product) {
     return (
-      <AppLayout title="Editar Camisa" showBack userName={profile?.full_name ?? undefined} userRole={profile?.role} onSignOut={signOut}>
+      <>
+        <TopBar title="Editar Camisa" showBack />
         <EmptyState title="Produto não encontrado" description="Este produto pode ter sido removido." />
-      </AppLayout>
+      </>
     )
   }
 
   if (product.archived) {
     return (
-      <AppLayout title="Editar Camisa" showBack userName={profile?.full_name ?? undefined} userRole={profile?.role} onSignOut={signOut}>
+      <>
+        <TopBar title="Editar Camisa" showBack />
         <EmptyState
           title="Produto arquivado"
           description="Reative o produto antes de editá-lo."
         />
-      </AppLayout>
+      </>
     )
   }
 
   return (
-    <AppLayout
-      title="Editar Camisa"
-      showBack
-      userName={profile?.full_name ?? undefined}
-      userRole={profile?.role}
-      onSignOut={signOut}
-    >
+    <>
+      <TopBar title="Editar Camisa" showBack />
       <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-2xl mx-auto pb-10">
         <Card className="p-5 flex flex-col gap-4">
           <h2 className="font-semibold text-gray-900">Informações da camisa</h2>
@@ -421,7 +419,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         }}
         onCancel={() => setShowPriceReminder(false)}
       />
-    </AppLayout>
+    </>
   )
 }
 

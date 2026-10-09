@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Button, CurrencyInput, Input, SearchInput, Select, Textarea } from '@/components/ui'
 import type { Database } from '@/types/database'
 
@@ -110,7 +110,8 @@ export default function NewPurchaseLotPage() {
   }
 
   return (
-    <AppLayout title="Nova Compra" showBack>
+    <>
+      <TopBar title="Nova Compra" showBack />
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-lg pb-20">
         <Select
           label="Fornecedor"
@@ -205,6 +206,6 @@ export default function NewPurchaseLotPage() {
           Registrar Compra
         </Button>
       </form>
-    </AppLayout>
+    </>
   )
 }

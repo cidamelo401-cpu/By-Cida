@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Button, Card, CurrencyInput, Input, Modal, SearchInput, Select, Textarea } from '@/components/ui'
 import { formatCurrency } from '@/lib/utils/format'
 import { createSale } from '@/lib/actions/sales'
@@ -258,7 +258,8 @@ export default function NovaVendaPage() {
   }
 
   return (
-    <AppLayout title="Nova Venda" showBack>
+    <>
+      <TopBar title="Nova Venda" showBack />
       <div className="flex flex-col gap-6 pb-24">
         {/* Progress indicator */}
         <div className="flex items-center gap-2">
@@ -614,6 +615,6 @@ export default function NovaVendaPage() {
           </div>
         </div>
       </Modal>
-    </AppLayout>
+    </>
   )
 }

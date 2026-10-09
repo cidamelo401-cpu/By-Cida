@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Card, EmptyState, LoadingSpinner, SearchInput } from '@/components/ui'
 import { formatPhone } from '@/lib/utils/format'
 import type { Database } from '@/types/database'
@@ -61,7 +61,8 @@ export default function CustomersPage() {
   }, [customers, search])
 
   return (
-    <AppLayout title="Clientes">
+    <>
+      <TopBar title="Clientes" />
       <div className="flex flex-col gap-5">
         <div className="hidden lg:block">
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">Clientes</h1>
@@ -115,7 +116,7 @@ export default function CustomersPage() {
           Novo Cliente
         </Link>
       )}
-    </AppLayout>
+    </>
   )
 }
 

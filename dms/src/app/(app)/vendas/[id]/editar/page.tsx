@@ -4,7 +4,7 @@ import { useEffect, useState, use as usePromise } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Button, Card, CurrencyInput, Input, LoadingSpinner, Textarea } from '@/components/ui'
 import { updateSaleDetails } from '@/lib/actions/sales'
 import type { Database } from '@/types/database'
@@ -71,24 +71,27 @@ export default function EditarVendaPage({ params }: { params: Promise<{ id: stri
 
   if (loading) {
     return (
-      <AppLayout title="Editar Venda" showBack>
+      <>
+        <TopBar title="Editar Venda" showBack />
         <LoadingSpinner label="Carregando..." />
-      </AppLayout>
+      </>
     )
   }
 
   if (!sale) {
     return (
-      <AppLayout title="Editar Venda" showBack>
+      <>
+        <TopBar title="Editar Venda" showBack />
         <p className="text-center text-gray-500 py-12">Venda não encontrada.</p>
-      </AppLayout>
+      </>
     )
   }
 
   const itemsLocked = sale.sale_status !== 'orcamento'
 
   return (
-    <AppLayout title={`Editar ${sale.code}`} showBack>
+    <>
+      <TopBar title={`Editar ${sale.code}`} showBack />
       <div className="flex flex-col gap-5 pb-10">
         <Card className="p-4 flex flex-col gap-4">
           {itemsLocked && (
@@ -126,6 +129,6 @@ export default function EditarVendaPage({ params }: { params: Promise<{ id: stri
           </Button>
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

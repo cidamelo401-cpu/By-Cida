@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Badge, Card, EmptyState, LoadingSpinner, SearchInput } from '@/components/ui'
 import { formatCurrency } from '@/lib/utils/format'
 import {
@@ -126,7 +126,8 @@ export default function ProductsPage() {
   const hasFilters = Boolean(sizeFilter || modelFilter || versionFilter || statusFilter)
 
   return (
-    <AppLayout title="Produtos">
+    <>
+      <TopBar title="Produtos" />
       <div className="flex flex-col gap-5">
         <div className="hidden lg:flex items-center justify-between gap-3">
           <div>
@@ -246,7 +247,7 @@ export default function ProductsPage() {
           Nova Camisa
         </Link>
       )}
-    </AppLayout>
+    </>
   )
 }
 

@@ -5,7 +5,6 @@ import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { Badge, Button, Card, ConfirmDialog, EmptyState, LoadingSpinner } from '@/components/ui'
 import { formatCurrency, formatDateTime } from '@/lib/utils/format'
 import { updateSaleStatus } from '@/lib/actions/sales'
@@ -93,7 +92,7 @@ export default function ReservasPage() {
   }
 
   return (
-    <AppLayout>
+    <>
       <div className="flex flex-col gap-5">
         <div>
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">Reservas</h1>
@@ -172,6 +171,6 @@ export default function ReservasPage() {
         }}
         onCancel={() => setCancelId(null)}
       />
-    </AppLayout>
+    </>
   )
 }

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Button, Input, Textarea } from '@/components/ui'
 
 export default function NewSupplierPage() {
@@ -39,7 +39,8 @@ export default function NewSupplierPage() {
   }
 
   return (
-    <AppLayout title="Novo Fornecedor" showBack>
+    <>
+      <TopBar title="Novo Fornecedor" showBack />
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-lg pb-20">
         <Input
           label="Nome do fornecedor"
@@ -64,6 +65,6 @@ export default function NewSupplierPage() {
           Cadastrar Fornecedor
         </Button>
       </form>
-    </AppLayout>
+    </>
   )
 }

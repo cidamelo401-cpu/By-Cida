@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Badge, Card, ConfirmDialog, EmptyState, LoadingSpinner } from '@/components/ui'
 import { formatCurrency, formatDate, formatPhone } from '@/lib/utils/format'
 import type { Database } from '@/types/database'
@@ -117,9 +117,10 @@ export default function CustomerDetailPage() {
 
   if (loading) {
     return (
-      <AppLayout title="Cliente" showBack>
+      <>
+        <TopBar title="Cliente" showBack />
         <LoadingSpinner label="Carregando cliente..." />
-      </AppLayout>
+      </>
     )
   }
 
@@ -132,7 +133,8 @@ export default function CustomerDetailPage() {
     : null
 
   return (
-    <AppLayout
+    <>
+    <TopBar
       title={customer.name}
       showBack
       action={
@@ -169,7 +171,7 @@ export default function CustomerDetailPage() {
           </div>
         ) : undefined
       }
-    >
+    />
       <div className="flex flex-col gap-5 pb-10">
         <Card className="p-4 flex flex-col gap-3">
           <div>
@@ -340,6 +342,6 @@ export default function CustomerDetailPage() {
         danger
         loading={deleting}
       />
-    </AppLayout>
+    </>
   )
 }

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { CustomerForm, type CustomerFormValues } from '@/components/customers/CustomerForm'
 
 export default function NewCustomerPage() {
@@ -36,8 +36,9 @@ export default function NewCustomerPage() {
   }
 
   return (
-    <AppLayout title="Novo Cliente" showBack>
+    <>
+      <TopBar title="Novo Cliente" showBack />
       <CustomerForm onSubmit={handleSubmit} submitLabel="Cadastrar Cliente" />
-    </AppLayout>
+    </>
   )
 }

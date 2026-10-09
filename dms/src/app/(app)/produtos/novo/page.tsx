@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
-import { AppLayout } from '@/components/layout/AppLayout'
+import { TopBar } from '@/components/layout/TopBar'
 import { Button, Card, CurrencyInput, Input, MultiPhotoUpload, Select, Textarea } from '@/components/ui'
 import { generateSKU } from '@/lib/utils/format'
 import { CATALOG_SIZE_LABELS, COMMON_TEAMS, MODEL_LABELS, SIZE_OPTIONS, VERSION_LABELS } from '@/lib/constants/products'
@@ -53,7 +53,7 @@ export default function NewProductPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
-  const { user, signOut, profile } = useAuth()
+  const { user } = useAuth()
 
   const [form, setForm] = useState<FormState>(() => {
     if (!searchParams || Array.from(searchParams.keys()).length === 0) return initialState
@@ -213,13 +213,8 @@ export default function NewProductPage() {
   }
 
   return (
-    <AppLayout
-      title="Nova Camisa"
-      showBack
-      userName={profile?.full_name ?? undefined}
-      userRole={profile?.role}
-      onSignOut={signOut}
-    >
+    <>
+      <TopBar title="Nova Camisa" showBack />
       <form onSubmit={(e) => handleSave(e, false)} className="flex flex-col gap-5 max-w-2xl mx-auto pb-10">
         <Card className="p-5 flex flex-col gap-4">
           <h2 className="font-semibold text-gray-900">Informações da camisa</h2>
@@ -452,6 +447,6 @@ export default function NewProductPage() {
           </Button>
         </div>
       </form>
-    </AppLayout>
+    </>
   )
 }

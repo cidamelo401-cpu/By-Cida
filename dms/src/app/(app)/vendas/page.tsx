@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { Badge, Card, EmptyState, LoadingSpinner, SearchInput } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils/format'
 import {
@@ -90,7 +89,7 @@ export default function VendasPage() {
   const filteredTotal = filtered.reduce((sum, s) => sum + s.total, 0)
 
   return (
-    <AppLayout>
+    <>
       <div className="flex flex-col gap-5">
         <div>
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">Vendas</h1>
@@ -210,6 +209,6 @@ export default function VendasPage() {
         Nova Venda
         </Link>
       )}
-    </AppLayout>
+    </>
   )
 }
