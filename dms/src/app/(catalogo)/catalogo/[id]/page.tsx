@@ -64,12 +64,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         setProduct(data)
         setSelectedSize(data.size)
 
-        // Load siblings: use catalog_group if available, else team+model+season
+        // Load siblings: use catalog_group if available, else team+model+season.
+        // Sempre particiona por adulto/infantil (mesmo critério usado nas listagens),
+        // senão tamanhos kids e adulto do mesmo time/modelo se misturam na seleção.
+        const openedIsKids = CATALOG_KIDS_SIZES.includes(data.size as ProductSize)
         let query = supabase
           .from('products')
           .select('*')
           .eq('archived', false)
           .in('status', ['disponivel', 'sob_encomenda'])
+          .in('size', openedIsKids ? CATALOG_KIDS_SIZES : CATALOG_ADULT_SIZES)
 
         if ((data as any).catalog_group) {
           query = query.eq('catalog_group', (data as any).catalog_group)
