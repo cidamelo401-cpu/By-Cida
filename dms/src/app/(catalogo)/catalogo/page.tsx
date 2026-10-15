@@ -157,7 +157,9 @@ export default function CatalogoPage() {
       // Agrupamento sempre por time+modelo+temporada — o catalog_group (quando existe) não é usado
       // como chave porque um tamanho cadastrado separadamente pode ficar sem esse elo e formar
       // indevidamente um card próprio em vez de se juntar aos demais tamanhos da mesma camisa.
-      const key = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+      // "sob_encomenda" nunca é fundido com o estoque disponível: é sempre uma marcação deliberada
+      // no cadastro (não algo automático de "acabou"), então é um produto à parte, com card próprio.
+      const key = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}|${p.status === 'sob_encomenda' ? 'sob_encomenda' : 'estoque'}`
       const isAvailable = p.status !== 'sob_encomenda' && p.quantity > 0
 
       const existing = map.get(key)

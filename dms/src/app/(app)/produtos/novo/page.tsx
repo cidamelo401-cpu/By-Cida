@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
@@ -76,12 +76,32 @@ export default function NewProductPage() {
   })
   const [saving, setSaving] = useState(false)
   const [showTeamSuggestions, setShowTeamSuggestions] = useState(false)
+  const [existingTeams, setExistingTeams] = useState<string[]>([])
+
+  // Busca os times já cadastrados pra sugerir o nome exato (evita cadastrar
+  // "Corinthians" e "Corinthians Feminino" como times diferentes no catálogo).
+  useEffect(() => {
+    supabase
+      .from('products')
+      .select('team')
+      .eq('archived', false)
+      .then(({ data }) => {
+        const names = Array.from(new Set((data ?? []).map((p) => p.team))).sort()
+        setExistingTeams(names)
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const allTeamOptions = useMemo(
+    () => Array.from(new Set([...existingTeams, ...COMMON_TEAMS])).sort(),
+    [existingTeams]
+  )
 
   const filteredTeams = useMemo(() => {
     const term = form.team.trim().toLowerCase()
-    if (!term) return COMMON_TEAMS
-    return COMMON_TEAMS.filter((t) => t.toLowerCase().includes(term))
-  }, [form.team])
+    if (!term) return allTeamOptions
+    return allTeamOptions.filter((t) => t.toLowerCase().includes(term))
+  }, [form.team, allTeamOptions])
 
   function updateField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))

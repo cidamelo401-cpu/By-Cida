@@ -223,10 +223,11 @@ export default function ReportsPage() {
     const { startTs, endTs } = rangeToTimestamps(startDate, endDate)
     const { data, error } = await supabase
       .from('sale_items')
-      .select('quantity, unit_price, cost_price, sales!inner(code, created_at, sale_status)')
+      .select('quantity, unit_price, cost_price, sales!inner(code, created_at, sale_status, payment_status)')
       .gte('sales.created_at', startTs)
       .lte('sales.created_at', endTs)
       .neq('sales.sale_status', 'cancelada')
+      .eq('sales.payment_status', 'pago')
     if (error) throw error
 
     type ProfitItem = { quantity: number; unit_price: number; cost_price: number; sales: { code: string } | null }

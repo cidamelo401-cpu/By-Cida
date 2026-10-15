@@ -67,12 +67,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         // Load siblings: use catalog_group if available, else team+model+season.
         // Sempre particiona por adulto/infantil (mesmo critério usado nas listagens),
         // senão tamanhos kids e adulto do mesmo time/modelo se misturam na seleção.
+        // Também particiona por "sob encomenda": essa marcação é sempre deliberada no
+        // cadastro (nunca automática), então uma camisa sob consulta é um produto à
+        // parte e não deve se misturar com o estoque disponível de outra camisa igual.
         const openedIsKids = CATALOG_KIDS_SIZES.includes(data.size as ProductSize)
+        const openedIsSobEncomenda = data.status === 'sob_encomenda'
         let query = supabase
           .from('products')
           .select('*')
           .eq('archived', false)
-          .in('status', ['disponivel', 'sob_encomenda'])
+          .eq('status', openedIsSobEncomenda ? 'sob_encomenda' : 'disponivel')
           .in('size', openedIsKids ? CATALOG_KIDS_SIZES : CATALOG_ADULT_SIZES)
 
         if ((data as any).catalog_group) {
