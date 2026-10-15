@@ -82,7 +82,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
     for (const p of products) {
       const isKids = KIDS_SIZES.includes(p.size)
       // Agrupamento sempre por time+modelo+temporada — ver comentário equivalente em catalogo/page.tsx
-      const key = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+      const key = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}|${p.status === 'sob_encomenda' ? 'sob_encomenda' : 'estoque'}`
       const isAvailable = p.status !== 'sob_encomenda' && p.quantity > 0
 
       const existing = map.get(key)
