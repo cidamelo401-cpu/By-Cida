@@ -135,9 +135,10 @@ export default function DashboardPage() {
           .in('sale_status', ['paga', 'enviada', 'entregue']),
         supabase
           .from('sale_items')
-          .select('quantity, unit_price, cost_price, sales!inner(sale_status, created_at)')
+          .select('quantity, unit_price, cost_price, sales!inner(sale_status, payment_status, created_at)')
           .gte('sales.created_at', monthStart)
-          .in('sales.sale_status', ['paga', 'enviada', 'entregue']),
+          .in('sales.sale_status', ['paga', 'enviada', 'entregue'])
+          .eq('sales.payment_status', 'pago'),
         supabase
           .from('sales')
           .select('amount_pending')
