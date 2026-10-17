@@ -67,16 +67,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         // Load siblings: use catalog_group if available, else team+model+season.
         // Sempre particiona por adulto/infantil (mesmo critério usado nas listagens),
         // senão tamanhos kids e adulto do mesmo time/modelo se misturam na seleção.
-        // Também particiona por "sob encomenda": essa marcação é sempre deliberada no
-        // cadastro (nunca automática), então uma camisa sob consulta é um produto à
-        // parte e não deve se misturar com o estoque disponível de outra camisa igual.
         const openedIsKids = CATALOG_KIDS_SIZES.includes(data.size as ProductSize)
-        const openedIsSobEncomenda = data.status === 'sob_encomenda'
         let query = supabase
           .from('products')
           .select('*')
           .eq('archived', false)
-          .eq('status', openedIsSobEncomenda ? 'sob_encomenda' : 'disponivel')
+          .in('status', ['disponivel', 'sob_encomenda'])
           .in('size', openedIsKids ? CATALOG_KIDS_SIZES : CATALOG_ADULT_SIZES)
 
         if ((data as any).catalog_group) {
@@ -92,7 +88,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
         const { data: sibs } = await query
         if (sibs) {
-          const filtered = sibs.filter((s) => s.status === 'sob_encomenda' || s.quantity > 0)
+          // Uma camisa "sob encomenda" com foto diferente da que foi aberta é um produto
+          // à parte (ex: versão patrocinada) e não deve aparecer como tamanho desta
+          // camisa; com a mesma foto (ou sem foto própria), é só esse tamanho em falta
+          // da mesma camisa.
+          const filtered = sibs
+            .filter((s) => s.status === 'sob_encomenda' || s.quantity > 0)
+            .filter((s) => {
+              const eitherSobEncomenda = s.status === 'sob_encomenda' || data.status === 'sob_encomenda'
+              if (!eitherSobEncomenda) return true
+              if (!s.photo_url || !data.photo_url) return true
+              return s.photo_url === data.photo_url
+            })
           filtered.sort((a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size))
           setSiblings(filtered)
         }

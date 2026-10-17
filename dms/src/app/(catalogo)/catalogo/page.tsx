@@ -152,14 +152,29 @@ export default function CatalogoPage() {
     if (!showShirtCards) return []
     const map = new Map<string, GroupedShirt>()
 
+    // Pré-varredura: para cada time+modelo+temporada, guarda a foto de uma camisa
+    // já disponível em estoque (quando existir). Serve pra decidir, mais abaixo, se
+    // uma camisa "sob encomenda" é só esse tamanho em falta da mesma camisa (mesma
+    // foto -> continua no mesmo card) ou um produto diferente, tipo uma versão
+    // patrocinada (foto diferente -> ganha card próprio).
+    const anchorPhotoByBaseKey = new Map<string, string>()
+    for (const p of filteredProducts) {
+      if (p.status === 'sob_encomenda' || !p.photo_url) continue
+      const isKids = KIDS_SIZES.includes(p.size)
+      const baseKey = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+      if (!anchorPhotoByBaseKey.has(baseKey)) anchorPhotoByBaseKey.set(baseKey, p.photo_url)
+    }
+
     for (const p of filteredProducts) {
       const isKids = KIDS_SIZES.includes(p.size)
       // Agrupamento sempre por time+modelo+temporada — o catalog_group (quando existe) não é usado
       // como chave porque um tamanho cadastrado separadamente pode ficar sem esse elo e formar
       // indevidamente um card próprio em vez de se juntar aos demais tamanhos da mesma camisa.
-      // "sob_encomenda" nunca é fundido com o estoque disponível: é sempre uma marcação deliberada
-      // no cadastro (não algo automático de "acabou"), então é um produto à parte, com card próprio.
-      const key = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}|${p.status === 'sob_encomenda' ? 'sob_encomenda' : 'estoque'}`
+      const baseKey = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+      const anchorPhoto = anchorPhotoByBaseKey.get(baseKey)
+      const isDistinctSobEncomenda =
+        p.status === 'sob_encomenda' && !!anchorPhoto && !!p.photo_url && p.photo_url !== anchorPhoto
+      const key = isDistinctSobEncomenda ? `${baseKey}|sob_${p.photo_url}` : baseKey
       const isAvailable = p.status !== 'sob_encomenda' && p.quantity > 0
 
       const existing = map.get(key)
