@@ -79,10 +79,25 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
   const grouped = useMemo(() => {
     const map = new Map<string, GroupedShirt>()
 
+    // Pré-varredura: ver comentário equivalente em catalogo/page.tsx — decide se uma
+    // camisa "sob encomenda" é só um tamanho em falta da mesma camisa (mesma foto) ou
+    // um produto diferente, tipo uma versão patrocinada (foto diferente).
+    const anchorPhotoByBaseKey = new Map<string, string>()
+    for (const p of products) {
+      if (p.status === 'sob_encomenda' || !p.photo_url) continue
+      const isKids = KIDS_SIZES.includes(p.size)
+      const baseKey = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+      if (!anchorPhotoByBaseKey.has(baseKey)) anchorPhotoByBaseKey.set(baseKey, p.photo_url)
+    }
+
     for (const p of products) {
       const isKids = KIDS_SIZES.includes(p.size)
       // Agrupamento sempre por time+modelo+temporada — ver comentário equivalente em catalogo/page.tsx
-      const key = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}|${p.status === 'sob_encomenda' ? 'sob_encomenda' : 'estoque'}`
+      const baseKey = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+      const anchorPhoto = anchorPhotoByBaseKey.get(baseKey)
+      const isDistinctSobEncomenda =
+        p.status === 'sob_encomenda' && !!anchorPhoto && !!p.photo_url && p.photo_url !== anchorPhoto
+      const key = isDistinctSobEncomenda ? `${baseKey}|sob_${p.photo_url}` : baseKey
       const isAvailable = p.status !== 'sob_encomenda' && p.quantity > 0
 
       const existing = map.get(key)
