@@ -182,6 +182,22 @@ export function useTeamBadges(teams: string[]) {
         } catch { /* ignore */ }
         return merged
       })
+
+      // Grava no banco os brasões encontrados pela primeira vez, pra não depender
+      // mais da API externa (thesportsdb) nas próximas visitas — só o navegador que
+      // buscou tinha esse cache antes, agora fica salvo pra todo mundo.
+      const toPersist = Object.entries(results).filter(([team]) => !manualOverrides[team])
+      if (toPersist.length > 0) {
+        supabase
+          .from('team_badges')
+          .upsert(
+            toPersist.map(([team, badge_url]) => ({ team, badge_url })),
+            { onConflict: 'team', ignoreDuplicates: false }
+          )
+          .then(({ error }) => {
+            if (error) console.error('Erro ao salvar brasão em cache:', error)
+          })
+      }
     }
 
     run()
