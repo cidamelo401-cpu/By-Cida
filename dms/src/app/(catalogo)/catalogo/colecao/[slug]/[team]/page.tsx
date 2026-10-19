@@ -91,7 +91,11 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
         const existingSize = existing.sizes.find((s) => s.size === p.size)
         if (existingSize) {
           existingSize.quantity += p.quantity
-          if (isAvailable) existingSize.soldOut = false
+          // Link do card sempre aponta pra quem está disponível de verdade nesse tamanho.
+          if (isAvailable) {
+            existingSize.soldOut = false
+            existingSize.id = p.id
+          }
         } else {
           existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id, soldOut: !isAvailable })
         }

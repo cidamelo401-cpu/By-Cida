@@ -80,7 +80,9 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
   const filteredProducts = useMemo(() => {
     const term = search.trim().toLowerCase()
     if (!term) return products
-    return products.filter((p) => p.team.toLowerCase().includes(term))
+    return products.filter(
+      (p) => p.team.toLowerCase().includes(term) || (p.notes ?? '').toLowerCase().includes(term)
+    )
   }, [products, search])
 
   const shirts = useMemo(() => {
@@ -98,7 +100,11 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
         const existingSize = existing.sizes.find((s) => s.size === p.size)
         if (existingSize) {
           existingSize.quantity += p.quantity
-          if (isAvailable) existingSize.soldOut = false
+          // Link do card sempre aponta pra quem está disponível de verdade nesse tamanho.
+          if (isAvailable) {
+            existingSize.soldOut = false
+            existingSize.id = p.id
+          }
         } else {
           existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id, soldOut: !isAvailable })
         }
