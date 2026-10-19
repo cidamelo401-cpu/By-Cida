@@ -169,7 +169,13 @@ export default function CatalogoPage() {
         const existingSize = existing.sizes.find((s) => s.size === p.size)
         if (existingSize) {
           existingSize.quantity += p.quantity
-          if (isAvailable) existingSize.soldOut = false
+          // Quando duas camisas diferentes (ex: masculina e feminina) acabam cadastradas
+          // com o mesmo tamanho no mesmo grupo, o link do card precisa apontar pra quem
+          // está disponível de verdade — nunca ficar preso no primeiro produto processado.
+          if (isAvailable) {
+            existingSize.soldOut = false
+            existingSize.id = p.id
+          }
         } else {
           existing.sizes.push({ size: p.size, quantity: p.quantity, id: p.id, soldOut: !isAvailable })
         }
