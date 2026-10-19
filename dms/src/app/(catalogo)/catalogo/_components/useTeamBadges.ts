@@ -96,6 +96,54 @@ const LOCAL_BADGES: Record<string, string> = {
   'Al-Hilal': '/badges/al-hilal.png',
 }
 
+/* ── Termo de busca na Wikipédia (usada como reforço se a TheSportsDB falhar) ──
+   Seleções levam "national football team" pra não cair na página do país;
+   clubes com nome ambíguo (cidade, etc.) levam "football club" pra desempatar. */
+const WIKI_SEARCH_NAMES: Record<string, string> = {
+  'Alemanha': 'Germany national football team',
+  'Argentina': 'Argentina national football team',
+  'Bélgica': 'Belgium national football team',
+  'Brasil': 'Brazil national football team',
+  'Espanha': 'Spain national football team',
+  'França': 'France national football team',
+  'Inglaterra': 'England national football team',
+  'Itália': 'Italy national football team',
+  'Japão': 'Japan national football team',
+  'México': 'Mexico national football team',
+  'Noruega': 'Norway national football team',
+  'Portugal': 'Portugal national football team',
+  'USA': 'United States men\'s national soccer team',
+  'Barcelona': 'FC Barcelona',
+  'Santos': 'Santos FC football club',
+  'Palmeiras': 'Palmeiras football club',
+  'Chelsea': 'Chelsea F.C.',
+  'Arsenal': 'Arsenal F.C.',
+}
+
+async function fetchWikipediaBadge(team: string): Promise<string | undefined> {
+  const query = WIKI_SEARCH_NAMES[team] ?? `${TEAM_SEARCH_NAMES[team] ?? team} football club`
+  try {
+    const searchRes = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
+        query
+      )}&format=json&origin=*&srlimit=1`
+    )
+    if (!searchRes.ok) return undefined
+    const searchJson = await searchRes.json()
+    const title = searchJson?.query?.search?.[0]?.title
+    if (!title) return undefined
+
+    const summaryRes = await fetch(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`
+    )
+    if (!summaryRes.ok) return undefined
+    const summaryJson = await summaryRes.json()
+    return summaryJson?.thumbnail?.source ?? summaryJson?.originalimage?.source ?? undefined
+  } catch {
+    return undefined
+  }
+}
+
 /* ── Hook to fetch team badges: 1) cadastro manual do Sérgio (Supabase) 2) busca automática (TheSportsDB) ── */
 export function useTeamBadges(teams: string[]) {
   const [badges, setBadges] = useState<Record<string, string>>({})
@@ -158,13 +206,20 @@ export function useTeamBadges(teams: string[]) {
               const res = await fetch(
                 `https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(searchName)}`
               )
-              if (!res.ok) return
-              const json = await res.json()
-              const badge = json?.teams?.[0]?.strBadge
-              if (badge) {
-                results[team] = badge
+              if (res.ok) {
+                const json = await res.json()
+                const badge = json?.teams?.[0]?.strBadge
+                if (badge) {
+                  results[team] = badge
+                  return
+                }
               }
-            } catch { /* ignore failed fetches */ }
+            } catch { /* ignore, tenta a Wikipédia a seguir */ }
+
+            // Reforço: se a TheSportsDB falhar ou não achar nada, tenta a Wikipédia
+            // (gratuita, sem chave, muito mais estável) antes de desistir.
+            const wikiBadge = await fetchWikipediaBadge(team)
+            if (wikiBadge) results[team] = wikiBadge
           })
         )
 
