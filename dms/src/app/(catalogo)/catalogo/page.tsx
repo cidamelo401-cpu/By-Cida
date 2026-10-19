@@ -90,7 +90,9 @@ export default function CatalogoPage() {
 
     const term = search.trim().toLowerCase()
     if (term) {
-      result = result.filter((p) => p.team.toLowerCase().includes(term))
+      result = result.filter(
+        (p) => p.team.toLowerCase().includes(term) || (p.notes ?? '').toLowerCase().includes(term)
+      )
     }
 
     return result

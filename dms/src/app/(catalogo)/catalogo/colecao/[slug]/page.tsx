@@ -80,7 +80,9 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
   const filteredProducts = useMemo(() => {
     const term = search.trim().toLowerCase()
     if (!term) return products
-    return products.filter((p) => p.team.toLowerCase().includes(term))
+    return products.filter(
+      (p) => p.team.toLowerCase().includes(term) || (p.notes ?? '').toLowerCase().includes(term)
+    )
   }, [products, search])
 
   const shirts = useMemo(() => {
