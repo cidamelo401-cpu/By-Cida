@@ -88,18 +88,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
         const { data: sibs } = await query
         if (sibs) {
-          // Uma camisa "sob encomenda" com foto diferente da que foi aberta é um produto
-          // à parte (ex: versão patrocinada) e não deve aparecer como tamanho desta
-          // camisa; com a mesma foto (ou sem foto própria), é só esse tamanho em falta
-          // da mesma camisa.
-          const filtered = sibs
-            .filter((s) => s.status === 'sob_encomenda' || s.quantity > 0)
-            .filter((s) => {
-              const eitherSobEncomenda = s.status === 'sob_encomenda' || data.status === 'sob_encomenda'
-              if (!eitherSobEncomenda) return true
-              if (!s.photo_url || !data.photo_url) return true
-              return s.photo_url === data.photo_url
-            })
+          const filtered = sibs.filter((s) => s.status === 'sob_encomenda' || s.quantity > 0)
           filtered.sort((a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size))
           setSiblings(filtered)
         }
