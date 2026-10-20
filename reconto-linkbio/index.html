@@ -129,6 +129,7 @@
   .card:nth-of-type(2) { animation-delay: .05s; }
   .card:nth-of-type(3) { animation-delay: .15s; }
   .card:nth-of-type(4) { animation-delay: .2s; }
+  .card:nth-of-type(5) { animation-delay: .25s; }
   @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
@@ -167,6 +168,12 @@
     <span class="arrow" aria-hidden="true">›</span>
   </a>
 
+  <a class="card link" id="vender" href="#" rel="noopener">
+    <span class="ico">📦</span>
+    <span class="txt"><b>Quero vender</b><small>Dê vida nova aos livros que sobraram</small></span>
+    <span class="arrow" aria-hidden="true">›</span>
+  </a>
+
   <a class="card link" id="vip" href="#" rel="noopener">
     <span class="ico">✨</span>
     <span class="txt"><b>Curadoria ReConto · Grupo VIP</b><small>Comunidade no WhatsApp · grátis</small></span>
@@ -186,6 +193,7 @@
 const CONFIG = {
   site: "https://www.recontolivraria.com.br",
   vera: "https://chat.recontolivraria.com.br/",
+  vender: "https://recontolivraria.cdn.vnda.com.br/p/termos#como-vender",
   vip: "https://chat.whatsapp.com/XXXXXXXX",   // TROCAR: link do Grupo VIP
   instagram: "https://www.instagram.com/USUARIO", // TROCAR: perfil da ReConto
   utm: "utm_source=instagram&utm_medium=linkbio",
@@ -202,11 +210,15 @@ const CONFIG = {
 /* ======================================== */
 
 const $ = (id) => document.getElementById(id);
-const withUtm = (url) => url + (url.includes("?") ? "&" : "?") + CONFIG.utm;
+const withUtm = (url) => {
+  const [base, hash] = url.split("#");
+  return base + (base.includes("?") ? "&" : "?") + CONFIG.utm + (hash ? "#" + hash : "");
+};
 const go = (url) => { window.location.href = url; };
 
 $("site").href = withUtm(CONFIG.site);
 $("vera").href = CONFIG.vera;
+$("vender").href = withUtm(CONFIG.vender);
 $("vip").href = CONFIG.vip;
 $("insta").href = CONFIG.instagram;
 
