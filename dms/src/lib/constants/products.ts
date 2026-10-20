@@ -6,6 +6,7 @@ export const MODEL_LABELS: Record<ProductModel, string> = {
   terceiro: 'Third',
   goleiro: 'Goalkeeper',
   treino: 'Training',
+  especial: 'Special Edition',
 }
 
 export const VERSION_LABELS: Record<ProductVersion, string> = {
