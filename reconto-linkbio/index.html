@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ReConto Livraria Sebo Infantil</title>
+<meta name="description" content="Vida nova a boas histórias. Encontre livros infantis usados por idade.">
+<meta name="theme-color" content="#FFF8EC">
+<meta property="og:title" content="ReConto Livraria Sebo Infantil">
+<meta property="og:description" content="Vida nova a boas histórias. Encontre livros infantis usados por idade.">
+<meta property="og:image" content="assets/logo.png">
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF8EC;
+    --card: #FFFFFF;
+    --ink: #2B2B33;
+    --muted: #6E6A73;
+    --teal: #2A9D9A;
+    --teal-dark: #1E7C79;
+    --mustard: #E9B92F;
+    --wine: #B5335F;
+    --line: #F0E4CF;
+    --shadow: 0 6px 20px rgba(43, 43, 51, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1E1B22;
+      --card: #2A262F;
+      --ink: #F6EFE2;
+      --muted: #B8B0BE;
+      --line: #3B3541;
+      --shadow: 0 6px 20px rgba(0, 0, 0, .35);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100dvh;
+    background:
+      radial-gradient(420px 300px at 12% -5%, color-mix(in srgb, var(--mustard) 28%, transparent), transparent 70%),
+      radial-gradient(420px 320px at 100% 8%, color-mix(in srgb, var(--teal) 22%, transparent), transparent 70%),
+      var(--bg);
+    color: var(--ink);
+    font-family: "Nunito", system-ui, sans-serif;
+    padding: 28px 16px calc(40px + env(safe-area-inset-bottom));
+  }
+  main { max-width: 480px; margin: 0 auto; }
+
+  .hero { text-align: center; margin-bottom: 26px; animation: rise .6s ease both; }
+  .logo {
+    width: 116px; height: 116px; border-radius: 50%;
+    background: #fff; padding: 6px; margin: 0 auto 14px;
+    box-shadow: var(--shadow); display: grid; place-items: center; overflow: hidden;
+  }
+  .logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+  .logo span { font-family: "Fredoka", sans-serif; font-size: 22px; color: var(--teal); }
+  h1 { font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.65rem; line-height: 1.15; }
+  .tag { margin-top: 6px; color: var(--muted); font-weight: 600; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+    box-shadow: var(--shadow); margin-bottom: 14px; animation: rise .6s ease both;
+  }
+  .link {
+    display: flex; align-items: center; gap: 14px; padding: 12px 16px 12px 12px;
+    text-decoration: none; color: inherit; min-height: 72px;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .link:active { transform: scale(.98); }
+  @media (hover: hover) { .link:hover { transform: translateY(-2px); } }
+  .ico {
+    flex: none; width: 48px; height: 48px; border-radius: 16px; overflow: hidden;
+    display: grid; place-items: center; background: var(--line); font-size: 24px;
+  }
+  .ico img { width: 100%; height: 100%; object-fit: cover; }
+  .txt { flex: 1; min-width: 0; }
+  .txt b { display: block; font-family: "Fredoka", sans-serif; font-weight: 500; font-size: 1.05rem; }
+  .txt small { color: var(--muted); font-size: .85rem; }
+  .arrow { color: var(--muted); font-size: 20px; flex: none; }
+
+  .link.vera { border-color: transparent; background: linear-gradient(135deg, var(--teal), var(--teal-dark)); color: #fff; }
+  .link.vera .txt small, .link.vera .arrow { color: rgba(255,255,255,.85); }
+  .link.vera .ico { background: rgba(255,255,255,.2); }
+
+  .finder { padding: 20px 18px 18px; animation-delay: .1s; }
+  .finder h2 { font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.25rem; }
+  .finder p { color: var(--muted); font-size: .92rem; margin: 2px 0 14px; }
+  .row { display: flex; gap: 10px; }
+  .row input {
+    flex: 1; min-width: 0; height: 52px; border-radius: 16px; border: 2px solid var(--line);
+    background: var(--bg); color: var(--ink); padding: 0 16px; font: 600 1.05rem "Nunito", sans-serif;
+  }
+  .row input:focus { outline: none; border-color: var(--teal); }
+  .btn {
+    height: 52px; padding: 0 20px; border: 0; border-radius: 16px; cursor: pointer;
+    background: var(--wine); color: #fff; font: 500 1rem "Fredoka", sans-serif;
+    transition: transform .15s ease, filter .15s ease;
+  }
+  .btn:active { transform: scale(.96); }
+  .btn:focus-visible, .chip:focus-visible, .link:focus-visible, .row input:focus-visible { outline: 3px solid var(--mustard); outline-offset: 2px; }
+  .err { color: var(--wine); font-weight: 700; font-size: .88rem; min-height: 1.2em; margin-top: 8px; }
+  .chips { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 6px; }
+  .chip {
+    border: 2px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 16px;
+    padding: 12px 8px; cursor: pointer; font: 500 1rem "Fredoka", sans-serif;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .chip:nth-child(1) { --c: var(--mustard); }
+  .chip:nth-child(2) { --c: var(--teal); }
+  .chip:nth-child(3) { --c: var(--wine); }
+  .chip:nth-child(4) { --c: var(--mustard); }
+  .chip:active { transform: scale(.96); }
+  @media (hover: hover) { .chip:hover { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, var(--bg)); } }
+  .chip small { display: block; font: 600 .75rem "Nunito", sans-serif; color: var(--muted); }
+
+  .social { display: flex; justify-content: center; margin-top: 26px; }
+  .social a {
+    width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); color: var(--ink);
+  }
+  footer { text-align: center; margin-top: 22px; color: var(--muted); font-size: .8rem; }
+
+  .card:nth-of-type(2) { animation-delay: .05s; }
+  .card:nth-of-type(3) { animation-delay: .15s; }
+  .card:nth-of-type(4) { animation-delay: .2s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div class="logo">
+      <img src="assets/logo.png" alt="Logo ReConto Livraria Infantil de Usados" onerror="this.remove();document.getElementById('logoFallback').hidden=false">
+      <span aria-hidden="true" id="logoFallback" hidden>ReConto</span>
+    </div>
+    <h1>ReConto Livraria<br>Sebo Infantil</h1>
+    <p class="tag">Vida nova a boas histórias ♻️</p>
+  </header>
+
+  <a class="card link vera" id="vera" href="#" rel="noopener">
+    <span class="ico"><img src="assets/vera.jpg" alt="" onerror="this.replaceWith(document.createTextNode('💬'))"></span>
+    <span class="txt"><b>Fale com a Vera</b><small>Livreira virtual · te ajuda a escolher</small></span>
+    <span class="arrow" aria-hidden="true">›</span>
+  </a>
+
+  <section class="card finder" aria-labelledby="finderTitle">
+    <h2 id="finderTitle">Qual a idade do leitor?</h2>
+    <p>Digite a idade ou escolha uma faixa e veja os livros certos.</p>
+    <form class="row" id="ageForm" novalidate>
+      <input id="age" type="number" inputmode="numeric" min="0" max="99" placeholder="Ex.: 4" aria-label="Idade da criança em anos">
+      <button class="btn" type="submit">Ver livros</button>
+    </form>
+    <div class="err" id="err" role="alert"></div>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <a class="card link" id="site" href="#" rel="noopener">
+    <span class="ico">📚</span>
+    <span class="txt"><b>Site da ReConto</b><small>Todo o acervo</small></span>
+    <span class="arrow" aria-hidden="true">›</span>
+  </a>
+
+  <a class="card link" id="vip" href="#" rel="noopener">
+    <span class="ico">✨</span>
+    <span class="txt"><b>Curadoria ReConto · Grupo VIP</b><small>Comunidade no WhatsApp · grátis</small></span>
+    <span class="arrow" aria-hidden="true">›</span>
+  </a>
+
+  <div class="social">
+    <a id="insta" href="#" rel="noopener" aria-label="Instagram da ReConto">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+    </a>
+  </div>
+  <footer>Vida nova a boas histórias ♻️</footer>
+</main>
+
+<script>
+/* ===== CONFIGURAÇÃO — edite só aqui ===== */
+const CONFIG = {
+  site: "https://www.recontolivraria.com.br",
+  vera: "https://wa.me/55DDDNUMERO",          // TROCAR: WhatsApp ou chat da Vera
+  vip: "https://chat.whatsapp.com/XXXXXXXX",   // TROCAR: link do Grupo VIP
+  instagram: "https://www.instagram.com/USUARIO", // TROCAR: perfil da ReConto
+  utm: "utm_source=instagram&utm_medium=linkbio",
+  // Faixas etárias. "path" é o final da URL no site (padrão confirmado: /6-8).
+  faixas: [
+    { min: 0, max: 2,  label: "0 a 2 anos",  sub: "Bebês",           path: "0-2" },
+    { min: 3, max: 5,  label: "3 a 5 anos",  sub: "Primeiras letras", path: "3-5" },
+    { min: 6, max: 8,  label: "6 a 8 anos",  sub: "Leitores iniciantes", path: "6-8" },
+    { min: 9, max: 12, label: "9 a 12 anos", sub: "Leitores fluentes", path: "9-12" }
+  ],
+  idadeMaxima: 14
+};
+/* ======================================== */
+
+const $ = (id) => document.getElementById(id);
+const withUtm = (url) => url + (url.includes("?") ? "&" : "?") + CONFIG.utm;
+const go = (url) => { window.location.href = url; };
+
+$("site").href = withUtm(CONFIG.site);
+$("vera").href = CONFIG.vera;
+$("vip").href = CONFIG.vip;
+$("insta").href = CONFIG.instagram;
+
+CONFIG.faixas.forEach((f) => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "chip";
+  b.innerHTML = f.label + "<small>" + f.sub + "</small>";
+  b.addEventListener("click", () => go(withUtm(CONFIG.site + "/" + f.path)));
+  $("chips").appendChild(b);
+});
+
+$("ageForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const raw = $("age").value.trim();
+  const age = Number(raw);
+  const err = $("err");
+  err.textContent = "";
+  if (raw === "" || !Number.isInteger(age) || age < 0) {
+    err.textContent = "Digite a idade em anos, só números. 🙂";
+    return;
+  }
+  if (age > CONFIG.idadeMaxima) {
+    err.textContent = "Para essa idade, a Vera te ajuda a escolher. 💬";
+    return;
+  }
+  const faixa = CONFIG.faixas.find((f) => age >= f.min && age <= f.max);
+  go(withUtm(faixa ? CONFIG.site + "/" + faixa.path : CONFIG.site));
+});
+</script>
+</body>
+</html>
