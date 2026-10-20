@@ -58,8 +58,8 @@
   }
   .logo img { width: 100%; height: auto; display: block; }
   .logo span { font-family: "Fredoka", sans-serif; font-size: 22px; color: var(--teal); }
-  h1 { font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.65rem; line-height: 1.15; }
-  .tag { margin-top: 6px; color: var(--muted); font-weight: 600; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .tag { margin-top: 0; color: var(--muted); font-weight: 600; }
 
   .card {
     background: var(--card); border: 1px solid var(--line); border-radius: 22px;
@@ -76,6 +76,7 @@
     flex: none; width: 48px; height: 48px; border-radius: 16px; overflow: hidden;
     display: grid; place-items: center; background: var(--line); font-size: 24px;
   }
+  .ico.wa { background: #25D366; color: #fff; }
   .ico img { width: 100%; height: 100%; object-fit: cover; }
   .txt { flex: 1; min-width: 0; }
   .txt b { display: block; font-family: "Fredoka", sans-serif; font-weight: 500; font-size: 1.05rem; }
@@ -117,6 +118,8 @@
   .chip:nth-child(5) { --c: var(--teal); }
   .chip:active { transform: scale(.96); }
   @media (hover: hover) { .chip:hover { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, var(--bg)); } }
+  .chip.selected { border-color: var(--c); background: color-mix(in srgb, var(--c) 22%, var(--bg)); }
+  .btn.go { width: 100%; margin-top: 6px; }
   .chip small { display: block; font: 600 .75rem "Nunito", sans-serif; color: var(--muted); }
 
   .social { display: flex; justify-content: center; margin-top: 26px; }
@@ -141,7 +144,7 @@
       <img src="assets/logo.png" alt="Logo ReConto Livraria Infantil de Usados" onerror="this.remove();document.getElementById('logoFallback').hidden=false">
       <span aria-hidden="true" id="logoFallback" hidden>ReConto</span>
     </div>
-    <h1>ReConto Livraria<br>Sebo Infantil</h1>
+    <h1 class="sr">ReConto Livraria Sebo Infantil</h1>
     <p class="tag">Vida nova a boas histórias ♻️</p>
   </header>
 
@@ -153,13 +156,10 @@
 
   <section class="card finder" aria-labelledby="finderTitle">
     <h2 id="finderTitle">Qual a idade do leitor?</h2>
-    <p>Digite a idade ou escolha uma faixa e veja os livros certos.</p>
-    <form class="row" id="ageForm" novalidate>
-      <input id="age" type="number" inputmode="numeric" min="0" max="99" placeholder="Ex.: 4" aria-label="Idade da criança em anos">
-      <button class="btn" type="submit">Ver livros</button>
-    </form>
-    <div class="err" id="err" role="alert"></div>
+    <p>Escolha a faixa de idade do leitor.</p>
     <div class="chips" id="chips"></div>
+    <div class="err" id="err" role="alert"></div>
+    <button class="btn go" id="verLivros" type="button">Ver livros</button>
   </section>
 
   <a class="card link" id="site" href="#" rel="noopener">
@@ -175,7 +175,7 @@
   </a>
 
   <a class="card link" id="vip" href="#" rel="noopener">
-    <span class="ico">✨</span>
+    <span class="ico wa"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></span>
     <span class="txt"><b>Curadoria ReConto · Grupo VIP</b><small>Comunidade no WhatsApp · grátis</small></span>
     <span class="arrow" aria-hidden="true">›</span>
   </a>
@@ -185,7 +185,6 @@
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
     </a>
   </div>
-  <footer>Vida nova a boas histórias ♻️</footer>
 </main>
 
 <script>
@@ -204,8 +203,7 @@ const CONFIG = {
     { min: 6, max: 8,  label: "6 a 8 anos",  sub: "Leitores iniciantes", path: "6-8" },
     { min: 9, max: 11, label: "9 a 11 anos", sub: "Leitores fluentes", path: "9-11" },
     { min: 12, max: 15, label: "12 a 15 anos", sub: "Jovens leitores", path: "12-15" }
-  ],
-  idadeMaxima: 15
+  ]
 };
 /* ======================================== */
 
@@ -222,31 +220,31 @@ $("vender").href = withUtm(CONFIG.vender);
 $("vip").href = CONFIG.vip;
 $("insta").href = CONFIG.instagram;
 
+let escolhida = null;
 CONFIG.faixas.forEach((f) => {
   const b = document.createElement("button");
   b.type = "button";
   b.className = "chip";
+  b.setAttribute("aria-pressed", "false");
   b.innerHTML = f.label + "<small>" + f.sub + "</small>";
-  b.addEventListener("click", () => go(withUtm(CONFIG.site + "/" + f.path)));
+  b.addEventListener("click", () => {
+    escolhida = f;
+    $("err").textContent = "";
+    document.querySelectorAll(".chip").forEach((c) => {
+      const on = c === b;
+      c.classList.toggle("selected", on);
+      c.setAttribute("aria-pressed", String(on));
+    });
+  });
   $("chips").appendChild(b);
 });
 
-$("ageForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const raw = $("age").value.trim();
-  const age = Number(raw);
-  const err = $("err");
-  err.textContent = "";
-  if (raw === "" || !Number.isInteger(age) || age < 0) {
-    err.textContent = "Digite a idade em anos, só números. 🙂";
+$("verLivros").addEventListener("click", () => {
+  if (!escolhida) {
+    $("err").textContent = "Toque na idade do leitor primeiro. 🙂";
     return;
   }
-  if (age > CONFIG.idadeMaxima) {
-    err.textContent = "Para essa idade, a Vera te ajuda a escolher. 💬";
-    return;
-  }
-  const faixa = CONFIG.faixas.find((f) => age >= f.min && age <= f.max);
-  go(withUtm(faixa ? CONFIG.site + "/" + faixa.path : CONFIG.site));
+  go(withUtm(CONFIG.site + "/" + escolhida.path));
 });
 </script>
 </body>
