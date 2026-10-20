@@ -103,10 +103,10 @@
   }
   .btn:active { transform: scale(.96); }
   .btn:focus-visible, .chip:focus-visible, .link:focus-visible, .row input:focus-visible { outline: 3px solid var(--mustard); outline-offset: 2px; }
-  .err { color: var(--wine); font-weight: 700; font-size: .88rem; min-height: 1.2em; margin-top: 8px; }
   .chips { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 6px; }
   .chip:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .chip {
+    display: block; text-align: center; text-decoration: none;
     border: 2px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 16px;
     padding: 12px 8px; cursor: pointer; font: 500 1rem "Fredoka", sans-serif;
     transition: transform .15s ease, border-color .15s ease, background .15s ease;
@@ -118,8 +118,7 @@
   .chip:nth-child(5) { --c: var(--teal); }
   .chip:active { transform: scale(.96); }
   @media (hover: hover) { .chip:hover { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, var(--bg)); } }
-  .chip.selected { border-color: var(--c); background: color-mix(in srgb, var(--c) 22%, var(--bg)); }
-  .btn.go { width: 100%; margin-top: 6px; }
+  .btn.go { width: 100%; margin-top: 14px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
   .chip small { display: block; font: 600 .75rem "Nunito", sans-serif; color: var(--muted); }
 
   .social { display: flex; justify-content: center; margin-top: 26px; }
@@ -156,10 +155,9 @@
 
   <section class="card finder" aria-labelledby="finderTitle">
     <h2 id="finderTitle">Qual a idade do leitor?</h2>
-    <p>Escolha a faixa de idade do leitor.</p>
+    <p>Toque na idade do leitor e veja os livros.</p>
     <div class="chips" id="chips"></div>
-    <div class="err" id="err" role="alert"></div>
-    <button class="btn go" id="verLivros" type="button">Ver livros</button>
+    <a class="btn go" id="verTodos" href="#" rel="noopener">Ver todos os livros</a>
   </section>
 
   <a class="card link" id="site" href="#" rel="noopener">
@@ -212,7 +210,6 @@ const withUtm = (url) => {
   const [base, hash] = url.split("#");
   return base + (base.includes("?") ? "&" : "?") + CONFIG.utm + (hash ? "#" + hash : "");
 };
-const go = (url) => { window.location.href = url; };
 
 $("site").href = withUtm(CONFIG.site);
 $("vera").href = CONFIG.vera;
@@ -220,32 +217,15 @@ $("vender").href = withUtm(CONFIG.vender);
 $("vip").href = CONFIG.vip;
 $("insta").href = CONFIG.instagram;
 
-let escolhida = null;
 CONFIG.faixas.forEach((f) => {
-  const b = document.createElement("button");
-  b.type = "button";
-  b.className = "chip";
-  b.setAttribute("aria-pressed", "false");
-  b.innerHTML = f.label + "<small>" + f.sub + "</small>";
-  b.addEventListener("click", () => {
-    escolhida = f;
-    $("err").textContent = "";
-    document.querySelectorAll(".chip").forEach((c) => {
-      const on = c === b;
-      c.classList.toggle("selected", on);
-      c.setAttribute("aria-pressed", String(on));
-    });
-  });
-  $("chips").appendChild(b);
+  const a = document.createElement("a");
+  a.className = "chip";
+  a.href = withUtm(CONFIG.site + "/" + f.path);
+  a.rel = "noopener";
+  a.innerHTML = f.label + "<small>" + f.sub + "</small>";
+  $("chips").appendChild(a);
 });
-
-$("verLivros").addEventListener("click", () => {
-  if (!escolhida) {
-    $("err").textContent = "Toque na idade do leitor primeiro. 🙂";
-    return;
-  }
-  go(withUtm(CONFIG.site + "/" + escolhida.path));
-});
+$("verTodos").href = withUtm(CONFIG.site);
 </script>
 </body>
 </html>
