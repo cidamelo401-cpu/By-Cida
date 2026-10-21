@@ -247,7 +247,8 @@ export default function NewProductPage() {
       }
     } catch (err) {
       console.error(err)
-      toast.error('Erro ao salvar produto. Tente novamente.')
+      const msg = err instanceof Error ? err.message : 'Erro desconhecido'
+      toast.error(`Erro ao salvar produto: ${msg}`)
     } finally {
       setSaving(false)
     }
