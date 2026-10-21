@@ -19,6 +19,7 @@ type FormState = {
   country_league: string
   season: string
   model: ProductModel
+  edition_label: string
   version: ProductVersion
   cost_price: number
   sell_price: number
@@ -37,6 +38,7 @@ const initialState: FormState = {
   country_league: '',
   season: '',
   model: 'titular',
+  edition_label: '',
   version: 'torcedor',
   cost_price: 0,
   sell_price: 0,
@@ -77,6 +79,7 @@ export default function NewProductPage() {
   const [saving, setSaving] = useState(false)
   const [showTeamSuggestions, setShowTeamSuggestions] = useState(false)
   const [existingTeams, setExistingTeams] = useState<string[]>([])
+  const [existingEditions, setExistingEditions] = useState<{ team: string; season: string | null; edition_label: string | null }[]>([])
 
   // Busca os times já cadastrados pra sugerir o nome exato (evita cadastrar
   // "Corinthians" e "Corinthians Feminino" como times diferentes no catálogo).
@@ -89,6 +92,15 @@ export default function NewProductPage() {
         const names = Array.from(new Set((data ?? []).map((p) => p.team))).sort()
         setExistingTeams(names)
       })
+
+    // Já cadastradas como "Edição Especial", pra avisar o Sérgio se ele tentar
+    // cadastrar outra do mesmo time/temporada sem dar um nome que as diferencie.
+    supabase
+      .from('products')
+      .select('team, season, edition_label')
+      .eq('archived', false)
+      .eq('model', 'especial')
+      .then(({ data }) => setExistingEditions(data ?? []))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -135,6 +147,14 @@ export default function NewProductPage() {
     }
     const sizeValues = form.sizes.map((s) => s.size)
     if (new Set(sizeValues).size !== sizeValues.length) return 'Não repita tamanhos. Remova os duplicados.'
+    if (form.model === 'especial' && !form.edition_label.trim()) {
+      const hasOther = existingEditions.some(
+        (p) => p.team.trim().toLowerCase() === form.team.trim().toLowerCase() && (p.season ?? '') === form.season.trim()
+      )
+      if (hasOther) {
+        return 'Já existe uma Edição Especial desse time/temporada cadastrada. Preencha "Nome da edição" pra diferenciar essa camisa das outras.'
+      }
+    }
     return null
   }
 
@@ -177,6 +197,7 @@ export default function NewProductPage() {
         archived: false,
         is_cover: form.is_cover,
         catalog_group: entries.length > 1 ? catalogGroup : null,
+        edition_label: form.model === 'especial' ? form.edition_label.trim() || null : null,
       }))
 
       const { data: inserted, error: insertError } = await supabase
@@ -226,7 +247,8 @@ export default function NewProductPage() {
       }
     } catch (err) {
       console.error(err)
-      toast.error('Erro ao salvar produto. Tente novamente.')
+      const msg = err instanceof Error ? err.message : 'Erro desconhecido'
+      toast.error(`Erro ao salvar produto: ${msg}`)
     } finally {
       setSaving(false)
     }
@@ -326,6 +348,16 @@ export default function NewProductPage() {
               ))}
             </Select>
           </div>
+
+          {form.model === 'especial' && (
+            <Input
+              label="Nome da edição (opcional)"
+              value={form.edition_label}
+              onChange={(e) => updateField('edition_label', e.target.value)}
+              placeholder="Ex: Patrocinada Home, Rosa Outubro, Centenário"
+              helper="Só preencha se já tiver outra Edição Especial do mesmo time/temporada — esse nome separa uma da outra no catálogo."
+            />
+          )}
         </Card>
 
         <Card className="p-5 flex flex-col gap-4">

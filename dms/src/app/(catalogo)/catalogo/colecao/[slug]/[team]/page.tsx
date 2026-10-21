@@ -19,6 +19,7 @@ type GroupedShirt = {
   model: Product['model']
   season: string | null
   notes: string | null
+  edition_label: string | null
   photo_url: string | null
   version: Product['version']
   sell_price: number
@@ -83,7 +84,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
       const isKids = KIDS_SIZES.includes(p.size)
       // Agrupamento sempre por time+modelo+temporada — ver comentário equivalente em catalogo/page.tsx.
       // A foto NÃO entra como critério: cada tamanho normalmente tem sua própria foto de upload.
-      const key = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+      const key = `${p.team}|${p.model}|${p.season ?? ''}|${p.edition_label ?? ''}|${isKids ? 'kids' : 'adult'}`
       const isAvailable = p.status !== 'sob_encomenda' && p.quantity > 0
 
       const existing = map.get(key)
@@ -117,6 +118,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
           model: p.model,
           season: p.season,
           notes: p.notes,
+          edition_label: p.edition_label,
           photo_url: p.photo_url,
           version: p.version,
           sell_price: isAvailable ? p.sell_price : 0,
@@ -231,7 +233,7 @@ export default function TeamShirtsPage({ params }: { params: Promise<{ slug: str
                     <div className="p-3 flex flex-col gap-1.5 flex-1">
                       <p className="font-display text-white text-lg leading-tight line-clamp-2 uppercase">{shirt.team}</p>
                       <p className="text-[11px] text-gray-500">
-                        {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}
+                        {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}{shirt.edition_label ? ` · ${shirt.edition_label}` : ''}
                       </p>
 
                       {/* Faixa completa de tamanhos, riscando o que não tem estoque */}

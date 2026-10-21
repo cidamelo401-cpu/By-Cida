@@ -27,6 +27,7 @@ type GroupedShirt = {
   model: Product['model']
   season: string | null
   notes: string | null
+  edition_label: string | null
   photo_url: string | null
   version: Product['version']
   sell_price: number
@@ -163,7 +164,7 @@ export default function CatalogoPage() {
       // (links diferentes mesmo sendo a mesma camisa), então usar foto pra decidir o agrupamento
       // gerava cards duplicados. Uma camisa realmente diferente (ex: versão patrocinada) deve ser
       // cadastrada com uma temporada própria (ex: "25/26 Patrocinada") pra ganhar card separado.
-      const key = `${p.team}|${p.model}|${p.season ?? ''}|${isKids ? 'kids' : 'adult'}`
+      const key = `${p.team}|${p.model}|${p.season ?? ''}|${p.edition_label ?? ''}|${isKids ? 'kids' : 'adult'}`
       const isAvailable = p.status !== 'sob_encomenda' && p.quantity > 0
 
       const existing = map.get(key)
@@ -200,6 +201,7 @@ export default function CatalogoPage() {
           model: p.model,
           season: p.season,
           notes: p.notes,
+          edition_label: p.edition_label,
           photo_url: p.photo_url,
           version: p.version,
           sell_price: isAvailable ? p.sell_price : 0,
@@ -387,7 +389,7 @@ export default function CatalogoPage() {
                     <div className="p-3 flex flex-col gap-1.5 flex-1">
                       <p className="font-display text-white text-lg leading-tight line-clamp-2 uppercase">{shirt.team}</p>
                       <p className="text-[11px] text-gray-500">
-                        {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}
+                        {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}{shirt.edition_label ? ` · ${shirt.edition_label}` : ''}
                       </p>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {shirt.sizes.map((s) => (

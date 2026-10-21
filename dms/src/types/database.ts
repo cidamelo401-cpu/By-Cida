@@ -97,6 +97,7 @@ export interface Database {
           archived: boolean
           is_cover: boolean
           catalog_group: string | null
+          edition_label: string | null
           created_at: string
           updated_at: string
         }
@@ -121,6 +122,7 @@ export interface Database {
           archived?: boolean
           is_cover?: boolean
           catalog_group?: string | null
+          edition_label?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -145,6 +147,7 @@ export interface Database {
           archived?: boolean
           is_cover?: boolean
           catalog_group?: string | null
+          edition_label?: string | null
           created_at?: string
           updated_at?: string
         }

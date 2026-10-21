@@ -76,7 +76,12 @@ export function generateSKU(team: string, season: string, model: string, version
       .replace(/[^A-Z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '')
 
-  return [slug(team), slug(season), slug(model), slug(version), slug(size)].filter(Boolean).join('-')
+  // Sufixo curto e aleatório garante que o SKU nunca colida com outro produto
+  // já cadastrado com a mesma combinação time+temporada+modelo+versão+tamanho
+  // (ex: dois produtos "Sob Encomenda" de tamanho AD da mesma camisa).
+  const suffix = Math.random().toString(36).slice(2, 6).toUpperCase()
+
+  return [slug(team), slug(season), slug(model), slug(version), slug(size), suffix].filter(Boolean).join('-')
 }
 
 /** Build a WhatsApp deep link with a pre-filled message for a given phone number */
