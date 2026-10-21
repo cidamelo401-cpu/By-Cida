@@ -22,6 +22,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showPriceReminder, setShowPriceReminder] = useState(false)
+  const [existingEditions, setExistingEditions] = useState<{ team: string; season: string | null; edition_label: string | null }[]>([])
 
   const [form, setForm] = useState({
     team: '',
@@ -29,6 +30,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     country_league: '',
     season: '',
     model: 'titular' as ProductModel,
+    edition_label: '',
     version: 'torcedor' as ProductVersion,
     size: 'M' as ProductSize,
     cost_price: 0,
@@ -61,6 +63,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           country_league: data.country_league ?? '',
           season: data.season ?? '',
           model: data.model,
+          edition_label: data.edition_label ?? '',
           version: data.version,
           size: data.size,
           cost_price: data.cost_price,
@@ -81,6 +84,14 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       }
     }
     loadProduct()
+
+    supabase
+      .from('products')
+      .select('team, season, edition_label')
+      .eq('archived', false)
+      .eq('model', 'especial')
+      .neq('id', id)
+      .then(({ data }) => setExistingEditions(data ?? []))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
@@ -112,6 +123,15 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     if (!form.sob_encomenda && form.sell_price <= 0) {
       toast.error('Informe o preço de venda.')
       return
+    }
+    if (form.model === 'especial' && !form.edition_label.trim()) {
+      const hasOther = existingEditions.some(
+        (p) => p.team.trim().toLowerCase() === form.team.trim().toLowerCase() && (p.season ?? '') === form.season.trim()
+      )
+      if (hasOther) {
+        toast.error('Já existe uma Edição Especial desse time/temporada cadastrada. Preencha "Nome da edição" pra diferenciar essa camisa das outras.')
+        return
+      }
     }
     if (isRestockingWithoutPrice()) {
       setShowPriceReminder(true)
@@ -146,6 +166,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           country_league: form.country_league.trim() || null,
           season: form.season.trim() || null,
           model: form.model,
+          edition_label: form.model === 'especial' ? form.edition_label.trim() || null : null,
           version: form.version,
           size: form.size,
           cost_price: form.cost_price,
@@ -299,6 +320,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
               ))}
             </Select>
           </div>
+
+          {form.model === 'especial' && (
+            <Input
+              label="Nome da edição (opcional)"
+              value={form.edition_label}
+              onChange={(e) => updateField('edition_label', e.target.value)}
+              placeholder="Ex: Patrocinada Home, Rosa Outubro, Centenário"
+              helper="Só preencha se já tiver outra Edição Especial do mesmo time/temporada — esse nome separa uma da outra no catálogo."
+            />
+          )}
 
           <Select label="Tamanho" value={form.size} onChange={(e) => updateField('size', e.target.value as ProductSize)}>
             {SIZE_OPTIONS.map((size) => (
