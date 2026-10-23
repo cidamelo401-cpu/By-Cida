@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type ProductModel = 'titular' | 'reserva' | 'terceiro' | 'goleiro' | 'treino' | 'especial'
+export type ProductModel = 'titular' | 'reserva' | 'terceiro' | 'goleiro' | 'treino' | 'especial' | 'retro'
 export type ProductVersion = 'torcedor' | 'jogador'
 export type ProductSize = 'T20' | 'T22' | 'T24' | 'T26' | 'T28' | 'PP' | 'P' | 'M' | 'G' | 'GG' | '2XG' | '3XG' | 'AD'
 export type ProductStatus = 'disponivel' | 'reservado' | 'esgotado' | 'sob_encomenda'
