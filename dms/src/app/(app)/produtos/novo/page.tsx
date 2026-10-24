@@ -225,11 +225,15 @@ export default function NewProductPage() {
       }
 
       if (form.team_badge_url.trim()) {
-        await supabase.from('team_badges').upsert({
+        const { error: badgeError } = await supabase.from('team_badges').upsert({
           team: form.team.trim(),
           badge_url: form.team_badge_url.trim(),
           updated_by: user.id,
         })
+        if (badgeError) {
+          console.error(badgeError)
+          toast.error(`Produto salvo, mas o brasão não foi salvo: ${badgeError.message}`)
+        }
       }
 
       const total = entries.reduce((sum, e) => sum + e.quantity, 0)
