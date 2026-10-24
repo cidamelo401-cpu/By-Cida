@@ -29,10 +29,11 @@ function todayISO() {
   return new Date().toISOString().slice(0, 10)
 }
 
-function monthAgoISO() {
+/** Primeiro dia do mês corrente — usado como data inicial padrão, pra abrir
+ *  já no "mês atual" em vez de uma janela de 30 dias corridos que invade o mês anterior. */
+function startOfMonthISO() {
   const d = new Date()
-  d.setMonth(d.getMonth() - 1)
-  return d.toISOString().slice(0, 10)
+  return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0, 10)
 }
 
 function rangeToTimestamps(start: string, end: string) {
@@ -147,7 +148,7 @@ function ReportSection({ title, description, onExport, exportDisabled, onExpand,
 export default function ReportsPage() {
   const supabase = createClient()
 
-  const [startDate, setStartDate] = useState(monthAgoISO())
+  const [startDate, setStartDate] = useState(startOfMonthISO())
   const [endDate, setEndDate] = useState(todayISO())
 
   // Section 1: Vendas por período
