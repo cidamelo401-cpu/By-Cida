@@ -65,6 +65,14 @@ export function parseCurrency(value: string): number {
   return Number.isNaN(parsed) ? 0 : parsed
 }
 
+/** Remove acentos pra permitir busca sem diferenciar "Croácia" de "Croacia" */
+export function normalizeSearch(s: string): string {
+  return s
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+}
+
 /** Generate a SKU from team, season, model, version and size */
 export function generateSKU(team: string, season: string, model: string, version: string, size: string): string {
   const slug = (s: string) =>

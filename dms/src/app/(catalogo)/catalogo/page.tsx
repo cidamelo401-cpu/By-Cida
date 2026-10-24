@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, getWhatsAppLink } from '@/lib/utils/format'
+import { formatCurrency, getWhatsAppLink, normalizeSearch } from '@/lib/utils/format'
 import { MODEL_LABELS, CATALOG_SIZE_LABELS, CATALOG_ADULT_SIZES, CATALOG_KIDS_SIZES } from '@/lib/constants/products'
 import type { Database, ProductSize } from '@/types/database'
 import CatalogShell from './_components/CatalogShell'
@@ -89,10 +89,10 @@ export default function CatalogoPage() {
       }
     }
 
-    const term = search.trim().toLowerCase()
+    const term = normalizeSearch(search.trim())
     if (term) {
       result = result.filter(
-        (p) => p.team.toLowerCase().includes(term) || (p.notes ?? '').toLowerCase().includes(term)
+        (p) => normalizeSearch(p.team).includes(term) || normalizeSearch(p.notes ?? '').includes(term)
       )
     }
 
@@ -143,9 +143,9 @@ export default function CatalogoPage() {
       }
     }
 
-    const term = search.trim().toLowerCase()
+    const term = normalizeSearch(search.trim())
     const result = Array.from(map.values())
-    if (term) return result.filter((t) => t.name.toLowerCase().includes(term))
+    if (term) return result.filter((t) => normalizeSearch(t.name).includes(term))
     return result.sort((a, b) => a.name.localeCompare(b.name))
   }, [filteredProducts, search])
 
