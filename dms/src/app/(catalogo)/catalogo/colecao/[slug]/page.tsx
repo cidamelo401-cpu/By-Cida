@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, use as usePromise } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, getWhatsAppLink } from '@/lib/utils/format'
+import { formatCurrency, getWhatsAppLink, normalizeSearch } from '@/lib/utils/format'
 import { MODEL_LABELS, CATALOG_SIZE_LABELS, CATALOG_ADULT_SIZES, CATALOG_KIDS_SIZES } from '@/lib/constants/products'
 import type { Database, ProductSize } from '@/types/database'
 import CatalogShell from '../../_components/CatalogShell'
@@ -79,10 +79,10 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
   }, [collectionName])
 
   const filteredProducts = useMemo(() => {
-    const term = search.trim().toLowerCase()
+    const term = normalizeSearch(search.trim())
     if (!term) return products
     return products.filter(
-      (p) => p.team.toLowerCase().includes(term) || (p.notes ?? '').toLowerCase().includes(term)
+      (p) => normalizeSearch(p.team).includes(term) || normalizeSearch(p.notes ?? '').includes(term)
     )
   }, [products, search])
 
