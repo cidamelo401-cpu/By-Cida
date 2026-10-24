@@ -201,11 +201,15 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       // Brasão do time: salva o link colado, ou remove o override se o campo foi limpo
       const teamName = form.team.trim()
       if (form.team_badge_url.trim()) {
-        await supabase.from('team_badges').upsert({
+        const { error: badgeError } = await supabase.from('team_badges').upsert({
           team: teamName,
           badge_url: form.team_badge_url.trim(),
           updated_by: user?.id,
         })
+        if (badgeError) {
+          console.error(badgeError)
+          toast.error(`Produto salvo, mas o brasão não foi salvo: ${badgeError.message}`)
+        }
       } else {
         // Best-effort: apagar o override é restrito a admin; se falhar (RLS), não impede salvar o produto
         try {
