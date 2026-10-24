@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { Badge, Button, Card, Input, LoadingSpinner } from '@/components/ui'
@@ -65,27 +65,43 @@ type SectionProps = {
   exportDisabled?: boolean
   onExpand: () => void | Promise<void>
   children: ReactNode
+  /** Quando esse valor muda (ex: o período do relatório), a seção recarrega os dados
+   *  se já tiver sido aberta antes — senão ela ficava mostrando dados do período anterior. */
+  refreshKey?: string
 }
 
-function ReportSection({ title, description, onExport, exportDisabled, onExpand, children }: SectionProps) {
+function ReportSection({ title, description, onExport, exportDisabled, onExpand, children, refreshKey }: SectionProps) {
   const [open, setOpen] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [loading, setLoading] = useState(false)
+  const prevRefreshKey = useRef(refreshKey)
+
+  async function load() {
+    setLoading(true)
+    try {
+      await onExpand()
+      setLoaded(true)
+    } catch (err) {
+      console.error(err)
+      toast.error(`Erro ao carregar "${title}".`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (prevRefreshKey.current === refreshKey) return
+    prevRefreshKey.current = refreshKey
+    setLoaded(false)
+    if (open) load()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshKey])
 
   async function toggle() {
     const next = !open
     setOpen(next)
     if (next && !loaded) {
-      setLoading(true)
-      try {
-        await onExpand()
-        setLoaded(true)
-      } catch (err) {
-        console.error(err)
-        toast.error(`Erro ao carregar "${title}".`)
-      } finally {
-        setLoading(false)
-      }
+      await load()
     }
   }
 
@@ -515,6 +531,7 @@ export default function ReportsPage() {
         onExpand={loadSalesInRange}
         onExport={exportSalesInRange}
         exportDisabled={salesInRange.length === 0}
+        refreshKey={`${startDate}|${endDate}`}
       >
         {salesInRange.length === 0 ? (
           <p className="text-sm text-gray-500">Nenhuma venda no período.</p>
@@ -561,7 +578,12 @@ export default function ReportsPage() {
       </ReportSection>
 
       {/* 2. Lucro estimado */}
-      <ReportSection title="Lucro estimado" description="Receita, custo e lucro bruto do período" onExpand={loadProfit}>
+      <ReportSection
+        title="Lucro estimado"
+        description="Receita, custo e lucro bruto do período"
+        onExpand={loadProfit}
+        refreshKey={`${startDate}|${endDate}`}
+      >
         {profitData && (
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -611,6 +633,7 @@ export default function ReportsPage() {
         onExpand={loadTopProducts}
         onExport={exportTopProducts}
         exportDisabled={topProducts.length === 0}
+        refreshKey={`${startDate}|${endDate}`}
       >
         {topProducts.length === 0 ? (
           <p className="text-sm text-gray-500">Nenhuma venda no período.</p>
@@ -671,6 +694,7 @@ export default function ReportsPage() {
         title="Camisas paradas"
         description="Produtos sem venda registrada no período"
         onExpand={loadStaleProducts}
+        refreshKey={`${startDate}|${endDate}`}
       >
         {staleProducts.length === 0 ? (
           <p className="text-sm text-gray-500">Todos os produtos tiveram vendas no período.</p>
@@ -747,6 +771,7 @@ export default function ReportsPage() {
         onExpand={loadTopCustomers}
         onExport={exportTopCustomers}
         exportDisabled={topCustomers.length === 0}
+        refreshKey={`${startDate}|${endDate}`}
       >
         {topCustomers.length === 0 ? (
           <p className="text-sm text-gray-500">Nenhuma compra no período.</p>
@@ -777,7 +802,12 @@ export default function ReportsPage() {
       </ReportSection>
 
       {/* 8. Vendas por canal */}
-      <ReportSection title="Vendas por canal" description="WhatsApp vs. Instagram" onExpand={loadByChannel}>
+      <ReportSection
+        title="Vendas por canal"
+        description="WhatsApp vs. Instagram"
+        onExpand={loadByChannel}
+        refreshKey={`${startDate}|${endDate}`}
+      >
         {byChannel.length === 0 ? (
           <p className="text-sm text-gray-500">Nenhuma venda no período.</p>
         ) : (
