@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H8 Funilaria e Pintura | Tatuapé</title>
+  <meta name="description" content="Funilaria, pintura automotiva e martelinho de ouro no Tatuapé. Mais de 15 anos de qualidade e transparência. Peça seu orçamento pelo WhatsApp.">
+  <meta name="theme-color" content="#0b0b0c">
+  <meta property="og:title" content="H8 Funilaria e Pintura | Tatuapé">
+  <meta property="og:description" content="Funilaria, pintura automotiva e martelinho de ouro. Orçamento pelo WhatsApp.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,600;1,700;1,800&family=Barlow:wght@400;500;600&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0b0b0c;
+      --surface: #151517;
+      --surface-2: #1d1d20;
+      --text: #f3f3f4;
+      --text-soft: #a4a4ab;
+      --red: #d3151f;
+      --red-bright: #ef2b36;
+      --silver: #d9dadd;
+      --border: rgba(255, 255, 255, 0.09);
+      --wa: #25d366;
+    }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: 'Barlow', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.45;
+      background-image:
+        radial-gradient(ellipse 80% 40% at 50% -5%, rgba(211, 21, 31, 0.28), transparent 70%),
+        linear-gradient(180deg, transparent 60%, rgba(211, 21, 31, 0.06));
+      background-repeat: no-repeat;
+    }
+
+    .wrap { max-width: 480px; margin: 0 auto; padding: 40px 16px 32px; }
+
+    /* Marca */
+    .brand { text-align: center; margin-bottom: 28px; }
+    .logo { display: block; width: 270px; max-width: 80%; height: auto; margin: 0 auto; filter: drop-shadow(0 0 22px rgba(211, 21, 31, 0.4)); }
+    .tagline { margin-top: 18px; font-size: 15px; color: var(--text-soft); }
+    .tagline strong { color: var(--text); font-weight: 600; }
+
+    /* Prova social */
+    .rating {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin: 18px auto 0; width: fit-content;
+      padding: 7px 14px; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--border);
+      font-size: 14px; color: var(--text);
+      text-decoration: none;
+    }
+    .rating .gold { color: #fbbc04; letter-spacing: 1px; }
+    .rating small { color: var(--text-soft); font-size: 13px; }
+
+    /* Botões */
+    .links { display: grid; gap: 12px; margin-top: 28px; }
+    .btn {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px; border-radius: 14px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); text-decoration: none;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .btn:hover, .btn:focus-visible { transform: translateY(-2px); border-color: rgba(239, 43, 54, 0.6); background: var(--surface-2); outline: none; }
+    .btn svg { width: 24px; height: 24px; flex: none; }
+    .btn .t { display: flex; flex-direction: column; min-width: 0; }
+    .btn .t b { font-weight: 600; font-size: 16px; }
+    .btn .t span { font-size: 13px; color: var(--text-soft); }
+    .btn .arrow { margin-left: auto; color: var(--text-soft); font-size: 20px; }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #1fb855, var(--wa));
+      border-color: transparent; color: #04210f;
+      padding: 19px 20px;
+      box-shadow: 0 10px 30px rgba(37, 211, 102, 0.22);
+    }
+    .btn.primary:hover, .btn.primary:focus-visible { border-color: transparent; background: linear-gradient(135deg, #22c75d, #34e276); }
+    .btn.primary .t b { font-size: 18px; }
+    .btn.primary .t span, .btn.primary .arrow { color: rgba(4, 33, 15, 0.75); }
+
+    /* Seções */
+    h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic; font-weight: 700;
+      font-size: 22px; letter-spacing: 1px; text-transform: uppercase;
+      margin: 40px 0 14px;
+    }
+    h2::before { content: ""; display: inline-block; width: 18px; height: 3px; background: var(--red); margin-right: 10px; vertical-align: middle; }
+
+    .services { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .service {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px 8px; text-align: center; font-size: 13px; font-weight: 500;
+    }
+    .service svg { width: 28px; height: 28px; margin: 0 auto 8px; display: block; color: var(--red-bright); }
+
+    .diffs { display: grid; gap: 10px; }
+    .diff { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--red); border-radius: 10px; }
+    .diff b { display: block; font-size: 15px; }
+    .diff span { font-size: 13px; color: var(--text-soft); }
+
+    .where { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; font-size: 14px; }
+    .where p + p { margin-top: 6px; color: var(--text-soft); }
+    .where a { color: var(--text); }
+
+    footer { margin-top: 40px; text-align: center; font-size: 12px; color: var(--text-soft); }
+    footer a { color: var(--text-soft); }
+
+    @media (prefers-reduced-motion: reduce) { .btn { transition: none; } .btn:hover { transform: none; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+
+    <header class="brand">
+      <svg class="logo" viewBox="0 0 310 185" role="img" aria-label="H8 Funilaria e Pintura">
+        <defs>
+          <linearGradient id="gH" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#fafafa"/>
+            <stop offset=".45" stop-color="#c9cacd"/>
+            <stop offset=".55" stop-color="#9c9ea3"/>
+            <stop offset="1" stop-color="#e4e5e8"/>
+          </linearGradient>
+          <linearGradient id="g8" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f0453d"/>
+            <stop offset=".6" stop-color="#c3201b"/>
+            <stop offset="1" stop-color="#8e100d"/>
+          </linearGradient>
+        </defs>
+        <g transform="translate(40 8) skewX(-14)">
+          <path fill="url(#gH)" d="M0 0H31V38H89V0H120V100H89V62H31V100H0Z"/>
+          <path fill="url(#g8)" fill-rule="evenodd" d="M168 0H222Q252 0 252 26Q252 42 238 50Q252 58 252 74Q252 100 222 100H168Q138 100 138 74Q138 58 152 50Q138 42 138 26Q138 0 168 0ZM172 22Q166 22 166 28V32Q166 38 172 38H218Q224 38 224 32V28Q224 22 218 22ZM172 62Q166 62 166 68V72Q166 78 172 78H218Q224 78 224 72V68Q224 62 218 62Z"/>
+        </g>
+        <text x="155" y="142" text-anchor="middle" font-family="Montserrat, 'Barlow', sans-serif" font-weight="600" font-size="15" fill="#d9dadd" textLength="262" lengthAdjust="spacing">FUNILARIA E PINTURA</text>
+        <text x="155" y="172" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#e0262c" letter-spacing="9">★★★★★</text>
+      </svg>
+      <p class="tagline"><strong>Funilaria, pintura automotiva e martelinho de ouro</strong><br>Tatuapé · São Paulo</p>
+      <a class="rating" href="https://share.google/T29PLIBWbmID7pN8N" target="_blank" rel="noopener">
+        <span class="gold" aria-hidden="true">★★★★★</span> <b>5,0</b> <small>no Google · 11 avaliações</small>
+      </a>
+    </header>
+
+    <nav class="links" aria-label="Contato">
+      <a class="btn primary" href="https://wa.link/w5gkbb" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.2 1.6 6L0 24l6.3-1.7a11.9 11.9 0 0 0 5.7 1.5c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.4-8.4ZM12 21.8c-1.8 0-3.6-.5-5.100-1.400l-.4-.2-3.700 1 1-3.600-.2-.4A9.800 9.800 0 0 1 2.100 12C2.100 6.500 6.500 2.100 12 2.100c2.600 0 5.100 1 6.900 2.900A9.700 9.700 0 0 1 21.800 12c0 5.400-4.400 9.800-9.800 9.800Zm5.400-7.300c-.3-.1-1.800-.9-2-1-.3-.1-.5-.1-.7.100-.2.300-.8 1-.9 1.200-.2.200-.3.200-.6.100-.3-.1-1.200-.4-2.300-1.400-.9-.8-1.400-1.700-1.600-2-.2-.3 0-.5.100-.6l.4-.5c.1-.2.200-.3.300-.5.100-.2 0-.4 0-.5l-.9-2.200c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.100-.8.400-.3.300-1 1-1 2.500s1.100 2.900 1.200 3.100c.1.200 2.100 3.200 5.100 4.500.7.300 1.300.5 1.700.6.700.2 1.400.2 1.900.1.600-.1 1.800-.7 2-1.400.3-.7.300-1.300.2-1.400-.1-.2-.3-.2-.6-.4Z"/></svg>
+        <span class="t"><b>Peça seu orçamento</b><span>Resposta pelo WhatsApp</span></span>
+        <span class="arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="btn" href="tel:+5511947850804">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.200 2 19.800 19.800 0 0 1-8.600-3.100 19.500 19.500 0 0 1-6-6A19.800 19.800 0 0 1 2.100 4.200 2 2 0 0 1 4.100 2h3a2 2 0 0 1 2 1.700c.1 1 .4 1.900.7 2.800a2 2 0 0 1-.5 2.100L8.100 9.900a16 16 0 0 0 6 6l1.300-1.300a2 2 0 0 1 2.100-.4c.9.300 1.800.6 2.800.7a2 2 0 0 1 1.700 2Z"/></svg>
+        <span class="t"><b>Ligar agora</b><span>(11) 94785-0804</span></span>
+        <span class="arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="btn" href="https://maps.app.goo.gl/kKGB8PKw8QtX6Wa99?g_st=ic" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span class="t"><b>Como chegar</b><span>R. Emília Marengo, 858 · Vila Reg. Feijó</span></span>
+        <span class="arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="btn" href="https://share.google/T29PLIBWbmID7pN8N" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.100 6.300 6.900 1-5 4.900 1.200 6.900L12 17.800 5.800 21.100 7 14.200 2 9.300l6.900-1L12 2Z"/></svg>
+        <span class="t"><b>Nossas avaliações</b><span>Veja o que os clientes dizem</span></span>
+        <span class="arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="btn" href="https://www.instagram.com/h8_funilariaepintura?stkn=c2liY3VieDk5NjRr" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.500" cy="6.500" r="1" fill="currentColor"/></svg>
+        <span class="t"><b>Instagram</b><span>@h8_funilariaepintura · antes e depois</span></span>
+        <span class="arrow" aria-hidden="true">›</span>
+      </a>
+    </nav>
+
+    <section aria-labelledby="serv">
+      <h2 id="serv">O que fazemos</h2>
+      <div class="services">
+        <div class="service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.700 6.300a4 4 0 0 0-5.400 5.400L3 18l3 3 6.300-6.300a4 4 0 0 0 5.400-5.400l-2.600 2.600-2.400-.6-.6-2.400 2.600-2.600Z"/></svg>
+          Funilaria
+        </div>
+        <div class="service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 11 9 21l-6-6L13 5l6 6Z"/><path d="M13 5 10 2M21 19c0 1.100-.9 2-2 2s-2-.9-2-2c0-1.500 2-3.500 2-3.500s2 2 2 3.500Z"/></svg>
+          Pintura automotiva
+        </div>
+        <div class="service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 1.900 5.100L19 10l-5.100 1.900L12 17l-1.900-5.100L5 10l5.100-1.900L12 3Z"/><path d="M19 17v4M17 19h4"/></svg>
+          Martelinho de ouro
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="dif">
+      <h2 id="dif">Por que a H8</h2>
+      <div class="diffs">
+        <div class="diff"><div><b>Mais de 15 anos de experiência</b><span>Qualidade e transparência em cada serviço.</span></div></div>
+        <div class="diff"><div><b>Acabamento impecável</b><span>Brilho profundo e uniforme.</span></div></div>
+        <div class="diff"><div><b>Materiais de alta linha</b><span>Técnica avançada para valorizar o seu carro.</span></div></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="onde">
+      <h2 id="onde">Onde estamos</h2>
+      <div class="where">
+        <p><b>H8 Funilaria e Pintura</b></p>
+        <p>R. Emília Marengo, 858 · Vila Reg. Feijó<br>São Paulo – SP · 03336-000</p>
+        <p>Segunda a sexta, das 8h às 18h<br>Sábado, das 8h às 12h</p>
+        <p>Orçamento rápido pelo <a href="https://wa.link/w5gkbb" target="_blank" rel="noopener">WhatsApp</a> ou pelo telefone <a href="tel:+5511947850804">(11) 94785-0804</a>.</p>
+      </div>
+    </section>
+
+    <footer>
+      <p>© H8 Funilaria e Pintura</p>
+      <p>Página criada pela ByCida</p>
+    </footer>
+
+  </main>
+</body>
+</html>
