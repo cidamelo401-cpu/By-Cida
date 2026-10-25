@@ -98,6 +98,7 @@ export interface Database {
           is_cover: boolean
           catalog_group: string | null
           edition_label: string | null
+          pix_price: number | null
           created_at: string
           updated_at: string
         }
@@ -123,6 +124,7 @@ export interface Database {
           is_cover?: boolean
           catalog_group?: string | null
           edition_label?: string | null
+          pix_price?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -148,6 +150,7 @@ export interface Database {
           is_cover?: boolean
           catalog_group?: string | null
           edition_label?: string | null
+          pix_price?: number | null
           created_at?: string
           updated_at?: string
         }

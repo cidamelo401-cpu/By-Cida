@@ -362,9 +362,22 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </div>
             )}
 
-            <p className="mt-6 text-3xl sm:text-4xl font-extrabold text-[#C9A84C]">
-              {product.status === 'sob_encomenda' && product.sell_price <= 0 ? 'Sob consulta' : formatCurrency(product.sell_price)}
-            </p>
+            {product.status === 'sob_encomenda' && product.sell_price <= 0 ? (
+              <p className="mt-6 text-3xl sm:text-4xl font-extrabold text-[#C9A84C]">Sob consulta</p>
+            ) : product.pix_price && product.pix_price > 0 ? (
+              <div className="mt-6">
+                <p className="flex flex-wrap items-baseline gap-2">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-white">{formatCurrency(product.pix_price)}</span>
+                  <span className="text-lg sm:text-xl font-bold text-[#C9A84C]">no Pix</span>
+                </p>
+                <p className="mt-1 text-sm text-gray-400">à vista {formatCurrency(product.sell_price)}</p>
+                <p className="text-sm text-gray-400">ou 3x {formatCurrency(product.sell_price / 3)}* sem juros</p>
+              </div>
+            ) : (
+              <p className="mt-6 text-3xl sm:text-4xl font-extrabold text-[#C9A84C]">
+                {formatCurrency(product.sell_price)}
+              </p>
+            )}
 
             {product.status === 'sob_encomenda' ? (
               <>
