@@ -23,6 +23,7 @@ type FormState = {
   version: ProductVersion
   cost_price: number
   sell_price: number
+  pix_price: number
   supplier: string
   photo_url: string
   photos: string[]
@@ -42,6 +43,7 @@ const initialState: FormState = {
   version: 'torcedor',
   cost_price: 0,
   sell_price: 0,
+  pix_price: 0,
   supplier: '',
   photo_url: '',
   photos: [],
@@ -187,6 +189,7 @@ export default function NewProductPage() {
         quantity: entry.quantity,
         cost_price: form.cost_price,
         sell_price: form.sell_price,
+        pix_price: form.pix_price > 0 ? form.pix_price : null,
         supplier: form.supplier.trim() || null,
         photo_url: form.photos[0]?.trim() || form.photo_url.trim() || null,
         photos: form.photos.length > 0 ? form.photos : null,
@@ -440,6 +443,11 @@ export default function NewProductPage() {
               onValueChange={(v) => updateField('sell_price', v)}
             />
           </div>
+          <CurrencyInput
+            label="Preço no Pix (opcional)"
+            value={form.pix_price}
+            onValueChange={(v) => updateField('pix_price', v)}
+          />
           <Input
             label="Fornecedor"
             value={form.supplier}
