@@ -31,6 +31,7 @@ type GroupedShirt = {
   photo_url: string | null
   version: Product['version']
   sell_price: number
+  pix_price: number | null
   status: Product['status']
   sizes: { size: ProductSize; quantity: number; id: string; soldOut: boolean }[]
   fallbackId: string
@@ -187,6 +188,7 @@ export default function CatalogoPage() {
           if (existing.status === 'sob_encomenda') {
             existing.status = 'disponivel'
             existing.sell_price = p.sell_price
+            existing.pix_price = p.pix_price
           }
         }
         if ((p as any).is_cover && p.photo_url) {
@@ -205,6 +207,7 @@ export default function CatalogoPage() {
           photo_url: p.photo_url,
           version: p.version,
           sell_price: isAvailable ? p.sell_price : 0,
+          pix_price: isAvailable ? p.pix_price : null,
           status: isAvailable ? 'disponivel' : 'sob_encomenda',
           sizes: [{ size: p.size, quantity: p.quantity, id: p.id, soldOut: !isAvailable }],
           fallbackId: p.id,
@@ -405,7 +408,23 @@ export default function CatalogoPage() {
                           </span>
                         ))}
                       </div>
-                      <p className="text-base font-bold text-[#C9A84C] mt-auto pt-1">{isSobEncomenda && shirt.sell_price <= 0 ? 'Sob consulta' : formatCurrency(shirt.sell_price)}</p>
+                      <div className="mt-auto pt-1">
+                        {isSobEncomenda && shirt.sell_price <= 0 ? (
+                          <p className="text-base font-bold text-[#C9A84C]">Sob consulta</p>
+                        ) : shirt.pix_price && shirt.pix_price > 0 ? (
+                          <>
+                            <p className="flex flex-wrap items-baseline gap-1">
+                              <span className="text-base font-bold text-white">{formatCurrency(shirt.pix_price)}</span>
+                              <span className="text-[10px] font-bold text-[#C9A84C]">no Pix</span>
+                            </p>
+                            <p className="text-[10px] text-gray-400">
+                              à vista {formatCurrency(shirt.sell_price)} · 3x {formatCurrency(shirt.sell_price / 3)} sem juros
+                            </p>
+                          </>
+                        ) : (
+                          <p className="text-base font-bold text-[#C9A84C]">{formatCurrency(shirt.sell_price)}</p>
+                        )}
+                      </div>
                       {isSobEncomenda ? (
                         <button
                           type="button"
