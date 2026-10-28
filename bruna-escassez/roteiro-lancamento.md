@@ -5,11 +5,10 @@ Provisório. Nada aqui foi aprovado pela Bruna. Sem emoji, sem contagem regressi
 ## Antes de publicar (checklist)
 
 - [ ] Bruna aprovou os textos da página (`index.html`) e o roteiro abaixo
-- [ ] Bruna definiu o preço e a condição de pagamento (hoje a página mostra "R$ [preço a definir]")
+- [ ] Bruna confirmou o preço de R$ 37 (a página já mostra esse valor)
 - [ ] Produto criado na Hotmart, na conta da Bruna, com o PDF anexado
 - [ ] Link do checkout colado em `CONFIG.checkoutUrl` (no fim do `index.html`)
-- [ ] Garantia e política de reembolso confirmadas (Hotmart + Bruna)
-- [ ] Política de privacidade publicada e linkada (a página tem um marcador "[link pendente]")
+- [ ] Política de privacidade (`privacidade.html`) revisada, com CNPJ/CPF e e-mail da Bruna preenchidos nos marcadores
 - [ ] `CONFIG.provisorio = false` e `noindex` removido
 - [ ] Deploy no Netlify e teste do formulário (os leads chegam em Forms > quiz-escassez)
 
