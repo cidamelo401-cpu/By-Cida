@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escassez invisível | Bruna Makdissi</title>
+  <meta name="description" content="Quiz de 2 minutos e ebook Escassez invisível, de Bruna Makdissi: dinheiro, corpo e relações, olhados a partir da raiz.">
+  <!-- Provisório: tirar o noindex e a faixa de rascunho só depois da aprovação da Bruna -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#231B38">
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --noite-900: #231B38; --noite-700: #3D3160; --noite-600: #4E3F78; --noite-400: #8579A8; --noite-200: #D0CADE; --noite-100: #E9E5F0; --noite-050: #F4F1F8;
+      --nevoa-000: #FFFFFF; --nevoa-100: #FDFAF8; --nevoa-200: #F9F2F1; --nevoa-300: #EFE4E2; --nevoa-400: #DFCFCC;
+      --horizonte-700: #9A4632; --horizonte-600: #B4553F; --horizonte-500: #CE6B4A; --horizonte-100: #FCEDE4;
+      --ouro-700: #7E5A1E; --ouro-600: #A57B33; --ouro-500: #C89A4E; --ouro-300: #E4C48D; --ouro-100: #F7EDD8;
+      --tinta-900: #231B38; --tinta-700: #403353; --tinta-500: #6B5F7F;
+      --sucesso: #4C8267; --sucesso-bg: #E7F0EA; --erro: #A63A31; --erro-bg: #F9E9E7;
+
+      --surface-cover: var(--noite-900);
+      --surface-page: var(--nevoa-200);
+      --surface-work: var(--nevoa-000);
+      --line-rule: rgba(35,27,56,.065);
+      --line-hair: rgba(35,27,56,.11);
+      --line-strong: rgba(35,27,56,.22);
+      --action: var(--horizonte-500);
+      --action-hover: var(--horizonte-600);
+      --focus-ring: 0 0 0 3px rgba(206,107,74,.42);
+
+      --shadow-sm: 0 1px 2px rgba(35,27,56,.06);
+      --shadow-md: 0 3px 14px rgba(35,27,56,.07);
+      --shadow-lg: 0 16px 44px rgba(35,27,56,.13);
+      --ease: cubic-bezier(.22,.61,.36,1);
+
+      --serif: 'Newsreader', Georgia, serif;
+      --sans: 'Inter', system-ui, sans-serif;
+      --read: 680px;
+      --grid: 1160px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans); font-weight: 300; font-size: 16px; line-height: 1.65;
+      background: var(--surface-page); color: var(--tinta-900);
+      -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: var(--horizonte-600); text-underline-offset: 3px; }
+    a:hover { color: var(--horizonte-700); }
+    button, input { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    :focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 6px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+    /* ---------- faixa provisória ---------- */
+    .provisorio {
+      background: var(--horizonte-100); color: var(--horizonte-700);
+      font-size: 13px; font-weight: 400; text-align: center; padding: 8px 16px;
+      border-bottom: 1px solid var(--horizonte-500);
+    }
+
+    /* ---------- tipografia de marca ---------- */
+    .eyebrow, .margem-label {
+      font-family: var(--sans); font-weight: 500; font-size: 9.5px;
+      letter-spacing: .19em; text-transform: uppercase; color: var(--ouro-700);
+    }
+    h1, h2, h3 { font-family: var(--serif); font-weight: 400; color: var(--noite-900); line-height: 1.15; }
+    h1 { font-weight: 300; font-size: clamp(34px, 6vw, 52px); }
+    h2 { font-size: clamp(27px, 4vw, 34px); }
+    h3 { font-size: 20px; }
+    .voz { font-family: var(--serif); font-style: italic; font-size: 20px; line-height: 1.5; color: var(--noite-700); }
+    p + p { margin-top: 16px; }
+    .wrap { max-width: var(--grid); margin: 0 auto; padding: 0 16px; }
+
+    /* ---------- botões (peça de comunicação = pill) ---------- */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--action); color: #fff; border: 0; border-radius: 999px;
+      padding: 15px 30px; font-weight: 500; font-size: 15px; letter-spacing: .01em;
+      text-decoration: none; transition: background 160ms var(--ease), box-shadow 160ms var(--ease);
+      min-height: 48px;
+    }
+    .btn:hover { background: var(--action-hover); color: #fff; box-shadow: var(--shadow-md); }
+    .btn[disabled] { opacity: .45; cursor: not-allowed; box-shadow: none; }
+    .btn-quiet {
+      background: transparent; color: var(--noite-700); border: 1px solid var(--line-strong);
+    }
+    .btn-quiet:hover { background: var(--noite-050); color: var(--noite-900); box-shadow: none; }
+
+    /* ---------- capa: o único bloco escuro ---------- */
+    .capa {
+      position: relative; overflow: hidden; background: var(--surface-cover); color: var(--nevoa-100);
+      padding: 40px 0 96px;
+    }
+    .capa .simbolo-fundo {
+      position: absolute; right: -90px; bottom: -150px; width: 560px; opacity: .10; pointer-events: none;
+    }
+    .capa .wrap { position: relative; }
+    .capa h1 { color: var(--nevoa-100); margin-top: 72px; max-width: 14ch; }
+    .capa .voz { color: var(--noite-200); margin-top: 24px; max-width: 34ch; }
+    .capa .acoes { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    .capa .nota { font-size: 13px; color: var(--noite-300, #ADA3C4); }
+    .capa .eyebrow { color: var(--ouro-300); }
+
+    /* lockup composto (S = 56px). Valores da referência: tudo derivado de S */
+    .lockup { --S: 56px; display: inline-flex; align-items: center; gap: calc(var(--S) * .314); }
+    .lockup img { height: var(--S); width: auto; }
+    .lockup .nome {
+      display: block; font-family: var(--serif); font-weight: 400; text-transform: uppercase; white-space: nowrap;
+      font-size: calc(var(--S) * .5143); letter-spacing: .055em; margin-right: -.055em; line-height: 1;
+    }
+    .lockup .tag {
+      display: block; font-family: var(--sans); font-weight: 200; text-transform: uppercase; white-space: nowrap;
+      font-size: calc(var(--S) * .5143 * .325); letter-spacing: .4531em; margin-right: -.4531em;
+      padding-left: .2538em; margin-top: calc(var(--S) * .128); line-height: 1;
+    }
+    .lockup-escuro .nome { color: var(--nevoa-100); }
+    .lockup-escuro .tag { color: var(--ouro-300); }
+    .lockup-claro .nome { color: var(--noite-900); }
+    .lockup-reduzido { --S: 36px; }
+
+    /* ---------- seções com margem de anotação ---------- */
+    section.pagina { padding: 72px 0; }
+    .pagina + .pagina { border-top: 1px solid var(--line-hair); }
+    .folha { display: grid; grid-template-columns: 168px minmax(0, var(--read)); gap: 24px; max-width: var(--grid); margin: 0 auto; padding: 0 16px; }
+    .folha > .margem-label { padding-top: 10px; }
+    .corpo > * + * { margin-top: 16px; }
+    .corpo h2 + * { margin-top: 24px; }
+
+    /* ---------- quiz ---------- */
+    .cartao { background: var(--surface-work); border: 1px solid var(--line-hair); border-radius: 16px; box-shadow: var(--shadow-md); padding: 32px; }
+    .progresso { height: 4px; background: var(--nevoa-300); border-radius: 999px; overflow: hidden; margin-bottom: 8px; }
+    .progresso > span { display: block; height: 100%; width: 0; background: var(--action); transition: width 200ms var(--ease); }
+    .passo-info { font-size: 13px; color: var(--tinta-500); margin-bottom: 24px; font-variant-numeric: tabular-nums; }
+    .pergunta { font-family: var(--serif); font-size: 24px; line-height: 1.3; margin-bottom: 24px; }
+    fieldset { border: 0; }
+    .opcao { display: block; position: relative; }
+    .opcao + .opcao { margin-top: 12px; }
+    .opcao input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer; }
+    .opcao span {
+      display: block; padding: 16px 20px; border: 1px solid var(--line-strong); border-radius: 10px;
+      background: var(--nevoa-100); transition: background 160ms var(--ease), border-color 160ms var(--ease);
+    }
+    .opcao:hover span { background: var(--noite-050); }
+    .opcao input:checked + span { border-color: var(--action); background: var(--horizonte-100); }
+    .opcao input:focus-visible + span { box-shadow: var(--focus-ring); }
+    .quiz-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 32px; }
+
+    label.campo { display: block; font-weight: 500; font-size: 14px; margin-top: 20px; }
+    .campo input[type=text], .campo input[type=tel] {
+      display: block; width: 100%; margin-top: 6px; padding: 14px 16px; font-weight: 300; font-size: 16px;
+      border: 1px solid var(--line-strong); border-radius: 10px; background: var(--nevoa-100);
+    }
+    .campo input:focus { outline: none; box-shadow: var(--focus-ring); border-color: var(--action); }
+    .consent { display: flex; gap: 12px; align-items: flex-start; margin-top: 24px; font-size: 14px; }
+    .consent input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--horizonte-600); flex: none; }
+    .aviso-erro { background: var(--erro-bg); color: var(--erro); border-radius: 10px; padding: 12px 16px; font-size: 14px; margin-top: 16px; }
+    .aviso-erro[hidden] { display: none; }
+    .nota-pequena { font-size: 13px; color: var(--tinta-500); margin-top: 16px; }
+    [hidden] { display: none !important; }
+
+    /* resultado */
+    .resultado-area { display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: baseline; }
+    .resultado-area .num { font-family: var(--serif); color: var(--ouro-500); font-size: 40px; font-variant-numeric: tabular-nums; line-height: 1; }
+    .mantra { border-left: 2px solid var(--ouro-500); padding-left: 20px; margin-top: 24px; }
+
+    /* ---------- entrada pautada: o livro-razão dos capítulos ---------- */
+    .razao { margin-top: 24px; border-top: 1px solid var(--line-hair); }
+    .entry {
+      display: grid; grid-template-columns: 56px 1fr auto; align-items: baseline; gap: 16px; padding: 0 16px; min-height: 65px;
+      background-image: linear-gradient(var(--line-rule) 1px, transparent 1px);
+      background-size: 100% 26px; background-position: 0 25px; background-color: var(--surface-work);
+      border-bottom: 1px solid var(--line-hair);
+    }
+    .entry .n { font-family: var(--serif); color: var(--ouro-500); font-size: 26px; font-variant-numeric: tabular-nums; line-height: 65px; }
+    .entry .t { font-family: var(--serif); font-size: 19px; line-height: 65px; }
+    .entry .a { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--tinta-500); line-height: 65px; font-weight: 500; }
+    .entry.destaque { background-color: var(--ouro-100); }
+
+    .passos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 32px; margin-top: 24px; }
+    .passos li { list-style: none; padding: 16px 0; border-top: 1px solid var(--line-hair); }
+    .passos b { font-family: var(--serif); font-weight: 400; font-size: 19px; display: block; }
+    .passos span { font-size: 14px; color: var(--tinta-500); }
+    .passos .nn { font-family: var(--serif); color: var(--ouro-500); font-variant-numeric: tabular-nums; margin-right: 8px; }
+
+    .extras { margin-top: 24px; display: grid; gap: 0; }
+    .extras li { list-style: none; padding: 14px 0; border-top: 1px solid var(--line-hair); display: grid; grid-template-columns: 1fr; }
+    .extras b { font-weight: 500; font-size: 15px; }
+    .extras span { font-size: 14px; color: var(--tinta-500); }
+
+    /* autora */
+    .autora { display: grid; grid-template-columns: 240px 1fr; gap: 32px; align-items: start; }
+    .autora img { width: 240px; aspect-ratio: 415 / 638; object-fit: cover; border-radius: 16px; box-shadow: var(--shadow-md); }
+
+    /* oferta */
+    .oferta { margin-top: 32px; }
+    .preco-marcador { font-family: var(--serif); font-size: 32px; color: var(--noite-900); font-variant-numeric: tabular-nums; }
+    .preco-marcador small { font-family: var(--sans); font-size: 13px; color: var(--tinta-500); display: block; margin-top: 4px; }
+    .itens-oferta { margin: 20px 0 28px; }
+    .itens-oferta li { list-style: none; font-size: 15px; padding: 8px 0 8px 24px; position: relative; border-top: 1px solid var(--line-hair); }
+    .itens-oferta li::before { content: ""; position: absolute; left: 4px; top: 18px; width: 8px; height: 8px; border-radius: 50%; background: var(--ouro-500); }
+
+    details { border-top: 1px solid var(--line-hair); padding: 16px 0; }
+    details:last-of-type { border-bottom: 1px solid var(--line-hair); }
+    summary { cursor: pointer; font-family: var(--serif); font-size: 19px; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; float: right; color: var(--ouro-600); font-family: var(--sans); }
+    details[open] summary::after { content: "–"; }
+    details p { margin-top: 12px; font-size: 15px; color: var(--tinta-700); }
+
+    footer { padding: 48px 0 64px; border-top: 1px solid var(--line-hair); }
+    footer .wrap { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; align-items: center; }
+    footer small { font-size: 13px; color: var(--tinta-500); max-width: 52ch; display: block; }
+
+    @media (max-width: 860px) {
+      .folha { grid-template-columns: 1fr; gap: 8px; }
+      .folha > .margem-label { padding-top: 0; }
+      .autora { grid-template-columns: 1fr; }
+      .autora img { width: 200px; }
+      .passos { grid-template-columns: 1fr; }
+      .cartao { padding: 24px 20px; }
+      .capa .simbolo-fundo { width: 380px; right: -110px; bottom: -110px; }
+      .capa h1 { margin-top: 56px; }
+      .entry { grid-template-columns: 40px 1fr; padding: 0 12px; }
+      .entry .a { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="provisorio" id="faixa-provisoria">Rascunho provisório: textos, preço e condições ainda não foram aprovados pela Bruna.</div>
+
+<!-- ===================== CAPA (único bloco escuro) ===================== -->
+<header class="capa">
+  <img class="simbolo-fundo" src="img/simbolo.png" alt="" aria-hidden="true">
+  <div class="wrap">
+    <div class="lockup lockup-escuro" role="img" aria-label="Bruna Makdissi, Consciência que transforma">
+      <img src="img/simbolo.png" alt="">
+      <div>
+        <span class="nome">Bruna Makdissi</span>
+        <span class="tag">Consciência que transforma</span>
+      </div>
+    </div>
+
+    <p class="eyebrow" style="margin-top:72px">Quiz de 2 minutos · Ebook Escassez invisível</p>
+    <h1 style="margin-top:16px">Onde a escassez mora na sua vida?</h1>
+    <p class="voz">Ela não está só na conta bancária. Seis perguntas para você ver o que mais apareceu nas suas respostas.</p>
+    <div class="acoes">
+      <a class="btn" href="#quiz" id="btn-comecar">Fazer o quiz</a>
+      <span class="nota">Dinheiro, corpo e relações. Uma raiz.</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ===================== QUIZ ===================== -->
+<section class="pagina" id="quiz" aria-labelledby="quiz-titulo">
+  <div class="folha">
+    <p class="margem-label">Quiz</p>
+    <div class="corpo">
+      <h2 id="quiz-titulo" class="sr-only">Quiz: onde a escassez mora na sua vida</h2>
+
+      <!-- perguntas -->
+      <div class="cartao" id="bloco-perguntas">
+        <div class="progresso" aria-hidden="true"><span id="barra"></span></div>
+        <p class="passo-info" id="passo-info" aria-live="polite">Pergunta 1 de 6</p>
+        <form id="form-pergunta" novalidate>
+          <fieldset>
+            <legend class="pergunta" id="pergunta-texto"></legend>
+            <div id="opcoes"></div>
+          </fieldset>
+          <p class="aviso-erro" id="erro-pergunta" hidden>Escolha uma frase para continuar.</p>
+          <div class="quiz-nav">
+            <button type="button" class="btn btn-quiet" id="btn-voltar" hidden>Voltar</button>
+            <button type="submit" class="btn" id="btn-proxima">Próxima</button>
+          </div>
+        </form>
+        <p class="nota-pequena">Este quiz não é diagnóstico nem avaliação psicológica. É um ponto de partida para a leitura.</p>
+      </div>
+
+      <!-- captura -->
+      <div class="cartao" id="bloco-captura" hidden>
+        <p class="eyebrow">Quase lá</p>
+        <h3 style="margin-top:8px">Para onde envio o seu resultado?</h3>
+        <p style="margin-top:12px">Seu resultado aparece na tela logo depois. Se quiser, a Bruna também pode te chamar no WhatsApp.</p>
+        <form id="form-lead" name="quiz-escassez" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="quiz-escassez">
+          <p class="sr-only"><label>Não preencha este campo <input name="bot-field"></label></p>
+          <input type="hidden" name="area" id="campo-area">
+          <input type="hidden" name="respostas" id="campo-respostas">
+          <label class="campo">Seu nome
+            <input type="text" name="nome" id="campo-nome" autocomplete="given-name" required>
+          </label>
+          <label class="campo">WhatsApp com DDD
+            <input type="tel" name="whatsapp" id="campo-whats" autocomplete="tel-national" inputmode="tel" placeholder="(11) 90000-0000" required>
+          </label>
+          <label class="consent">
+            <input type="checkbox" name="consentimento" id="campo-consent" value="sim" required>
+            <span>Autorizo a Bruna Makdissi a me chamar no WhatsApp sobre o meu resultado e sobre o ebook. Posso pedir a exclusão dos meus dados quando quiser.</span>
+          </label>
+          <p class="aviso-erro" id="erro-lead" hidden></p>
+          <div class="quiz-nav">
+            <button type="button" class="btn btn-quiet" id="btn-voltar-lead">Voltar</button>
+            <button type="submit" class="btn" id="btn-enviar">Ver meu resultado</button>
+          </div>
+        </form>
+        <p class="nota-pequena">Usamos seus dados apenas para este contato. Política de privacidade: [link pendente].</p>
+      </div>
+
+      <!-- resultado -->
+      <div class="cartao" id="bloco-resultado" hidden aria-live="polite">
+        <p class="eyebrow" id="res-eyebrow">Nas suas respostas</p>
+        <div class="resultado-area" style="margin-top:16px">
+          <span class="num" id="res-num">01</span>
+          <h3 id="res-titulo" style="font-size:30px"></h3>
+        </div>
+        <p id="res-texto" style="margin-top:16px"></p>
+        <div class="mantra">
+          <p class="eyebrow">Mantra do ebook</p>
+          <p class="voz" id="res-mantra" style="margin-top:8px"></p>
+        </div>
+        <p style="margin-top:24px" id="res-capitulos"></p>
+        <div class="acoes" style="margin-top:24px; display:flex; flex-wrap:wrap; gap:12px">
+          <a class="btn" href="#ebook">Ver o ebook</a>
+          <a class="btn btn-quiet" id="res-whats" href="#" target="_blank" rel="noopener">Falar com a Bruna no WhatsApp</a>
+        </div>
+        <p class="nota-pequena">Este resultado reflete o que você marcou agora. Não é diagnóstico.</p>
+        <p style="margin-top:12px"><button type="button" class="btn btn-quiet" id="btn-refazer" style="min-height:40px;padding:8px 20px;font-size:14px">Refazer o quiz</button></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EBOOK ===================== -->
+<section class="pagina" id="ebook" aria-labelledby="ebook-titulo">
+  <div class="folha">
+    <p class="margem-label">Ebook</p>
+    <div class="corpo">
+      <h2 id="ebook-titulo">Escassez invisível</h2>
+      <p class="voz">Ela está em todo lugar que você ainda não olhou.</p>
+      <p>A escassez não mora só na conta que não fecha, na agenda sem espaço ou no corpo que não responde como você queria. Mora também na forma como você ama, aparece, descansa e cobra pelo seu trabalho.</p>
+      <p>Este ebook tem 105 páginas e convida você a olhar para esses lugares, sem se punir pelo que encontrar. Eu escrevi a partir do que vivi: o que aparece aqui é registro, não teoria.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pagina" aria-labelledby="como-titulo">
+  <div class="folha">
+    <p class="margem-label">Como funciona</p>
+    <div class="corpo">
+      <h2 id="como-titulo">Cada capítulo é um ritual</h2>
+      <p>A mesma estrutura se repete, para a leitura virar prática e não só informação.</p>
+      <ol class="passos">
+        <li><b><span class="nn">01</span>Reconhecer</b><span>O conceito: onde essa escassez vive e como ela se disfarça.</span></li>
+        <li><b><span class="nn">02</span>Sentir</b><span>Uma história real, para você se reconhecer.</span></li>
+        <li><b><span class="nn">03</span>Entender</b><span>Um olhar da neurociência, em linguagem humana.</span></li>
+        <li><b><span class="nn">04</span>Interromper</b><span>Um exercício prático, o treino de sobrescrita.</span></li>
+        <li><b><span class="nn">05</span>Praticar</b><span>O mantra, a vigília e a repetição.</span></li>
+        <li><b><span class="nn">06</span>Novo normal</b><span>Como esse campo se parece na vida real.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="pagina" aria-labelledby="dentro-titulo">
+  <div class="folha">
+    <p class="margem-label">O que tem dentro</p>
+    <div class="corpo">
+      <h2 id="dentro-titulo">Treze capítulos, três áreas, uma raiz</h2>
+      <p>Você pode ler na ordem ou começar pelo capítulo que fala com o que está sentindo agora.</p>
+    </div>
+  </div>
+  <div class="folha" style="margin-top:8px">
+    <span></span>
+    <div>
+    <p class="nota-pequena" id="legenda-destaque" hidden style="margin:0 0 12px">As linhas em destaque são as do seu resultado do quiz.</p>
+    <div class="razao" id="razao">
+      <div class="entry" data-area="dinheiro"><span class="n">01</span><span class="t">Escassez financeira<small class="sr-only">Indicado no seu resultado</small></span><span class="a">Dinheiro</span></div>
+      <div class="entry" data-area="corpo"><span class="n">02</span><span class="t">Escassez de tempo<small class="sr-only">Indicado no seu resultado</small></span><span class="a">Corpo</span></div>
+      <div class="entry" data-area="corpo"><span class="n">03</span><span class="t">Escassez de energia<small class="sr-only">Indicado no seu resultado</small></span><span class="a">Corpo</span></div>
+      <div class="entry" data-area="corpo"><span class="n">04</span><span class="t">Escassez no corpo<small class="sr-only">Indicado no seu resultado</small></span><span class="a">Corpo</span></div>
+      <div class="entry" data-area="relacoes"><span class="n">05</span><span class="t">Escassez nas relações<small class="sr-only">Indicado no seu resultado</small></span><span class="a">Relações</span></div>
+      <div class="entry" data-area="raiz"><span class="n">06</span><span class="t">Escassez e o medo</span><span class="a">Raiz</span></div>
+      <div class="entry" data-area="raiz"><span class="n">07</span><span class="t">Escassez e a morte</span><span class="a">Raiz</span></div>
+      <div class="entry" data-area="dinheiro"><span class="n">08</span><span class="t">Escassez de visibilidade<small class="sr-only">Indicado no seu resultado</small></span><span class="a">Dinheiro</span></div>
+      <div class="entry" data-area="dinheiro"><span class="n">09</span><span class="t">Escassez de merecimento<small class="sr-only">Indicado no seu resultado</small></span><span class="a">Dinheiro</span></div>
+      <div class="entry" data-area="corpo"><span class="n">10</span><span class="t">Escassez de prazer<small class="sr-only">Indicado no seu resultado</small></span><span class="a">Corpo</span></div>
+      <div class="entry" data-area="relacoes"><span class="n">11</span><span class="t">Escassez de identidade<small class="sr-only">Indicado no seu resultado</small></span><span class="a">Relações</span></div>
+      <div class="entry" data-area="raiz"><span class="n">12</span><span class="t">Escassez de espiritualidade</span><span class="a">Raiz</span></div>
+      <div class="entry" data-area="raiz"><span class="n">13</span><span class="t">Vigiai e orai</span><span class="a">Raiz</span></div>
+    </div>
+    </div>
+  </div>
+  <div class="folha" style="margin-top:32px">
+    <span></span>
+    <div class="corpo">
+      <h3>E, para usar no dia a dia</h3>
+      <ul class="extras">
+        <li><b>Os 6 treinos fundamentais</b><span>Diário de abundância, protocolo STOP, mapa de energia, meditação da impermanência, vigiai e orai, mantra em série.</span></li>
+        <li><b>Os 12 mantras</b><span>Uma tabela completa, com espaço para a sua anotação.</span></li>
+        <li><b>Calendário de 66 dias</b><span>Para marcar cada dia de prática.</span></li>
+        <li><b>Diário de sobrescrita</b><span>Páginas com perguntas-guia por tema.</span></li>
+        <li><b>Índice de crise</b><span>"Estou sentindo isso agora. Para onde vou?" Você vai direto ao capítulo certo.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="pagina" aria-labelledby="trecho-titulo">
+  <div class="folha">
+    <p class="margem-label">Um trecho</p>
+    <div class="corpo">
+      <h2 id="trecho-titulo" class="sr-only">Um trecho do ebook</h2>
+      <p class="voz" style="font-size:24px">"Este ebook não existe para te dar mais uma coisa para fazer. Mas para te convidar a parar. Olhar. Receber o que já está aqui."</p>
+      <p class="nota-pequena">Do interlúdio "A sociedade que não para".</p>
+    </div>
+  </div>
+</section>
+
+<section class="pagina" aria-labelledby="autora-titulo">
+  <div class="folha">
+    <p class="margem-label">Quem escreve</p>
+    <div class="corpo">
+      <div class="autora">
+        <img src="img/bruna-retrato.jpg" alt="Retrato de Bruna Makdissi" width="415" height="638" loading="lazy">
+        <div>
+          <h2 id="autora-titulo">Bruna Makdissi</h2>
+          <p style="margin-top:16px">Mentora financeira e energética. Bióloga de formação, com experiência em quatro países e quatro idiomas.</p>
+          <p>Seu trabalho parte de uma premissa simples: a escassez não começa no dinheiro, começa na desconexão. Tudo o que ela traz vem de um lugar vivido, de quem atravessou e escolheu um dia destruir o alicerce para construir algo real.</p>
+          <p style="margin-top:16px"><a href="https://www.instagram.com/brunamakdissi/" target="_blank" rel="noopener">@brunamakdissi no Instagram</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pagina" aria-labelledby="oferta-titulo" id="comprar">
+  <div class="folha">
+    <p class="margem-label">O ebook</p>
+    <div class="corpo">
+      <h2 id="oferta-titulo">Escassez invisível</h2>
+      <div class="cartao oferta">
+        <div class="preco-marcador">R$ [preço a definir]<small>Condição de pagamento: [a definir pela Bruna]</small></div>
+        <ul class="itens-oferta">
+          <li>Ebook em PDF, 105 páginas</li>
+          <li>13 capítulos, 6 treinos e 12 mantras</li>
+          <li>Calendário de 66 dias, diário de sobrescrita e índice de crise</li>
+        </ul>
+        <a class="btn" id="btn-comprar" href="#">Quero o ebook</a>
+        <p class="nota-pequena">Garantia e política de reembolso: [a confirmar com a Bruna e com a plataforma de pagamento].</p>
+      </div>
+      <p class="nota-pequena">O ebook é um material de leitura e prática. Não substitui acompanhamento médico, terapia ou avaliação psicológica.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pagina" aria-labelledby="faq-titulo">
+  <div class="folha">
+    <p class="margem-label">Dúvidas</p>
+    <div class="corpo">
+      <h2 id="faq-titulo">Perguntas frequentes</h2>
+      <div style="margin-top:24px">
+        <details><summary>Como recebo o ebook?</summary><p>[Confirmar com a plataforma de pagamento: o acesso é liberado por e-mail depois da compra.]</p></details>
+        <details><summary>Preciso de alguma experiência para ler?</summary><p>Não. A leitura é em linguagem simples, com histórias reais e práticas curtas. Você pode começar pelo capítulo que mais falar com você agora.</p></details>
+        <details><summary>O ebook é terapia?</summary><p>Não. É um material de leitura e prática. Se você estiver passando por um momento difícil, procure também um profissional de saúde.</p></details>
+        <details><summary>Preciso fazer o quiz antes?</summary><p>Não. O quiz é só um ponto de partida para você escolher por onde começar.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="lockup lockup-claro lockup-reduzido" role="img" aria-label="Bruna Makdissi">
+      <img src="img/simbolo.png" alt="">
+      <div><span class="nome">Bruna Makdissi</span></div>
+    </div>
+    <small>Os textos desta página são provisórios até a aprovação da Bruna. Quiz e ebook não oferecem diagnóstico, tratamento ou promessa de resultado.</small>
+  </div>
+</footer>
+
+<script>
+  /* ============ CONFIGURAÇÃO (preencher antes de publicar) ============ */
+  const CONFIG = {
+    provisorio: true,                       // false remove a faixa de rascunho
+    checkoutUrl: "",                        // link da Hotmart. Vazio = botão abre WhatsApp
+    whatsapp: "5511951273317",              // número da bio do Instagram
+    mensagemCompra: "Oi, Bruna! Quero o ebook Escassez invisível.",
+    mensagemResultado: (area) => "Oi, Bruna! Fiz o quiz do ebook Escassez invisível e a área que mais apareceu nas minhas respostas foi: " + area + "."
+  };
+
+  /* ============ CONTEÚDO DO QUIZ ============ */
+  const PERGUNTAS = [
+    { t: "Qual destas frases você já disse para si mesma?", o: [
+      ["dinheiro", "Eu sei o que faço, mas fico sem graça na hora de cobrar."],
+      ["corpo", "Eu sei que preciso parar, mas me sinto culpada quando descanso."],
+      ["relacoes", "Eu sei o que eu quero, mas digo sim para não desagradar."] ] },
+    { t: "Onde você sente mais peso hoje?", o: [
+      ["dinheiro", "Na conta, no preço e no que eu aceito receber."],
+      ["corpo", "No corpo: cansaço, tensão, sono, comida no automático."],
+      ["relacoes", "Nas pessoas: em quem eu cedo e em quem eu preciso agradar."] ] },
+    { t: "O que mais se repete na sua semana?", o: [
+      ["dinheiro", "A sensação de que eu mereço menos do que entrego."],
+      ["corpo", "A sensação de estar sempre atrasada, mesmo fazendo muito."],
+      ["relacoes", "A necessidade de confirmar que está tudo bem entre nós."] ] },
+    { t: "Quando alguém elogia o que você faz...", o: [
+      ["dinheiro", "Eu desvio e diminuo o valor do que fiz."],
+      ["corpo", "Eu agradeço e já estou pensando na próxima tarefa."],
+      ["relacoes", "Eu fico em dúvida e preciso de mais uma confirmação."] ] },
+    { t: "Se você parasse por uma semana, o que apareceria primeiro?", o: [
+      ["dinheiro", "Preocupação com o dinheiro que eu deixaria de ganhar."],
+      ["corpo", "Culpa, como se parar fosse uma falha minha."],
+      ["relacoes", "Medo de que as pessoas só precisem de mim pelo que eu faço."] ] },
+    { t: "O que você mais gostaria que mudasse?", o: [
+      ["dinheiro", "Minha relação com cobrar, receber e aparecer."],
+      ["corpo", "Minha relação com tempo, energia e descanso."],
+      ["relacoes", "Minha relação com quem eu sou perto dos outros."] ] }
+  ];
+
+  /* Mantras e áreas: textos do próprio ebook. A divisão dos capítulos por área é proposta editorial, a validar com a Bruna. */
+  const AREAS = {
+    dinheiro: { nome: "Dinheiro", num: "01",
+      texto: "O que aparece na conta costuma ser só a superfície. No ebook, a Bruna olha para como você aprendeu a lidar com dinheiro, com merecimento e com receber.",
+      mantra: "Eu mereço o que entrego. Eu entrego o que mereço. A abundância é minha natureza original.",
+      caps: "01 Escassez financeira, 08 Escassez de visibilidade e 09 Escassez de merecimento" },
+    corpo: { nome: "Corpo", num: "02",
+      texto: "Cansaço, pressa e culpa por parar podem ter a mesma raiz. No ebook, a Bruna fala do corpo, da energia e do tempo a partir do que ela viveu.",
+      mantra: "Minha energia é sagrada. Repor é responsabilidade, não egoísmo.",
+      caps: "02 Escassez de tempo, 03 Escassez de energia, 04 Escassez no corpo e 10 Escassez de prazer" },
+    relacoes: { nome: "Relações", num: "03",
+      texto: "Agradar para não perder também cobra um preço. No ebook, a Bruna conta como foi sair do papel de quem cede e voltar para si.",
+      mantra: "Eu não preciso agradar para merecer ficar. Quem eu sou, sem filtros, sem molduras, é suficiente para o amor que é real.",
+      caps: "05 Escassez nas relações e 11 Escassez de identidade" }
+  };
+
+  /* ============ ESTADO E ELEMENTOS ============ */
+  const $ = (id) => document.getElementById(id);
+  const respostas = new Array(PERGUNTAS.length).fill(null);
+  let atual = 0;
+  let areasResultado = [];
+
+  if (!CONFIG.provisorio) $("faixa-provisoria").hidden = true;
+
+  function wa(texto) { return "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(texto); }
+
+  /* botão de compra: Hotmart quando houver link; senão, WhatsApp */
+  $("btn-comprar").href = CONFIG.checkoutUrl || wa(CONFIG.mensagemCompra);
+  if (CONFIG.checkoutUrl) { $("btn-comprar").target = "_blank"; $("btn-comprar").rel = "noopener"; }
+
+  function mostrar(bloco) {
+    ["bloco-perguntas", "bloco-captura", "bloco-resultado"].forEach((id) => { $(id).hidden = (id !== bloco); });
+    $(bloco).scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  }
+
+  function desenharPergunta() {
+    const p = PERGUNTAS[atual];
+    $("pergunta-texto").textContent = p.t;
+    $("passo-info").textContent = "Pergunta " + (atual + 1) + " de " + PERGUNTAS.length;
+    $("barra").style.width = ((atual) / PERGUNTAS.length * 100) + "%";
+    $("erro-pergunta").hidden = true;
+    $("btn-voltar").hidden = atual === 0;
+    $("btn-proxima").textContent = atual === PERGUNTAS.length - 1 ? "Concluir" : "Próxima";
+    const box = $("opcoes"); box.textContent = "";
+    p.o.forEach(([area, texto], i) => {
+      const lab = document.createElement("label"); lab.className = "opcao";
+      const inp = document.createElement("input"); inp.type = "radio"; inp.name = "q"; inp.value = area;
+      if (respostas[atual] === area) inp.checked = true;
+      const sp = document.createElement("span"); sp.textContent = texto;
+      lab.append(inp, sp); box.append(lab);
+    });
+  }
+
+  $("form-pergunta").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const marcada = document.querySelector('input[name="q"]:checked');
+    if (!marcada) { $("erro-pergunta").hidden = false; return; }
+    respostas[atual] = marcada.value;
+    if (atual < PERGUNTAS.length - 1) { atual++; desenharPergunta(); }
+    else {
+      $("barra").style.width = "100%";
+      calcular();
+      mostrar("bloco-captura");
+      $("campo-nome").focus({ preventScroll: true });
+    }
+  });
+  $("btn-voltar").addEventListener("click", () => { if (atual > 0) { atual--; desenharPergunta(); } });
+  $("btn-voltar-lead").addEventListener("click", () => { atual = PERGUNTAS.length - 1; desenharPergunta(); mostrar("bloco-perguntas"); });
+
+  function calcular() {
+    const placar = { dinheiro: 0, corpo: 0, relacoes: 0 };
+    respostas.forEach((a) => { if (a) placar[a]++; });
+    const max = Math.max(...Object.values(placar));
+    areasResultado = Object.keys(placar).filter((k) => placar[k] === max);
+    $("campo-area").value = areasResultado.join("+");
+    $("campo-respostas").value = respostas.join(",");
+  }
+
+  function mostrarResultado() {
+    const a = AREAS[areasResultado[0]];
+    const nomes = areasResultado.map((k) => AREAS[k].nome);
+    const empate = areasResultado.length > 1;
+    $("res-eyebrow").textContent = empate ? "Nas suas respostas, mais de uma área apareceu" : "Nas suas respostas, o que mais apareceu";
+    $("res-num").textContent = empate ? "01" : a.num;
+    $("res-titulo").textContent = empate ? nomes.join(" e ") : a.nome;
+    $("res-texto").textContent = empate
+      ? "Suas respostas se dividiram. Isso é comum: dinheiro, corpo e relações costumam estar ligados. Comece pela área que mais incomodar hoje."
+      : a.texto;
+    $("res-mantra").textContent = areasResultado.map((k) => AREAS[k].mantra).join(" ");
+    $("legenda-destaque").hidden = false;
+    $("res-capitulos").textContent = "Capítulos para começar: " + areasResultado.map((k) => AREAS[k].caps).join("; ") + ".";
+    $("res-whats").href = wa(CONFIG.mensagemResultado(nomes.join(" e ")));
+    document.querySelectorAll("#razao .entry").forEach((el) => {
+      el.classList.toggle("destaque", areasResultado.includes(el.dataset.area));
+    });
+    mostrar("bloco-resultado");
+  }
+
+  $("form-lead").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const erro = $("erro-lead"); erro.hidden = true;
+    const nome = $("campo-nome").value.trim();
+    const tel = $("campo-whats").value.replace(/\D/g, "");
+    if (nome.length < 2) { erro.textContent = "Informe seu nome."; erro.hidden = false; return; }
+    if (tel.length < 10 || tel.length > 13) { erro.textContent = "Informe seu WhatsApp com DDD."; erro.hidden = false; return; }
+    if (!$("campo-consent").checked) { erro.textContent = "Para ver o resultado e receber contato, marque a autorização acima."; erro.hidden = false; return; }
+
+    const btn = $("btn-enviar"); btn.disabled = true; btn.textContent = "Enviando...";
+    try {
+      const dados = new URLSearchParams(new FormData($("form-lead")));
+      const r = await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: dados.toString() });
+      if (!r.ok) throw new Error("status " + r.status);
+    } catch (err) {
+      /* Não bloqueia o resultado. Em ambiente local o formulário não existe. */
+      console.warn("Formulário não enviado:", err);
+    }
+    btn.disabled = false; btn.textContent = "Ver meu resultado";
+    mostrarResultado();
+  });
+
+  $("btn-refazer").addEventListener("click", () => {
+    respostas.fill(null); atual = 0; areasResultado = [];
+    document.querySelectorAll("#razao .entry").forEach((el) => el.classList.remove("destaque"));
+    $("legenda-destaque").hidden = true;
+    desenharPergunta(); mostrar("bloco-perguntas");
+  });
+
+  desenharPergunta();
+</script>
+</body>
+</html>
