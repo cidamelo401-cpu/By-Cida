@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, use as usePromise } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, getWhatsAppLink, normalizeSearch } from '@/lib/utils/format'
-import { MODEL_LABELS, CATALOG_SIZE_LABELS, CATALOG_ADULT_SIZES, CATALOG_KIDS_SIZES } from '@/lib/constants/products'
+import { MODEL_LABELS, VERSION_LABELS, CATALOG_SIZE_LABELS, CATALOG_ADULT_SIZES, CATALOG_KIDS_SIZES } from '@/lib/constants/products'
 import type { Database, ProductSize } from '@/types/database'
 import CatalogShell from '../../_components/CatalogShell'
 
@@ -94,7 +94,7 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
       const isKids = KIDS_SIZES.includes(p.size)
       // Agrupamento sempre por time+modelo+temporada — ver comentário equivalente em catalogo/page.tsx.
       // A foto NÃO entra como critério: cada tamanho normalmente tem sua própria foto de upload.
-      const key = `${p.team}|${p.model}|${p.season ?? ''}|${p.edition_label ?? ''}|${isKids ? 'kids' : 'adult'}`
+      const key = `${p.team}|${p.model}|${p.season ?? ''}|${p.edition_label ?? ''}|${p.version}|${isKids ? 'kids' : 'adult'}`
       const isAvailable = p.status !== 'sob_encomenda' && p.quantity > 0
 
       const existing = map.get(key)
@@ -256,7 +256,7 @@ export default function CollectionShirtsPage({ params }: { params: Promise<{ slu
                     <div className="p-3 flex flex-col gap-1.5 flex-1">
                       <p className="font-display text-white text-lg leading-tight line-clamp-2 uppercase">{shirt.team}</p>
                       <p className="text-[11px] text-gray-500">
-                        {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}{shirt.edition_label ? ` · ${shirt.edition_label}` : ''}
+                        {shirt.season ?? ''} · {MODEL_LABELS[shirt.model]}{shirt.version === 'jogador' ? ` · ${VERSION_LABELS[shirt.version]}` : ''}{shirt.edition_label ? ` · ${shirt.edition_label}` : ''}
                       </p>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {shirt.sizes.map((s) => (

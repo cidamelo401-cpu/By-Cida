@@ -193,6 +193,11 @@ export default function ReportsPage() {
     { channel: SaleChannel; count: number; total: number }[]
   >([])
 
+  // Section 9: Gasto por fornecedor
+  const [supplierSpending, setSupplierSpending] = useState<
+    { name: string; qty: number; total: number }[]
+  >([])
+
   /* ---- loaders ---- */
 
   async function loadSalesInRange() {
@@ -431,6 +436,32 @@ export default function ReportsPage() {
     setByChannel(Array.from(map.entries()).map(([channel, v]) => ({ channel, ...v })))
   }
 
+  async function loadSupplierSpending() {
+    const { data, error } = await supabase
+      .from('purchase_lots')
+      .select('quantity, unit_cost, purchase_date, suppliers(name)')
+      .gte('purchase_date', startDate)
+      .lte('purchase_date', endDate)
+    if (error) throw error
+
+    type SupplierLotItem = { quantity: number; unit_cost: number; suppliers: { name: string } | null }
+
+    const map = new Map<string, { qty: number; total: number }>()
+    ;((data as SupplierLotItem[] | null) ?? []).forEach((lot) => {
+      const name = lot.suppliers?.name ?? 'Sem fornecedor'
+      const entry = map.get(name) ?? { qty: 0, total: 0 }
+      entry.qty += lot.quantity
+      entry.total += lot.quantity * lot.unit_cost
+      map.set(name, entry)
+    })
+
+    setSupplierSpending(
+      Array.from(map.entries())
+        .map(([name, v]) => ({ name, ...v }))
+        .sort((a, b) => b.total - a.total)
+    )
+  }
+
   /* ---- exports ---- */
 
   function exportSalesInRange() {
@@ -474,6 +505,17 @@ export default function ReportsPage() {
     )
   }
 
+  function exportSupplierSpending() {
+    exportToCSV(
+      supplierSpending.map((s) => ({
+        Fornecedor: s.name,
+        'Qtd. Comprada': s.qty,
+        'Valor Gasto': s.total,
+      })),
+      'gasto-por-fornecedor'
+    )
+  }
+
   function exportTopCustomers() {
     exportToCSV(
       topCustomers.map((c) => ({
@@ -489,6 +531,7 @@ export default function ReportsPage() {
   const totalRangeNetValue = salesInRange.reduce((sum, s) => sum + s.netTotal, 0)
   const maxStockAvailable = Math.max(1, ...Object.values(stockBySize).map((v) => v.available))
   const totalChannelValue = byChannel.reduce((sum, c) => sum + c.total, 0)
+  const totalSupplierSpend = supplierSpending.reduce((sum, s) => sum + s.total, 0)
 
   return (
     <div className="flex flex-col gap-5 pb-6">
@@ -821,6 +864,39 @@ export default function ReportsPage() {
                     <span className="font-medium text-gray-900">{CHANNEL_LABELS[c.channel]}</span>
                     <span className="text-gray-500">
                       {c.count} vendas · {formatCurrency(c.total)} ({pct}%)
+                    </span>
+                  </div>
+                  <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
+                    <div className="h-full rounded-full bg-primary-600" style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </ReportSection>
+
+      {/* 9. Gasto por fornecedor */}
+      <ReportSection
+        title="Gasto por fornecedor"
+        description="Quanto você comprou de cada fornecedor no período"
+        onExpand={loadSupplierSpending}
+        onExport={exportSupplierSpending}
+        exportDisabled={supplierSpending.length === 0}
+        refreshKey={`${startDate}|${endDate}`}
+      >
+        {supplierSpending.length === 0 ? (
+          <p className="text-sm text-gray-500">Nenhuma compra registrada no período.</p>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {supplierSpending.map((s) => {
+              const pct = totalSupplierSpend > 0 ? Math.round((s.total / totalSupplierSpend) * 100) : 0
+              return (
+                <div key={s.name}>
+                  <div className="flex items-center justify-between text-sm mb-1">
+                    <span className="font-medium text-gray-900">{s.name}</span>
+                    <span className="text-gray-500">
+                      {s.qty} un. · {formatCurrency(s.total)} ({pct}%)
                     </span>
                   </div>
                   <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
