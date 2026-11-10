@@ -81,8 +81,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           query = query
             .eq('team', data.team)
             .eq('model', data.model)
+            .eq('version', data.version)
           if (data.season) {
             query = query.eq('season', data.season)
+          }
+          if (data.edition_label) {
+            query = query.eq('edition_label', data.edition_label)
+          } else {
+            query = query.is('edition_label', null)
           }
         }
 

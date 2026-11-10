@@ -96,6 +96,7 @@ type DashboardData = {
   lowStock: Product[]
   recentSales: (Sale & { customer_name: string | null })[]
   monthlySales: { label: string; total: number }[]
+  supplierSpending: { name: string; total: number }[]
 }
 
 export default function DashboardPage() {
@@ -113,6 +114,7 @@ export default function DashboardPage() {
     try {
       const now = new Date()
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+      const monthStartDate = monthStart.slice(0, 10)
 
       const [
         productsRes,
@@ -122,6 +124,7 @@ export default function DashboardPage() {
         pendingSalesRes,
         recentSalesRes,
         sixMonthSalesRes,
+        monthPurchaseLotsRes,
       ] = await Promise.all([
         supabase.from('products').select('*').eq('archived', false),
         supabase
@@ -154,6 +157,10 @@ export default function DashboardPage() {
           .select('total, created_at')
           .in('sale_status', ['paga', 'enviada', 'entregue'])
           .order('created_at', { ascending: true }),
+        supabase
+          .from('purchase_lots')
+          .select('quantity, unit_cost, suppliers(name)')
+          .gte('purchase_date', monthStartDate),
       ])
 
       if (productsRes.error) throw productsRes.error
@@ -232,6 +239,16 @@ export default function DashboardPage() {
       })
       const monthlySales = monthBuckets.map((b) => ({ label: b.label, total: b.total }))
 
+      type SupplierLotItem = { quantity: number; unit_cost: number; suppliers: { name: string } | null }
+      const supplierMap = new Map<string, number>()
+      ;((monthPurchaseLotsRes.data as SupplierLotItem[] | null) ?? []).forEach((lot) => {
+        const name = lot.suppliers?.name ?? 'Sem fornecedor'
+        supplierMap.set(name, (supplierMap.get(name) ?? 0) + lot.quantity * lot.unit_cost)
+      })
+      const supplierSpending = Array.from(supplierMap.entries())
+        .map(([name, total]) => ({ name, total }))
+        .sort((a, b) => b.total - a.total)
+
       setData({
         totalAvailable,
         totalReserved,
@@ -245,6 +262,7 @@ export default function DashboardPage() {
         lowStock,
         recentSales,
         monthlySales,
+        supplierSpending,
       })
     } catch (err) {
       console.error(err)
@@ -409,6 +427,34 @@ export default function DashboardPage() {
           })()
         )}
       </Card>
+
+      {/* Gasto por fornecedor (mês) */}
+      {data.supplierSpending.length > 0 && (
+        <Card className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Gasto por fornecedor (mês)</h2>
+            <Link href="/relatorios" className="text-xs font-medium text-primary-600">Ver relatório</Link>
+          </div>
+          <div className="flex flex-col gap-2">
+            {data.supplierSpending.slice(0, 5).map((s) => {
+              const maxSpend = Math.max(1, ...data.supplierSpending.map((x) => x.total))
+              const pct = Math.round((s.total / maxSpend) * 100)
+              return (
+                <div key={s.name} className="flex items-center gap-3">
+                  <span className="w-24 shrink-0 text-sm text-gray-600 truncate">{s.name}</span>
+                  <div className="flex-1 h-4 rounded-full bg-gray-100 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-primary-600 transition-all"
+                      style={{ width: `${Math.max(pct, 4)}%` }}
+                    />
+                  </div>
+                  <span className="w-20 shrink-0 text-sm text-right text-gray-500 tabular-nums">{formatCurrency(s.total)}</span>
+                </div>
+              )
+            })}
+          </div>
+        </Card>
+      )}
 
       {/* Estoque por tamanho */}
       <Card className="p-4">
