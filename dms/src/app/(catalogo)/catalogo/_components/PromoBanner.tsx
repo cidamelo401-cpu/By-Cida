@@ -3,9 +3,9 @@
 import Image from 'next/image'
 
 /* ── Período da promoção ──
-   Visível de 14/11 até 27/11/2026 (inclusive); some sozinho a partir de 28/11.
+   Visível de 13/11 até 27/11/2026 (inclusive); some sozinho a partir de 28/11.
    Pra desativar antes da hora, é só mudar PROMO_END pra uma data passada. */
-const PROMO_START = new Date('2026-11-14T00:00:00-03:00')
+const PROMO_START = new Date('2026-11-13T00:00:00-03:00')
 const PROMO_END = new Date('2026-11-28T00:00:00-03:00') // exclusivo: some ao bater essa data
 
 export default function PromoBanner() {
