@@ -14,14 +14,15 @@ export default function PromoBanner() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-3">
-      <div className="relative w-full overflow-hidden rounded-xl">
+      <div className="relative w-full overflow-hidden rounded-xl border border-[#C9A84C]/20">
         <Image
-          src="/banner-black-friday.png"
+          src="/banner-black-friday.svg"
           alt="Black Friday DMS Sports: desconto progressivo de até 15% — 1 camisa 5%, 2 camisas 10%, 3 camisas 15%. Pagamento em até 3x sem juros no cartão ou no Pix."
           width={1600}
-          height={533}
+          height={420}
           className="w-full h-auto"
           priority
+          unoptimized
         />
       </div>
     </div>
