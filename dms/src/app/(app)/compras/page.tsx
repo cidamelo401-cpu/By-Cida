@@ -5,7 +5,7 @@ import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { TopBar } from '@/components/layout/TopBar'
-import { Card, EmptyState, LoadingSpinner, Select } from '@/components/ui'
+import { Card, ConfirmDialog, EmptyState, LoadingSpinner, Select } from '@/components/ui'
 import type { Database } from '@/types/database'
 
 type PurchaseLot = Database['public']['Tables']['purchase_lots']['Row'] & {
@@ -23,6 +23,8 @@ export default function PurchaseLotsPage() {
   const [loading, setLoading] = useState(true)
   const [supplierFilter, setSupplierFilter] = useState('')
   const [suppliers, setSuppliers] = useState<{ id: string; name: string }[]>([])
+  const [lotToDelete, setLotToDelete] = useState<PurchaseLot | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     load()
@@ -48,6 +50,25 @@ export default function PurchaseLotsPage() {
       toast.error('Erro ao carregar compras.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleDelete() {
+    if (!lotToDelete) return
+    setDeleting(true)
+    try {
+      // Database.Functions fica vazio de propósito (tipo mantido à mão) pra não
+      // quebrar a inferência dos joins usados em outras páginas — daí o any aqui.
+      const { error } = await (supabase as any).rpc('delete_purchase_lot', { p_lot_id: lotToDelete.id })
+      if (error) throw error
+      toast.success('Compra excluída.')
+      setLotToDelete(null)
+      await load()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Erro desconhecido'
+      toast.error(`Erro ao excluir compra: ${msg}`)
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -120,14 +141,38 @@ export default function PurchaseLotsPage() {
                     </p>
                   </div>
                 </div>
-                <p className="text-xs text-gray-400 mt-2">
-                  Restante neste lote: {lot.remaining_quantity} de {lot.quantity}
-                </p>
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-xs text-gray-400">
+                    Restante neste lote: {lot.remaining_quantity} de {lot.quantity}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setLotToDelete(lot)}
+                    className="text-xs font-medium text-red-600 hover:text-red-700 bg-transparent border-0 p-0 cursor-pointer"
+                  >
+                    Excluir
+                  </button>
+                </div>
               </Card>
             ))}
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={!!lotToDelete}
+        onCancel={() => setLotToDelete(null)}
+        onConfirm={handleDelete}
+        title="Excluir compra?"
+        description={
+          lotToDelete
+            ? `Tem certeza que deseja excluir essa compra de ${lotToDelete.quantity}x "${lotToDelete.products?.team ?? 'produto removido'}" do fornecedor ${lotToDelete.suppliers?.name ?? 'removido'}? O estoque lançado por ela será descontado. Só é possível excluir se nenhuma unidade desse lote já tiver sido vendida.`
+            : ''
+        }
+        confirmLabel="Excluir"
+        danger
+        loading={deleting}
+      />
 
       {!loading && filtered.length > 0 && (
         <Link
