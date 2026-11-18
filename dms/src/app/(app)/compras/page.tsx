@@ -65,7 +65,10 @@ export default function PurchaseLotsPage() {
       setLotToDelete(null)
       await load()
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Erro desconhecido'
+      const msg =
+        err instanceof Error
+          ? err.message
+          : (err as { message?: string })?.message ?? 'Erro desconhecido'
       toast.error(`Erro ao excluir compra: ${msg}`)
     } finally {
       setDeleting(false)
