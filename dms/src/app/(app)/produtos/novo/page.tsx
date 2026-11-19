@@ -176,7 +176,7 @@ export default function NewProductPage() {
     try {
       const catalogGroup = crypto.randomUUID()
       const entries = form.sob_encomenda
-        ? [{ size: 'AD' as ProductSize, quantity: 0 }]
+        ? form.sizes.map((s) => ({ size: s.size, quantity: 0 }))
         : form.sizes.map((s) => ({ size: s.size, quantity: Number(s.quantity) || 0 }))
 
       const products = entries.map((entry) => ({
@@ -369,63 +369,65 @@ export default function NewProductPage() {
 
         <Card className="p-5 flex flex-col gap-4">
           <h2 className="font-semibold text-gray-900">Tamanhos e quantidades</h2>
-          {form.sob_encomenda ? (
-            <p className="text-sm text-gray-500">Sob encomenda — tamanho definido na hora do pedido.</p>
-          ) : (
-            <>
-              <div className="flex flex-col gap-3">
-                {form.sizes.map((entry, index) => (
-                  <div key={index} className="flex items-end gap-2">
-                    <div className="flex-1">
-                      <Select
-                        label={index === 0 ? 'Tamanho' : undefined}
-                        value={entry.size}
-                        onChange={(e) => updateSize(index, 'size', e.target.value)}
-                      >
-                        {SIZE_OPTIONS.map((size) => (
-                          <option key={size} value={size}>
-                            {CATALOG_SIZE_LABELS[size] ?? size}
-                          </option>
-                        ))}
-                      </Select>
-                    </div>
-                    <div className="w-24">
-                      <Input
-                        label={index === 0 ? 'Qtd' : undefined}
-                        type="number"
-                        min={0}
-                        value={entry.quantity}
-                        onChange={(e) => updateSize(index, 'quantity', e.target.value)}
-                      />
-                    </div>
-                    {form.sizes.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeSize(index)}
-                        className="mb-0.5 p-2 text-red-400 hover:text-red-600 transition-colors"
-                        aria-label="Remover tamanho"
-                      >
-                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    )}
+          {form.sob_encomenda && (
+            <p className="text-sm text-gray-500">
+              Sob encomenda — sem estoque, mas escolha o(s) tamanho(s) reais da camisa (infantil/adulto) pra ela aparecer
+              certo nos filtros do catálogo. Só use "A definir" se realmente não souber o tamanho ainda.
+            </p>
+          )}
+          <div className="flex flex-col gap-3">
+            {form.sizes.map((entry, index) => (
+              <div key={index} className="flex items-end gap-2">
+                <div className="flex-1">
+                  <Select
+                    label={index === 0 ? 'Tamanho' : undefined}
+                    value={entry.size}
+                    onChange={(e) => updateSize(index, 'size', e.target.value)}
+                  >
+                    {SIZE_OPTIONS.map((size) => (
+                      <option key={size} value={size}>
+                        {CATALOG_SIZE_LABELS[size] ?? size}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                {!form.sob_encomenda && (
+                  <div className="w-24">
+                    <Input
+                      label={index === 0 ? 'Qtd' : undefined}
+                      type="number"
+                      min={0}
+                      value={entry.quantity}
+                      onChange={(e) => updateSize(index, 'quantity', e.target.value)}
+                    />
                   </div>
-                ))}
+                )}
+                {form.sizes.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeSize(index)}
+                    className="mb-0.5 p-2 text-red-400 hover:text-red-600 transition-colors"
+                    aria-label="Remover tamanho"
+                  >
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                )}
               </div>
-              {form.sizes.length < SIZE_OPTIONS.length && (
-                <button
-                  type="button"
-                  onClick={addSize}
-                  className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-                >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Adicionar tamanho
-                </button>
-              )}
-            </>
+            ))}
+          </div>
+          {form.sizes.length < SIZE_OPTIONS.length && (
+            <button
+              type="button"
+              onClick={addSize}
+              className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              Adicionar tamanho
+            </button>
           )}
         </Card>
 
